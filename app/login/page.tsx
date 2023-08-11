@@ -8,7 +8,7 @@ import { useState } from 'react'
 export default function LoginPage() {
 	const [clickedGoogle, setClickedGoogle] = useState(false)
 	return (
-		<div className="flex h-screen w-screen justify-center bg-slate-100">
+		<div className="flex h-screen w-screen justify-center bg-slate-50">
 			<div className="z-10 mt-[calc(30vh)] h-fit w-full max-w-md overflow-hidden border border-gray-100 sm:rounded-2xl sm:shadow-xl">
 				<div className="flex flex-col items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center sm:px-16">
 					<h3 className="text-xl font-semibold">Sign in</h3>
