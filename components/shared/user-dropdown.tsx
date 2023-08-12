@@ -2,8 +2,10 @@
 
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
+import { signOut } from 'next-auth/react'
+import { Session } from 'next-auth'
 
-export default function UserDropdown({ session }: { session: any }) {
+export default function UserDropdown({ session }: { session: Session }) {
 	const [isOpen, setIsOpen] = useState(false)
 	const dropdownRef = useRef<HTMLDivElement | null>(null)
 
@@ -24,6 +26,8 @@ export default function UserDropdown({ session }: { session: any }) {
 		}
 	}, [])
 
+	if (!session.user?.email) return null
+
 	return (
 		<div className="relative" ref={dropdownRef}>
 			<button
@@ -34,7 +38,10 @@ export default function UserDropdown({ session }: { session: any }) {
 			>
 				<span className="sr-only">Open user menu</span>
 				<Image
-					src={session.user.image}
+					src={
+						session.user.image ||
+						`https://avatars.dicebear.com/api/micah/${session.user.email}.svg`
+					}
 					className="mr-3 object-cover h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-gray-300 transition-all duration-75 focus:outline-none active:scale-95 sm:h-9 sm:w-9"
 					alt="avatar"
 					width={400}
@@ -89,12 +96,14 @@ export default function UserDropdown({ session }: { session: any }) {
 					</li>
 				</ul>
 				<div className="py-1 mx-1">
-					<a
-						href="#"
-						className="block p-2 text-sm text-gray-700 hover:bg-gray-100 hover:rounded-sm"
+					<button
+						onClick={() =>
+							signOut({ redirect: true, callbackUrl: '/' })
+						}
+						className="block w-full text-left p-2 text-sm text-gray-700 hover:bg-gray-100 hover:rounded-sm"
 					>
 						Sign out
-					</a>
+					</button>
 				</div>
 			</div>
 		</div>

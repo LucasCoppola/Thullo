@@ -21,7 +21,7 @@ export default function LoginPage() {
 					<Button
 						onClick={() => {
 							setClickedGoogle(true)
-							signIn('google')
+							signIn('google', { callbackUrl: '/' })
 						}}
 					>
 						{clickedGoogle ? (
