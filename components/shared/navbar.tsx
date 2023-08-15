@@ -6,8 +6,8 @@ import Link from 'next/link'
 
 export default function Navbar({ session }: { session: Session | null }) {
 	return (
-		<nav className="relative bg-white mt-2">
-			<div className="container py-3 md:flex md:justify-between items-center">
+		<nav className="relative bg-white mt-2 px-10 shadow-md">
+			<div className="w-full py-3 md:flex md:justify-between items-center">
 				<div className="flex items-center">
 					<a href="#">
 						<Image
