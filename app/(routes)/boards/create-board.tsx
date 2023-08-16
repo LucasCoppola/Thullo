@@ -12,9 +12,20 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Add } from '@/components/ui/icons'
+import axios from 'axios'
+import { useQuery } from '@tanstack/react-query'
 
 export default function CreateBoard() {
 	const [isHovered, setIsHovered] = useState(false)
+
+	const { isLoading, error, data } = useQuery(['boards'], async () => {
+		const response = await axios.get(
+			`https://api.unsplash.com/photos/?client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}`
+		)
+		const data = await response.data
+		return data
+	})
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -29,7 +40,7 @@ export default function CreateBoard() {
 						<div
 							onMouseOver={() => setIsHovered(true)}
 							onMouseOut={() => setIsHovered(false)}
-							className="relative"
+							className="relative transition-all"
 						>
 							<Image
 								className="w-full h-40 rounded-xl"
@@ -38,14 +49,13 @@ export default function CreateBoard() {
 								width={200}
 								height={50}
 							/>
-							{isHovered && (
-								<span className="absolute top-0 right-0 bg-gray-100 p-1.5 cursor-pointer hover:bg-gray-200 transition-all duration-200 ease-in-out text-center text-xs rounded-es-lg rounded-se-lg font-medium text-gray-700">
-									Change cover
-								</span>
-							)}
+							<CoverImageModal
+								isHovered={isHovered}
+								data={data}
+							/>
 						</div>
 						<input
-							className="bg-gray-50 border border-gray-300 text-gray-800 text-sm rounded-lg w-full p-2.5"
+							className="bg-gray-50 border border-gray-300 text-gray-800 text-sm rounded-lg w-full p-2.5 focus:border-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300"
 							placeholder="Add a board title"
 							required
 						/>
@@ -94,6 +104,32 @@ export default function CreateBoard() {
 					</DialogDescription>
 				</DialogHeader>
 			</DialogContent>
+		</Dialog>
+	)
+}
+
+export function CoverImageModal({
+	isHovered,
+	data
+}: {
+	isHovered: boolean
+	data: any
+}) {
+	return (
+		<Dialog>
+			<DialogTrigger asChild>
+				<span
+					className={`absolute top-0 right-0 bg-gray-100 p-1.5 cursor-pointer text-center text-xs rounded-es-lg rounded-se-lg font-medium text-gray-700 ${
+						isHovered
+							? 'opacity-100 visibility-visible transition-opacity duration-300 ease-in-out'
+							: 'opacity-0 visibility-hidden transition-opacity duration-300 ease-in-out'
+					}`}
+					onClick={() => console.log(data)}
+				>
+					Change cover
+				</span>
+			</DialogTrigger>
+			<DialogContent></DialogContent>
 		</Dialog>
 	)
 }
