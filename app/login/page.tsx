@@ -25,7 +25,7 @@ export default function LoginPage() {
 						}}
 					>
 						{clickedGoogle ? (
-							<LoadingCircle className="h-4 w-4" />
+							<LoadingCircle className="fill-gray-600 text-gray-200" />
 						) : (
 							<>
 								<Google className="h-4 w-4 mr-2" />
