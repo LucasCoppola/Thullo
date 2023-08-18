@@ -16,6 +16,10 @@ import CoverImageModal from '@/components/boards/cover-image-modal'
 
 export default function CreateBoard() {
 	const [isHovered, setIsHovered] = useState(false)
+	const [coverImage, setCoverImage] = useState({
+		type: 'color' || 'image',
+		bg: ''
+	})
 
 	return (
 		<Dialog>
@@ -33,14 +37,28 @@ export default function CreateBoard() {
 							onMouseOut={() => setIsHovered(false)}
 							className="relative transition-all"
 						>
-							<Image
-								className="w-full h-40 rounded-xl"
-								src="https://res.cloudinary.com/dotpfjpno/image/upload/v1675864626/YelpCamp/yrwrxu55rg5bdfgyrzcc.jpg"
-								alt=""
-								width={200}
-								height={50}
+							{coverImage.type === 'color' ? (
+								<div
+									className="w-full h-40 rounded-xl"
+									style={{
+										backgroundColor:
+											coverImage.bg || '#adb5bd'
+									}}
+								></div>
+							) : (
+								<Image
+									className="w-full h-40 rounded-xl object-cover"
+									src={coverImage.bg}
+									alt=""
+									width={200}
+									height={50}
+								/>
+							)}
+							<CoverImageModal
+								isHovered={isHovered}
+								setCoverImage={setCoverImage}
+								coverImage={coverImage}
 							/>
-							<CoverImageModal isHovered={isHovered} />
 						</div>
 						<input
 							className="bg-gray-50 border border-gray-300 text-gray-800 text-sm rounded-lg w-full p-2.5 focus:border-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300"

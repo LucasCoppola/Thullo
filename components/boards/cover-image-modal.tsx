@@ -3,7 +3,7 @@
 import axios from 'axios'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { LoadingCircle, Search } from '@/components/ui/icons'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
@@ -16,9 +16,25 @@ type ImageData = {
 	user: { id: string; username: string; links: { html: string } }
 }
 
-export default function CoverImageModal({ isHovered }: { isHovered: boolean }) {
+export default function CoverImageModal({
+	isHovered,
+	coverImage,
+	setCoverImage
+}: {
+	isHovered: boolean
+	coverImage: { type: string; bg: string }
+	setCoverImage: (value: { type: string; bg: string }) => void
+}) {
+	const [open, setOpen] = useState(false)
+
+	useEffect(() => {
+		if (coverImage.bg) {
+			setOpen(false)
+		}
+	}, [coverImage])
+
 	return (
-		<Dialog>
+		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
 				<span
 					className={`absolute top-0 right-0 bg-gray-100 p-1.5 cursor-pointer text-center text-xs rounded-es-lg rounded-se-lg font-medium text-gray-700 ${
@@ -40,13 +56,13 @@ export default function CoverImageModal({ isHovered }: { isHovered: boolean }) {
 						value="colors"
 						className="w-[29rem] overflow-y-scroll md:overflow-y-auto max-h-72"
 					>
-						<ColorsTabContent />
+						<ColorsTabContent setCoverImage={setCoverImage} />
 					</TabsContent>
 					<TabsContent
 						value="unsplash"
 						className="w-[29rem] overflow-y-scroll md:overflow-y-auto max-h-72"
 					>
-						<UnsplashTabContent />
+						<UnsplashTabContent setCoverImage={setCoverImage} />
 					</TabsContent>
 				</Tabs>
 			</DialogContent>
@@ -54,7 +70,11 @@ export default function CoverImageModal({ isHovered }: { isHovered: boolean }) {
 	)
 }
 
-function UnsplashTabContent() {
+function UnsplashTabContent({
+	setCoverImage
+}: {
+	setCoverImage: (value: { type: string; bg: string }) => void
+}) {
 	const [query, setQuery] = useState('')
 
 	const {
@@ -123,7 +143,13 @@ function UnsplashTabContent() {
 								src={urls.small}
 								width={200}
 								height={50}
-								className="w-full h-16 rounded-sm object-cover"
+								className="w-full h-16 rounded-sm object-cover cursor-pointer"
+								onClick={() => {
+									setCoverImage({
+										type: 'image',
+										bg: urls.small
+									})
+								}}
 							/>
 							<div className="text-xs text-muted-foreground mt-1">
 								<span>by </span>
@@ -148,7 +174,13 @@ function UnsplashTabContent() {
 								src={urls.small}
 								width={200}
 								height={50}
-								className="w-full h-16 rounded-sm object-cover"
+								className="w-full h-16 rounded-sm object-cover cursor-pointer"
+								onClick={() =>
+									setCoverImage({
+										type: 'image',
+										bg: urls.small
+									})
+								}
 							/>
 							<div className="text-xs text-muted-foreground mt-1">
 								<span>by </span>
@@ -168,7 +200,11 @@ function UnsplashTabContent() {
 	)
 }
 
-function ColorsTabContent() {
+function ColorsTabContent({
+	setCoverImage
+}: {
+	setCoverImage: (value: { type: string; bg: string }) => void
+}) {
 	const colors = [
 		{ color: '#0077b6', name: 'Blue' },
 		{ color: '#00b4d8', name: 'Turquoise' },
@@ -186,9 +222,15 @@ function ColorsTabContent() {
 			{colors.map(({ color, name }, i) => (
 				<div
 					key={i}
-					className="h-16 rounded-sm"
+					className="h-16 rounded-sm cursor-pointer"
 					style={{ backgroundColor: color }}
 					title={name}
+					onClick={() =>
+						setCoverImage({
+							type: 'color',
+							bg: color
+						})
+					}
 				></div>
 			))}
 		</div>
