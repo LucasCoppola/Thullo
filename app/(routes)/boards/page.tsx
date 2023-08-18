@@ -1,5 +1,5 @@
 import Card from '@/components/ui/card'
-import CreateBoard from './create-board'
+import CreateBoard from '../../../components/boards/create-board'
 
 export default function Boards() {
 	return (
