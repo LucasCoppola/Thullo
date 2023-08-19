@@ -13,7 +13,7 @@ export default function Card() {
 	return (
 		<div className="bg-white border rounded-xl shadow w-64 h-auto">
 			<Image
-				className="w-full rounded-[1.5rem] p-3"
+				className="w-full rounded-xl pb-3"
 				src="https://res.cloudinary.com/dotpfjpno/image/upload/v1675864626/YelpCamp/yrwrxu55rg5bdfgyrzcc.jpg"
 				alt=""
 				width={219}
@@ -28,10 +28,10 @@ export default function Card() {
 					{avatars.slice(0, 3).map(({ img, name }, i) => (
 						<img
 							key={i}
-							title={name}
-							className="w-8 h-8 rounded-lg"
 							src={img}
 							alt={`${name} avatar`}
+							title={name}
+							className="w-8 h-8 rounded-lg"
 						/>
 					))}
 					{remainingAvatars > 0 && (
