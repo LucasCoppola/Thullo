@@ -22,8 +22,8 @@ export default function CoverImageModal({
 	setCoverImage
 }: {
 	isHovered: boolean
-	coverImage: { type: string; bg: string }
-	setCoverImage: (value: { type: string; bg: string }) => void
+	coverImage: { type: 'color' | 'image'; bg: string }
+	setCoverImage: (value: { type: 'color' | 'image'; bg: string }) => void
 }) {
 	const [open, setOpen] = useState(false)
 
@@ -70,10 +70,47 @@ export default function CoverImageModal({
 	)
 }
 
+function ColorsTabContent({
+	setCoverImage
+}: {
+	setCoverImage: (value: { type: 'color' | 'image'; bg: string }) => void
+}) {
+	const colors = [
+		{ color: '#0077b6', name: 'Blue' },
+		{ color: '#00b4d8', name: 'Turquoise' },
+		{ color: '#9d4edd', name: 'Violet' },
+		{ color: '#ef233c', name: 'Red' },
+		{ color: '#ffafcc', name: 'Pink' },
+		{ color: '#ffd500', name: 'Yellow' },
+		{ color: '#f4f1de', name: 'Beige' },
+		{ color: '#adb5bd', name: 'Gray' },
+		{ color: '#0a0a0a', name: 'Black' }
+	]
+
+	return (
+		<div className="grid grid-cols-3 gap-3 mt-4">
+			{colors.map(({ color, name }, i) => (
+				<div
+					key={i}
+					className="h-16 rounded-sm cursor-pointer"
+					style={{ backgroundColor: color }}
+					title={name}
+					onClick={() =>
+						setCoverImage({
+							type: 'color',
+							bg: color
+						})
+					}
+				></div>
+			))}
+		</div>
+	)
+}
+
 function UnsplashTabContent({
 	setCoverImage
 }: {
-	setCoverImage: (value: { type: string; bg: string }) => void
+	setCoverImage: (value: { type: 'color' | 'image'; bg: string }) => void
 }) {
 	const [query, setQuery] = useState('')
 
@@ -156,6 +193,7 @@ function UnsplashTabContent({
 								<Link
 									id={user.id}
 									href={user.links.html}
+									target="_blank"
 									className="underline hover:text-red-500"
 								>
 									{user.username}
@@ -187,6 +225,7 @@ function UnsplashTabContent({
 								<Link
 									id={user.id}
 									href={user.links.html}
+									target="_blank"
 									className="underline hover:text-red-500"
 								>
 									{user.username}
@@ -197,42 +236,5 @@ function UnsplashTabContent({
 				</div>
 			)}
 		</>
-	)
-}
-
-function ColorsTabContent({
-	setCoverImage
-}: {
-	setCoverImage: (value: { type: string; bg: string }) => void
-}) {
-	const colors = [
-		{ color: '#0077b6', name: 'Blue' },
-		{ color: '#00b4d8', name: 'Turquoise' },
-		{ color: '#9d4edd', name: 'Violet' },
-		{ color: '#ef233c', name: 'Red' },
-		{ color: '#ffafcc', name: 'Pink' },
-		{ color: '#ffd500', name: 'Yellow' },
-		{ color: '#f4f1de', name: 'Beige' },
-		{ color: '#adb5bd', name: 'Gray' },
-		{ color: '#0a0a0a', name: 'Black' }
-	]
-
-	return (
-		<div className="grid grid-cols-3 gap-3 mt-4">
-			{colors.map(({ color, name }, i) => (
-				<div
-					key={i}
-					className="h-16 rounded-sm cursor-pointer"
-					style={{ backgroundColor: color }}
-					title={name}
-					onClick={() =>
-						setCoverImage({
-							type: 'color',
-							bg: color
-						})
-					}
-				></div>
-			))}
-		</div>
 	)
 }
