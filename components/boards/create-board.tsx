@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { useMutation } from '@tanstack/react-query'
 import CoverImageModal from '@/components/boards/cover-image-modal'
 import {
 	Dialog,
@@ -14,32 +15,44 @@ import {
 import { Button } from '@/components/ui/button'
 import { Add } from '@/components/ui/icons'
 
+type formDataType = {
+	title: string
+	coverImage: string
+	visibility: string
+}
+
+type coverImageType = {
+	type: 'color' | 'image'
+	bg: string
+}
+
 export default function CreateBoard() {
 	const [isHovered, setIsHovered] = useState(false)
-	const [coverImage, setCoverImage] = useState<{
-		type: 'color' | 'image'
-		bg: string
-	}>({
+	const [coverImage, setCoverImage] = useState<coverImageType>({
 		type: 'color',
 		bg: '#adb5bd'
 	})
-	const [formData, setFormData] = useState({
+	const [formData, setFormData] = useState<formDataType>({
 		coverImage: coverImage.bg,
 		title: '',
 		visibility: 'public'
 	})
 	const [error, setError] = useState('')
 
-	function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-		e.preventDefault()
+	async function createBoard(formData: formDataType) {
+		// Server Action to create the board
+		console.log(formData)
+	}
 
+	const { mutate, isLoading } = useMutation(createBoard, {})
+
+	function handleSubmit(e: React.FormEvent) {
+		e.preventDefault()
 		if (formData.title.trim() === '') {
 			setError('Title cannot be empty')
 			return
 		}
-
-		setError('')
-		console.log(formData)
+		mutate(formData)
 	}
 
 	useEffect(() => {
