@@ -13,38 +13,42 @@ import {
 	DialogTrigger
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Add } from '@/components/ui/icons'
+import { Add, LoadingCircle } from '@/components/ui/icons'
 
-type formDataType = {
+type FormDataType = {
 	title: string
-	coverImage: string
+	coverImage: { type: 'color' | 'image'; bg: string }
 	visibility: string
-}
-
-type coverImageType = {
-	type: 'color' | 'image'
-	bg: string
 }
 
 export default function CreateBoard() {
 	const [isHovered, setIsHovered] = useState(false)
-	const [coverImage, setCoverImage] = useState<coverImageType>({
-		type: 'color',
-		bg: '#adb5bd'
-	})
-	const [formData, setFormData] = useState<formDataType>({
-		coverImage: coverImage.bg,
+	const [formData, setFormData] = useState<FormDataType>({
+		coverImage: { type: 'color', bg: '#adb5bd' },
 		title: '',
 		visibility: 'public'
 	})
 	const [error, setError] = useState('')
 
-	async function createBoard(formData: formDataType) {
+	async function createBoard(formData: FormDataType) {
 		// Server Action to create the board
 		console.log(formData)
 	}
 
-	const { mutate, isLoading } = useMutation(createBoard, {})
+	const { mutate, isLoading } = useMutation(createBoard, {
+		onSuccess: (data) => {
+			console.log('Mutation successful:', data)
+			setFormData({
+				coverImage: { type: 'color', bg: '#adb5bd' },
+				title: '',
+				visibility: 'public'
+			})
+		},
+		onError: (error) => {
+			console.error('Mutation error:', error)
+			setError('Something went wrong')
+		}
+	})
 
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault()
@@ -58,10 +62,10 @@ export default function CreateBoard() {
 	useEffect(() => {
 		setFormData({
 			...formData,
-			coverImage: coverImage.bg
+			coverImage: formData.coverImage
 		})
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [coverImage])
+	}, [formData.coverImage])
 
 	return (
 		<Dialog>
@@ -80,18 +84,19 @@ export default function CreateBoard() {
 								onMouseOut={() => setIsHovered(false)}
 								className="relative transition-all"
 							>
-								{coverImage.type === 'color' ? (
+								{formData.coverImage.type === 'color' ? (
 									<div
 										className="w-full h-40 rounded-xl"
 										style={{
 											backgroundColor:
-												coverImage.bg || '#adb5bd'
+												formData.coverImage.bg ||
+												'#adb5bd'
 										}}
 									></div>
 								) : (
 									<Image
 										className="w-full h-40 rounded-xl object-cover"
-										src={coverImage.bg}
+										src={formData.coverImage.bg}
 										alt="Board cover image"
 										width={200}
 										height={50}
@@ -99,8 +104,13 @@ export default function CreateBoard() {
 								)}
 								<CoverImageModal
 									isHovered={isHovered}
-									setCoverImage={setCoverImage}
-									coverImage={coverImage}
+									setCoverImage={(newCoverImage) => {
+										setFormData({
+											...formData,
+											coverImage: { ...newCoverImage }
+										})
+									}}
+									coverImage={formData.coverImage}
 								/>
 							</div>
 							<div>
@@ -176,9 +186,14 @@ export default function CreateBoard() {
 
 							<Button
 								type="submit"
+								disabled={isLoading}
 								className="bg-blue-500 ml-96 hover:bg-blue-600 rounded-lg"
 							>
-								Create
+								{isLoading ? (
+									<LoadingCircle className="fill-white mx-4 text-blue-200" />
+								) : (
+									'Create'
+								)}
 							</Button>
 						</DialogDescription>
 					</form>
