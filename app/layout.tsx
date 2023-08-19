@@ -3,7 +3,11 @@ import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
 import ReactQueryProvider from './react-query-provider'
 
-const poppins = Poppins({ weight: ['400', '500'], subsets: ['latin'] })
+const poppins = Poppins({
+	weight: ['400', '500'],
+	subsets: ['latin'],
+	preload: true
+})
 
 export const metadata: Metadata = {
 	title: 'Thullo',
