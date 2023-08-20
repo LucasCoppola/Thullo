@@ -37,14 +37,15 @@ model Session {
 }
 
 model User {
-  id       String    @id @default(cuid())
-  name     String?
-  email    String?   @unique
-  image    String?
-  boards   Board[]
-  accounts Account[]
-  sessions Session[]
-  board    MembersOnBoards[]
+  id            String            @id @default(cuid())
+  name          String?
+  email         String?           @unique
+  emailVerified DateTime?
+  image         String?
+  boards        Board[]
+  accounts      Account[]
+  sessions      Session[]
+  board         MembersOnBoards[]
 }
 
 model VerificationToken {
@@ -56,17 +57,17 @@ model VerificationToken {
 }
 
 model Board {
-  id          String          @id @default(cuid())
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id          String            @id @default(cuid())
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
   authorId    String
   title       String
   description String?
-  coverImage  String
-  visibility  BoardVisibility @default(PUBLIC)
-  author      User            @relation(fields: [authorId], references: [id])
+  coverImage  Json
+  visibility  BoardVisibility   @default(PUBLIC)
+  author      User              @relation(fields: [authorId], references: [id])
   list        List[]
-  members    MembersOnBoards[]
+  members     MembersOnBoards[]
 }
 
 enum BoardVisibility {
@@ -75,11 +76,12 @@ enum BoardVisibility {
 }
 
 model MembersOnBoards {
-  id       String @id @default(cuid())
-  userId   String
-  boardId  String
-  user     User   @relation(fields: [userId], references: [id])
-  board    Board  @relation(fields: [boardId], references: [id])
+  id      String @id @default(cuid())
+  userId  String
+  boardId String
+  user    User   @relation(fields: [userId], references: [id])
+  board   Board  @relation(fields: [boardId], references: [id])
+
   @@unique([userId, boardId])
 }
 

@@ -3,7 +3,10 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useMutation } from '@tanstack/react-query'
-import CoverImageModal from '@/components/boards/cover-image-modal'
+import { $Enums } from '@prisma/client'
+import { useSession } from 'next-auth/react'
+import { createBoardAction } from '@/app/actions'
+
 import {
 	Dialog,
 	DialogContent,
@@ -14,34 +17,47 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Add, LoadingCircle } from '@/components/ui/icons'
+import CoverImageModal from '@/components/boards/cover-image-modal'
 
 type FormDataType = {
 	title: string
 	coverImage: { type: 'color' | 'image'; bg: string }
-	visibility: string
+	visibility: $Enums.BoardVisibility
 }
 
-export default function CreateBoard() {
-	const [isHovered, setIsHovered] = useState(false)
-	const [formData, setFormData] = useState<FormDataType>({
-		coverImage: { type: 'color', bg: '#adb5bd' },
-		title: '',
-		visibility: 'public'
-	})
-	const [error, setError] = useState('')
+const defaultGrayColor = '#adb5bd'
 
-	async function createBoard(formData: FormDataType) {
-		// Server Action to create the board
-		console.log(formData)
+export default function CreateBoard() {
+	const { data } = useSession()
+	const [isHovered, setIsHovered] = useState(false)
+	const [isDialogOpen, setIsDialogOpen] = useState(false)
+	const [error, setError] = useState('')
+	const [formData, setFormData] = useState<FormDataType>({
+		coverImage: { type: 'color', bg: defaultGrayColor },
+		title: '',
+		visibility: 'PUBLIC'
+	})
+
+	async function createBoardClient(formData: FormDataType) {
+		const { title, visibility } = formData
+		const coverImage = formData.coverImage || defaultGrayColor
+		const authorId = data?.userId || ''
+
+		await createBoardAction({
+			authorId,
+			title,
+			coverImage,
+			visibility
+		})
 	}
 
-	const { mutate, isLoading } = useMutation(createBoard, {
-		onSuccess: (data) => {
-			console.log('Mutation successful:', data)
+	const { mutate, isLoading } = useMutation(createBoardClient, {
+		onSuccess: () => {
+			setIsDialogOpen(false)
 			setFormData({
-				coverImage: { type: 'color', bg: '#adb5bd' },
+				coverImage: { type: 'color', bg: defaultGrayColor },
 				title: '',
-				visibility: 'public'
+				visibility: 'PUBLIC'
 			})
 		},
 		onError: (error) => {
@@ -68,7 +84,7 @@ export default function CreateBoard() {
 	}, [formData.coverImage])
 
 	return (
-		<Dialog>
+		<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 			<DialogTrigger asChild>
 				<Button className="bg-blue-500 hover:bg-blue-600 rounded-lg">
 					<Add className="mr-2 h-5 w-5" /> Add
@@ -90,7 +106,7 @@ export default function CreateBoard() {
 										style={{
 											backgroundColor:
 												formData.coverImage.bg ||
-												'#adb5bd'
+												defaultGrayColor
 										}}
 									></div>
 								) : (
@@ -125,6 +141,8 @@ export default function CreateBoard() {
 											title: e.target.value
 										})
 									}
+									minLength={2}
+									maxLength={50}
 									required
 								/>
 								{error && (
@@ -137,16 +155,17 @@ export default function CreateBoard() {
 									<input
 										id="public-radio"
 										type="radio"
-										value="public"
+										value="PUBLIC"
 										name="visibility"
 										className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
 										checked={
-											formData.visibility === 'public'
+											formData.visibility === 'PUBLIC'
 										}
 										onChange={(e) =>
 											setFormData({
 												...formData,
-												visibility: e.target.value
+												visibility: e.target
+													.value as $Enums.BoardVisibility
 											})
 										}
 									/>
@@ -162,16 +181,17 @@ export default function CreateBoard() {
 									<input
 										id="private-radio"
 										type="radio"
-										value="private"
+										value="PRIVATE"
 										name="visibility"
 										className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
 										checked={
-											formData.visibility === 'private'
+											formData.visibility === 'PRIVATE'
 										}
 										onChange={(e) =>
 											setFormData({
 												...formData,
-												visibility: e.target.value
+												visibility: e.target
+													.value as $Enums.BoardVisibility
 											})
 										}
 									/>
