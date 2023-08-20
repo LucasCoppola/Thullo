@@ -1,5 +1,6 @@
 import { BoardProps } from '@/app/server'
 import Image from 'next/image'
+import { Globe, Lock } from './icons'
 
 const avatars = [
 	{ img: 'https://github.com/shadcn.png', name: 'shadcn' },
@@ -8,7 +9,11 @@ const avatars = [
 	{ img: 'https://github.com/shadcn.png', name: 'shadcn' }
 ]
 
-export default function BoardCard({ title, coverImage }: BoardProps) {
+export default function BoardCard({
+	title,
+	coverImage,
+	visibility
+}: BoardProps) {
 	const remainingAvatars = avatars.length - 3
 
 	return (
@@ -29,11 +34,21 @@ export default function BoardCard({ title, coverImage }: BoardProps) {
 					height={50}
 				/>
 			)}
-
 			<div className="px-3 mb-4">
-				<h5 className="text-lg mb-3 font-medium tracking-tight text-gray-900">
-					{title}
-				</h5>
+				<div className="flex items-center justify-between mb-2">
+					<h5
+						className={`${
+							title.length > 24 && 'truncate'
+						} font-medium tracking-tight text-gray-800`}
+					>
+						{title}
+					</h5>
+					{visibility === 'PUBLIC' ? (
+						<Globe className="h-4 w-4" />
+					) : (
+						<Lock className="h-4 w-4 text-gray-700" />
+					)}
+				</div>
 				<div className="flex space-x-3 flex-row items-center">
 					{avatars.slice(0, 3).map(({ img, name }, i) => (
 						<img
