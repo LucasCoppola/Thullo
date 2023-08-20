@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useMutation } from '@tanstack/react-query'
-import { createBoard } from '@/app/server'
 import { $Enums } from '@prisma/client'
 import { useSession } from 'next-auth/react'
+import { createBoardAction } from '@/app/actions'
 
 import {
 	Dialog,
@@ -43,7 +43,7 @@ export default function CreateBoard() {
 		const coverImage = formData.coverImage || defaultGrayColor
 		const authorId = data?.userId || ''
 
-		await createBoard({
+		await createBoardAction({
 			authorId,
 			title,
 			coverImage,
