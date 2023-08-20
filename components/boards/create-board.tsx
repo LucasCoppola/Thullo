@@ -30,6 +30,7 @@ const defaultGrayColor = '#adb5bd'
 export default function CreateBoard() {
 	const { data } = useSession()
 	const [isHovered, setIsHovered] = useState(false)
+	const [isDialogOpen, setIsDialogOpen] = useState(false)
 	const [error, setError] = useState('')
 	const [formData, setFormData] = useState<FormDataType>({
 		coverImage: { type: 'color', bg: defaultGrayColor },
@@ -52,6 +53,7 @@ export default function CreateBoard() {
 
 	const { mutate, isLoading } = useMutation(createBoardClient, {
 		onSuccess: () => {
+			setIsDialogOpen(false)
 			setFormData({
 				coverImage: { type: 'color', bg: defaultGrayColor },
 				title: '',
@@ -82,7 +84,7 @@ export default function CreateBoard() {
 	}, [formData.coverImage])
 
 	return (
-		<Dialog>
+		<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 			<DialogTrigger asChild>
 				<Button className="bg-blue-500 hover:bg-blue-600 rounded-lg">
 					<Add className="mr-2 h-5 w-5" /> Add
@@ -139,6 +141,8 @@ export default function CreateBoard() {
 											title: e.target.value
 										})
 									}
+									minLength={2}
+									maxLength={50}
 									required
 								/>
 								{error && (

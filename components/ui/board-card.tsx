@@ -1,3 +1,4 @@
+import { BoardProps } from '@/app/server'
 import Image from 'next/image'
 
 const avatars = [
@@ -7,22 +8,31 @@ const avatars = [
 	{ img: 'https://github.com/shadcn.png', name: 'shadcn' }
 ]
 
-export default function Card() {
+export default function BoardCard({ title, coverImage }: BoardProps) {
 	const remainingAvatars = avatars.length - 3
 
 	return (
-		<div className="bg-white border rounded-xl shadow w-64 h-auto">
-			<Image
-				className="w-full rounded-xl pb-3"
-				src="https://res.cloudinary.com/dotpfjpno/image/upload/v1675864626/YelpCamp/yrwrxu55rg5bdfgyrzcc.jpg"
-				alt=""
-				width={219}
-				height={130}
-			/>
+		<div className="bg-white border rounded-xl shadow w-60 h-60">
+			{coverImage.type === 'color' ? (
+				<div
+					className="w-full h-[138px] rounded-t-xl mb-3"
+					style={{
+						backgroundColor: coverImage.bg
+					}}
+				></div>
+			) : (
+				<Image
+					className="w-full h-[138px] rounded-t-xl object-cover mb-3"
+					src={coverImage.bg}
+					alt="Board cover image"
+					width={200}
+					height={50}
+				/>
+			)}
 
 			<div className="px-3 mb-4">
 				<h5 className="text-lg mb-3 font-medium tracking-tight text-gray-900">
-					Simple Project Board
+					{title}
 				</h5>
 				<div className="flex space-x-3 flex-row items-center">
 					{avatars.slice(0, 3).map(({ img, name }, i) => (
