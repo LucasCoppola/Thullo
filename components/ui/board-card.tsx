@@ -35,7 +35,7 @@ export default function BoardCard({
 				/>
 			)}
 			<div className="px-3 mb-4">
-				<div className="flex items-center justify-between mb-2">
+				<div className="flex items-center justify-between mb-4">
 					<h5
 						className={`${
 							title.length > 24 && 'truncate'
