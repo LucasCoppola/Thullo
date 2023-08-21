@@ -68,8 +68,10 @@ export default function UserDropdown({ session }: { session: Session }) {
 			<div
 				id="dropdownAvatarName"
 				className={`z-10 absolute right-0 mt-2 bg-white divide-y divide-gray-100 rounded-lg shadow-md border w-44 ${
-					isOpen ? 'block' : 'hidden'
-				} `}
+					isOpen
+						? 'transition-all duration-200 opacity-100 transform translate-y-0'
+						: 'transition-all duration-200 opacity-0 transform translate-y-[-10px] pointer-events-none'
+				}`}
 			>
 				<div className="p-3 text-sm text-gray-500">
 					<div className="truncate">{session.user.email}</div>

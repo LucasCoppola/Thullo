@@ -1,5 +1,5 @@
 import BoardCard from '@/components/ui/board-card'
-import CreateBoard from '../../../components/boards/create-board'
+import CreateBoard from '../../components/boards/create-board'
 import { BoardProps, getBoards } from '@/app/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'

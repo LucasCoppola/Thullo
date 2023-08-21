@@ -17,7 +17,7 @@ export default function BoardCard({
 	const remainingAvatars = avatars.length - 3
 
 	return (
-		<div className="bg-white border rounded-xl shadow w-60 h-60">
+		<div className="bg-white rounded-xl shadow-md w-60 h-60">
 			{coverImage.type === 'color' ? (
 				<div
 					className="w-full h-[138px] rounded-t-xl mb-3"
