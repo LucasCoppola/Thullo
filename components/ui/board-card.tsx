@@ -1,6 +1,7 @@
 import { BoardProps } from '@/app/server'
 import Image from 'next/image'
-import { Globe, Lock } from './icons'
+import { Lock } from 'lucide-react'
+import { Globe } from './icons'
 import Link from 'next/link'
 
 const avatars = [
@@ -49,7 +50,10 @@ export default function BoardCard({
 						{visibility === 'PUBLIC' ? (
 							<Globe className="h-4 w-4" />
 						) : (
-							<Lock className="h-4 w-4 text-gray-700" />
+							<Lock
+								className="h-4 w-4 text-gray-700"
+								strokeWidth={2.25}
+							/>
 						)}
 					</div>
 					<div className="flex space-x-3 flex-row items-center">
