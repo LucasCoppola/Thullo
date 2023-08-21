@@ -44,9 +44,12 @@ export default function BoardCard({
 						{title}
 					</h5>
 					{visibility === 'PUBLIC' ? (
-						<Globe className="h-4 w-4" />
+						<Globe title="Public" className="h-4 w-4" />
 					) : (
-						<Lock className="h-4 w-4 text-gray-700" />
+						<Lock
+							title="Private"
+							className="h-4 w-4 text-gray-700"
+						/>
 					)}
 				</div>
 				<div className="flex space-x-3 flex-row items-center">
