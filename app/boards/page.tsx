@@ -15,7 +15,7 @@ export default async function Boards() {
 	}
 
 	return (
-		<>
+		<div className="mx-24">
 			<div className="flex justify-between w-full mt-14 mb-6">
 				<h1 className="text-lg font-medium text-gray-800">
 					All Boards
@@ -27,6 +27,6 @@ export default async function Boards() {
 					<BoardCard key={board.id} {...board} />
 				))}
 			</div>
-		</>
+		</div>
 	)
 }

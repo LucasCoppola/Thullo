@@ -12,7 +12,7 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={poppins.className}>
 				<Nav />
-				<div className="mx-24">{children}</div>
+				{children}
 			</body>
 		</html>
 	)

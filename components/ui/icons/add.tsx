@@ -1,4 +1,10 @@
-export default function Add({ className }: { className?: string }) {
+export default function Add({
+	className,
+	strokeWidth
+}: {
+	className?: string
+	strokeWidth?: number
+}) {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -7,7 +13,7 @@ export default function Add({ className }: { className?: string }) {
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"
-			strokeWidth="2"
+			strokeWidth={strokeWidth || 2}
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			className={className}

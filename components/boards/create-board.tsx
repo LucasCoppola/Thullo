@@ -86,7 +86,7 @@ export default function CreateBoard() {
 	return (
 		<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 			<DialogTrigger asChild>
-				<Button className="bg-blue-500 hover:bg-blue-600 rounded-lg">
+				<Button variant={'blue'}>
 					<Add className="mr-2 h-5 w-5" /> Add
 				</Button>
 			</DialogTrigger>

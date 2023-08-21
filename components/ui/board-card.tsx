@@ -20,7 +20,7 @@ export default function BoardCard({
 
 	return (
 		<Link href={`/boards/${id}`}>
-			<div className="bg-white rounded-xl shadow-md w-60 h-60">
+			<div className="bg-white hover:shadow-lg rounded-xl shadow-md w-60 h-60">
 				{coverImage.type === 'color' ? (
 					<div
 						className="w-full h-[138px] rounded-t-xl mb-3"
@@ -47,12 +47,9 @@ export default function BoardCard({
 							{title}
 						</h5>
 						{visibility === 'PUBLIC' ? (
-							<Globe title="Public" className="h-4 w-4" />
+							<Globe className="h-4 w-4" />
 						) : (
-							<Lock
-								title="Private"
-								className="h-4 w-4 text-gray-700"
-							/>
+							<Lock className="h-4 w-4 text-gray-700" />
 						)}
 					</div>
 					<div className="flex space-x-3 flex-row items-center">
