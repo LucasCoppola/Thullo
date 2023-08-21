@@ -56,3 +56,18 @@ export async function createBoard({
 		return { e }
 	}
 }
+
+export default async function findBoardById({ id }: { id: string }) {
+	try {
+		const board = await prisma.board.findUnique({
+			where: {
+				id
+			}
+		})
+
+		return { board }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}

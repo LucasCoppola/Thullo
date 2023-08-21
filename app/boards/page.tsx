@@ -12,7 +12,6 @@ export default async function Boards() {
 
 	if (!session) {
 		redirect('/')
-		return
 	}
 
 	return (

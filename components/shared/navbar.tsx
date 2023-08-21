@@ -1,16 +1,38 @@
-import { Session } from 'next-auth'
+'use client'
+
 import UserDropdown from './user-dropdown'
 import Image from 'next/image'
-import { Button } from '../ui/button'
 import Link from 'next/link'
+import findBoardById from '@/app/server'
+import { useState, useEffect } from 'react'
+import { Session } from 'next-auth'
+import { usePathname } from 'next/navigation'
+import { Button } from '../ui/button'
 import { Search } from '../ui/icons'
 
 export default function Navbar({ session }: { session: Session | null }) {
+	const [boardTitle, setBoardTitle] = useState<string | null>(null)
+	const pathname = usePathname()
+	const boardId = pathname.split('/').pop() as string
+
+	async function getBoard(id: string) {
+		const { board } = await findBoardById({ id })
+		if (board) {
+			setBoardTitle(board.title)
+		}
+	}
+
+	useEffect(() => {
+		if (boardId) {
+			getBoard(boardId)
+		}
+	}, [boardId])
+
 	return (
 		<nav className="relative bg-white mt-2 px-10 shadow-sm">
 			<div className="w-full py-3 md:flex md:justify-between items-center">
 				<div className="flex items-center">
-					<a href="#">
+					<Link href="/">
 						<Image
 							className="w-auto h-6 sm:h-7"
 							src="./Logo.svg"
@@ -18,8 +40,22 @@ export default function Navbar({ session }: { session: Session | null }) {
 							width={400}
 							height={400}
 						/>
-					</a>
+					</Link>
 				</div>
+
+				{boardTitle && (
+					<div className="flex flex-row items-center">
+						<div className="ml-4 font-medium text-lg text-gray-800">
+							{boardTitle}
+						</div>
+						<div className="mx-6 border-r border-gray-200 h-9" />
+						<Link href="/boards">
+							<Button className="rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500">
+								All Boards
+							</Button>
+						</Link>
+					</div>
+				)}
 
 				<div className="flex">
 					{session ? (
