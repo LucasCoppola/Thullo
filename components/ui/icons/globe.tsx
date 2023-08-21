@@ -1,10 +1,4 @@
-export default function Globe({
-	className,
-	title
-}: {
-	className?: string
-	title: string
-}) {
+export default function Globe({ className }: { className?: string }) {
 	const gray = '#374151'
 	return (
 		<svg
@@ -12,7 +6,7 @@ export default function Globe({
 			viewBox="0 0 64 64"
 			className={className}
 		>
-			<title>{title}</title>
+			<title>Public</title>
 			<circle
 				cx="32"
 				cy="32"
