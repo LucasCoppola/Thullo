@@ -1,7 +1,7 @@
 'use server'
 
 import prisma from '@/lib/prisma'
-import { $Enums } from '@prisma/client'
+import { $Enums, Prisma } from '@prisma/client'
 
 export type BoardProps = {
 	id?: string
@@ -10,12 +10,20 @@ export type BoardProps = {
 	authorId: string
 	title: string
 	description?: string | null
-	coverImage: {
-		type: 'color' | 'image'
-		bg: string
-	}
+	coverImage: Prisma.InputJsonValue
 	visibility: $Enums.BoardVisibility
 }
+
+export type AuthorProps =
+	| {
+			id: string
+			name: string | null
+			email: string | null
+			emailVerified: Date | null
+			image: string | null
+	  }
+	| null
+	| undefined
 
 export async function getBoards({ userId }: { userId: string }) {
 	try {
@@ -57,15 +65,36 @@ export async function createBoard({
 	}
 }
 
-export default async function findBoardById({ id }: { id: string }) {
+export async function findBoardById({ id }: { id: string }) {
 	try {
 		const board = await prisma.board.findUnique({
 			where: {
 				id
 			}
 		})
+		const modifiedBoard = board
+			? {
+					...board,
+					coverImage: board.coverImage as Prisma.InputJsonValue
+			  }
+			: null
 
-		return { board }
+		return { board: modifiedBoard }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}
+
+export async function findUserById({ id }: { id: string }) {
+	try {
+		const author = await prisma.user.findUnique({
+			where: {
+				id
+			}
+		})
+
+		return { author }
 	} catch (e) {
 		console.error(e)
 		return { e }
