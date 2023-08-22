@@ -20,7 +20,7 @@ export default function UserDropdown({ session }: { session: Session }) {
 		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild>
 				<button
-					className="flex items-center text-sm font-semibold text-gray-800 rounded-full md:mr-0 focus:ring-gray-100"
+					className="flex items-center outline-none text-sm font-semibold text-gray-800 rounded-full md:mr-0 focus:ring-gray-100"
 					onClick={() => setIsOpen(!isOpen)}
 				>
 					<Image
