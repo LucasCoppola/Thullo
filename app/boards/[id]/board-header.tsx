@@ -1,9 +1,10 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Lock, MoreHorizontal } from 'lucide-react'
+import BoardSheet from './board-sheet'
+import { AuthorProps, BoardProps } from '@/app/server'
+import { Lock } from 'lucide-react'
 import { Add, Globe } from '@/components/ui/icons'
-import { $Enums } from '@prisma/client'
+import { Button } from '@/components/ui/button'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -33,17 +34,16 @@ const avatars = [
 ]
 
 export default function BoardHeader({
-	visibility
-}: {
-	visibility: $Enums.BoardVisibility
-}) {
+	author,
+	...board
+}: { author: AuthorProps } & BoardProps) {
 	return (
 		<div className="mt-6 mx-8 flex justify-between items-center">
 			<div className="flex space-x-4 flex-row items-center">
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button className="h-9 mr-2">
-							{visibility === 'PUBLIC' ? (
+							{board.visibility === 'PUBLIC' ? (
 								<Globe
 									className="h-3 w-3.5 mr-1"
 									color="#6b7280"
@@ -54,8 +54,8 @@ export default function BoardHeader({
 									strokeWidth={2.5}
 								/>
 							)}
-							{visibility[0]?.concat(
-								visibility.slice(1).toLowerCase()
+							{board.visibility[0]?.concat(
+								board.visibility.slice(1).toLowerCase()
 							)}
 						</Button>
 					</DropdownMenuTrigger>
@@ -103,13 +103,7 @@ export default function BoardHeader({
 					<Add className="h-[19px] w-[19px] text-gray-500" />
 				</Button>
 			</div>
-			<div
-				role="button"
-				title="Show Menu"
-				className="flex items-center justify-center w-8 h-7 rounded-md hover:bg-gray-200 transition duration-200"
-			>
-				<MoreHorizontal />
-			</div>
+			<BoardSheet {...board} author={author} />
 		</div>
 	)
 }
