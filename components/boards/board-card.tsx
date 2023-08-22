@@ -1,7 +1,7 @@
 import { BoardProps } from '@/app/server'
 import Image from 'next/image'
 import { Lock } from 'lucide-react'
-import { Globe } from './icons'
+import { Globe } from '../ui/icons'
 import Link from 'next/link'
 
 const avatars = [
