@@ -12,8 +12,8 @@ import { MoreHorizontal } from 'lucide-react'
 
 export default function BoardSheet({
 	title,
-	authorId,
-	author
+	author,
+	createdAt
 }: { author: AuthorProps } & BoardProps) {
 	return (
 		<Sheet>
@@ -26,14 +26,30 @@ export default function BoardSheet({
 			<SheetContent>
 				<SheetHeader>
 					<SheetTitle>{title}</SheetTitle>
-					<SheetDescription>
-						<span>Made by</span>
-						<Image
-							src={author?.image || ''}
-							width={100}
-							height={100}
-							alt=""
-						/>
+					<SheetDescription asChild>
+						<>
+							<hr className="mb-2" />
+							<span className="text-xs font-medium text-gray-500">
+								Made by
+							</span>
+							<div className="flex flex-row items-center mt-3">
+								<Image
+									src={author?.image || ''}
+									width={36}
+									height={36}
+									alt={`${author?.name} avatar`}
+									className="rounded-lg mr-3"
+								/>
+								<div className="flex flex-col">
+									<h1 className="font-semibold text-sm text-gray-800">
+										{author?.name}
+									</h1>
+									<span className="text-xs font-medium text-gray-500">
+										on {createdAt?.toDateString().slice(4)}
+									</span>
+								</div>
+							</div>
+						</>
 					</SheetDescription>
 				</SheetHeader>
 			</SheetContent>
