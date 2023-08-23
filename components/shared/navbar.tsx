@@ -3,7 +3,7 @@
 import UserDropdown from './user-dropdown'
 import Image from 'next/image'
 import Link from 'next/link'
-import findBoardById from '@/app/server'
+import { findBoardById } from '@/app/server'
 import { useState, useEffect } from 'react'
 import { Session } from 'next-auth'
 import { usePathname } from 'next/navigation'
