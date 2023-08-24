@@ -207,7 +207,8 @@ export default function CreateBoard() {
 							<Button
 								type="submit"
 								disabled={isLoading}
-								className="bg-blue-500 ml-96 hover:bg-blue-600 rounded-lg"
+								variant="blue"
+								className="ml-96"
 							>
 								{isLoading ? (
 									<LoadingCircle className="fill-white mx-4 text-blue-200" />
