@@ -1,9 +1,10 @@
 import BoardCard from '@/components/boards/board-card'
 import CreateBoard from '../../components/boards/create-board'
-import { BoardProps, getBoards } from '@/app/server'
+import { getBoards } from '@/app/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
+import { BoardProps } from '../types'
 
 export default async function Boards() {
 	const session = await getServerSession(authOptions)

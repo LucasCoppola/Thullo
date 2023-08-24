@@ -2,7 +2,7 @@
 
 import BoardSheet from './board-sheet'
 import { Lock } from 'lucide-react'
-import { Add, Globe } from '@/components/ui/icons'
+import { Add, Globe, LoadingCircle } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import {
 	DropdownMenu,
@@ -13,9 +13,10 @@ import {
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { useMutation } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
 import { AuthorProps, BoardProps } from '@/app/types'
 import { updateVisibilityAction } from '@/app/actions'
+import { $Enums } from '@prisma/client'
+import { useState } from 'react'
 
 const avatars = [
 	{
@@ -41,35 +42,32 @@ export default function BoardHeader({
 	currUserId,
 	...board
 }: { author: AuthorProps; currUserId: string } & BoardProps) {
-	const [selectedVisibility, setSelectedVisibility] = useState(
-		board.visibility
-	)
-	console.log(selectedVisibility)
+	const [updateVisibility, setUpdateVisibility] = useState(board.visibility)
 
-	async function handleVisibilityUpdate() {
-		try {
-			console.log('is this even running?')
-			if (author?.id !== currUserId) {
-				throw new Error('You are not the author of this board')
-			}
-			console.log('is authorized working')
+	const { mutate, isLoading } = useMutation(
+		async (newVisibility: $Enums.BoardVisibility) => {
+			isAuthorized(currUserId, newVisibility)
 
-			if (selectedVisibility !== board.visibility) {
-				await updateVisibilityAction({
+			if (newVisibility !== board.visibility) {
+				return updateVisibilityAction({
 					boardId: board.id || '',
-					visibility: selectedVisibility,
-					authorId: author.id,
+					visibility: newVisibility,
+					authorId: author!.id,
 					currUserId
 				})
 			}
-		} catch (error) {
-			console.error(error)
 		}
-	}
+	)
 
-	useEffect(() => {
-		handleVisibilityUpdate()
-	}, [selectedVisibility])
+	function isAuthorized(
+		currUserId: string,
+		visibility?: $Enums.BoardVisibility
+	) {
+		if (author?.id !== currUserId) {
+			throw new Error('You are not the author of this board')
+		}
+		setUpdateVisibility(visibility || board.visibility)
+	}
 
 	return (
 		<div className="mt-6 mx-8 flex justify-between items-center">
@@ -77,19 +75,25 @@ export default function BoardHeader({
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button className="h-9 mr-2">
-							{board.visibility === 'PUBLIC' ? (
-								<Globe
-									className="h-3 w-3.5 mr-1"
-									color="#6b7280"
-								/>
+							{isLoading ? (
+								<LoadingCircle className="fill-white mx-6 text-gray-400" />
 							) : (
-								<Lock
-									className="h-3 w-3.5 text-gray-500 mr-1"
-									strokeWidth={2.5}
-								/>
-							)}
-							{board.visibility[0]?.concat(
-								board.visibility.slice(1).toLowerCase()
+								<>
+									{updateVisibility === 'PUBLIC' ? (
+										<Globe
+											className="h-3 w-3.5 mr-1"
+											color="#6b7280"
+										/>
+									) : (
+										<Lock
+											className="h-3 w-3.5 text-gray-500 mr-1"
+											strokeWidth={2.5}
+										/>
+									)}
+									{updateVisibility[0]?.concat(
+										updateVisibility.slice(1).toLowerCase()
+									)}
+								</>
 							)}
 						</Button>
 					</DropdownMenuTrigger>
@@ -103,7 +107,10 @@ export default function BoardHeader({
 						<DropdownMenuSeparator />
 						<DropdownMenuItem
 							className="cursor-pointer flex-col items-start"
-							onClick={() => setSelectedVisibility('PUBLIC')}
+							onClick={() => {
+								isAuthorized(currUserId, 'PUBLIC')
+								mutate('PUBLIC')
+							}}
 						>
 							<div className="flex flex-row items-center">
 								<Globe className="h-4 w-4 mr-2" />
@@ -115,7 +122,10 @@ export default function BoardHeader({
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							className="cursor-pointer flex-col items-start"
-							onClick={() => setSelectedVisibility('PRIVATE')}
+							onClick={() => {
+								isAuthorized(currUserId, 'PRIVATE')
+								mutate('PRIVATE')
+							}}
 						>
 							<div className="flex flex-row items-center">
 								<Lock className="h-4 w-4 text-gray-500 mr-2" />
