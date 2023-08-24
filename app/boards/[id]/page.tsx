@@ -1,4 +1,4 @@
-import { AuthorProps, findBoardById, findUserById } from '@/app/server'
+import { findBoardById, findUserById } from '@/app/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
@@ -20,5 +20,7 @@ export default async function BoardPage({
 		redirect('/')
 	}
 
-	return <BoardHeader {...board} author={author} />
+	return (
+		<BoardHeader {...board} author={author} currUserId={session.userId} />
+	)
 }

@@ -1,7 +1,6 @@
 'use client'
 
 import BoardSheet from './board-sheet'
-import { AuthorProps, BoardProps } from '@/app/server'
 import { Lock } from 'lucide-react'
 import { Add, Globe } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
@@ -13,6 +12,10 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { useMutation } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { AuthorProps, BoardProps } from '@/app/types'
+import { updateVisibilityAction } from '@/app/actions'
 
 const avatars = [
 	{
@@ -35,8 +38,39 @@ const avatars = [
 
 export default function BoardHeader({
 	author,
+	currUserId,
 	...board
-}: { author: AuthorProps } & BoardProps) {
+}: { author: AuthorProps; currUserId: string } & BoardProps) {
+	const [selectedVisibility, setSelectedVisibility] = useState(
+		board.visibility
+	)
+	console.log(selectedVisibility)
+
+	async function handleVisibilityUpdate() {
+		try {
+			console.log('is this even running?')
+			if (author?.id !== currUserId) {
+				throw new Error('You are not the author of this board')
+			}
+			console.log('is authorized working')
+
+			if (selectedVisibility !== board.visibility) {
+				await updateVisibilityAction({
+					boardId: board.id || '',
+					visibility: selectedVisibility,
+					authorId: author.id,
+					currUserId
+				})
+			}
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	useEffect(() => {
+		handleVisibilityUpdate()
+	}, [selectedVisibility])
+
 	return (
 		<div className="mt-6 mx-8 flex justify-between items-center">
 			<div className="flex space-x-4 flex-row items-center">
@@ -67,7 +101,10 @@ export default function BoardHeader({
 							</span>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem className="cursor-pointer flex-col items-start">
+						<DropdownMenuItem
+							className="cursor-pointer flex-col items-start"
+							onClick={() => setSelectedVisibility('PUBLIC')}
+						>
 							<div className="flex flex-row items-center">
 								<Globe className="h-4 w-4 mr-2" />
 								Public
@@ -76,7 +113,10 @@ export default function BoardHeader({
 								Anyone can see this board
 							</span>
 						</DropdownMenuItem>
-						<DropdownMenuItem className="cursor-pointer flex-col items-start">
+						<DropdownMenuItem
+							className="cursor-pointer flex-col items-start"
+							onClick={() => setSelectedVisibility('PRIVATE')}
+						>
 							<div className="flex flex-row items-center">
 								<Lock className="h-4 w-4 text-gray-500 mr-2" />
 								Private

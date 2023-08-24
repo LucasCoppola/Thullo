@@ -1,29 +1,8 @@
 'use server'
 
 import prisma from '@/lib/prisma'
-import { $Enums, Prisma } from '@prisma/client'
-
-export type BoardProps = {
-	id?: string
-	createdAt?: Date
-	updatedAt?: Date
-	authorId: string
-	title: string
-	description?: string | null
-	coverImage: Prisma.InputJsonValue
-	visibility: $Enums.BoardVisibility
-}
-
-export type AuthorProps =
-	| {
-			id: string
-			name: string | null
-			email: string | null
-			emailVerified: Date | null
-			image: string | null
-	  }
-	| null
-	| undefined
+import { Prisma } from '@prisma/client'
+import { BoardProps, VisibilityMutation } from './types'
 
 export async function getBoards({ userId }: { userId: string }) {
 	try {
@@ -95,6 +74,32 @@ export async function findUserById({ id }: { id: string }) {
 		})
 
 		return { author }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}
+
+export async function updateVisibility({
+	boardId,
+	visibility,
+	authorId,
+	currUserId
+}: VisibilityMutation) {
+	try {
+		if (authorId !== currUserId) {
+			throw new Error('Unauthorized')
+		}
+		const updatedBoard = await prisma.board.update({
+			where: {
+				id: boardId
+			},
+			data: {
+				visibility
+			}
+		})
+
+		return { updatedBoard }
 	} catch (e) {
 		console.error(e)
 		return { e }
