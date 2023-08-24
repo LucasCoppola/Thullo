@@ -7,7 +7,7 @@ export type BoardProps = {
 	authorId: string
 	title: string
 	description?: string | null
-	coverImage: Prisma.InputJsonValue
+	coverImage: { type: 'color' | 'image'; bg: string } | Prisma.InputJsonValue
 	visibility: $Enums.BoardVisibility
 }
 

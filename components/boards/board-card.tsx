@@ -1,8 +1,8 @@
-import { BoardProps } from '@/app/server'
 import Image from 'next/image'
 import { Lock } from 'lucide-react'
 import { Globe } from '../ui/icons'
 import Link from 'next/link'
+import { BoardProps } from '@/app/types'
 
 const avatars = [
 	{ img: 'https://github.com/shadcn.png', name: 'shadcn' },
@@ -18,21 +18,25 @@ export default function BoardCard({
 	visibility
 }: BoardProps) {
 	const remainingAvatars = avatars.length - 3
+	const typedCoverImage = coverImage as {
+		type: 'color' | 'image'
+		bg: string
+	}
 
 	return (
 		<Link href={`/boards/${id}`}>
 			<div className="bg-white hover:shadow-lg rounded-xl shadow-md w-60 h-60">
-				{coverImage.type === 'color' ? (
+				{typedCoverImage.type === 'color' ? (
 					<div
 						className="w-full h-[138px] rounded-t-xl mb-3"
 						style={{
-							backgroundColor: coverImage.bg
+							backgroundColor: typedCoverImage.bg
 						}}
 					></div>
 				) : (
 					<Image
 						className="w-full h-[138px] rounded-t-xl object-cover mb-3"
-						src={coverImage.bg}
+						src={typedCoverImage.bg}
 						alt="Board cover image"
 						width={200}
 						height={50}
