@@ -2,7 +2,7 @@
 
 import BoardSheet from './board-sheet'
 import { Lock } from 'lucide-react'
-import { Add, Globe, LoadingCircle } from '@/components/ui/icons'
+import { Globe, LoadingCircle } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
 import {
 	DropdownMenu,
@@ -17,6 +17,7 @@ import { AuthorProps, BoardProps } from '@/app/types'
 import { updateVisibilityAction } from '@/app/actions'
 import { $Enums } from '@prisma/client'
 import { useState } from 'react'
+import AddMemberModal from './add-member-modal'
 
 const avatars = [
 	{
@@ -137,7 +138,6 @@ export default function BoardHeader({
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
-
 				<div className="flex -space-x-1 overflow-hidden">
 					{avatars.map(({ img, name }, i) => (
 						<img
@@ -149,14 +149,7 @@ export default function BoardHeader({
 						/>
 					))}
 				</div>
-				<Button
-					size="icon"
-					variant="gray"
-					className="h-8 w-8"
-					title="Add a member"
-				>
-					<Add className="h-[19px] w-[19px] text-gray-500" />
-				</Button>
+				<AddMemberModal />
 			</div>
 			<BoardSheet {...board} author={author} />
 		</div>

@@ -1,5 +1,5 @@
-import BoardCard from '@/components/boards/board-card'
-import CreateBoard from '../../components/boards/create-board'
+import BoardCard from '@/app/boards/components/board-card'
+import CreateBoard from './components/create-board'
 import { getBoards } from '@/app/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'

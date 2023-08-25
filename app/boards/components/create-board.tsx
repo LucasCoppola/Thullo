@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Add, LoadingCircle } from '@/components/ui/icons'
-import CoverImageModal from '@/components/boards/cover-image-modal'
+import CoverImageModal from '@/app/boards/components/cover-image-modal'
 
 type FormDataType = {
 	title: string

@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Lock } from 'lucide-react'
-import { Globe } from '../ui/icons'
+import { Globe } from '../../../components/ui/icons'
 import Link from 'next/link'
 import { BoardProps } from '@/app/types'
 

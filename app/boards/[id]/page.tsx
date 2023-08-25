@@ -2,7 +2,7 @@ import { findBoardById, findUserById } from '@/app/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
-import BoardHeader from './board-header'
+import BoardHeader from './components/board-header'
 
 export default async function BoardPage({
 	params
