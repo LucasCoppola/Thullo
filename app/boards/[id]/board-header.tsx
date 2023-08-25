@@ -74,7 +74,7 @@ export default function BoardHeader({
 			<div className="flex space-x-4 flex-row items-center">
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button className="h-9 mr-2">
+						<Button className="h-9 mr-2" variant="gray">
 							{isLoading ? (
 								<LoadingCircle className="fill-white mx-6 text-gray-400" />
 							) : (
@@ -149,7 +149,12 @@ export default function BoardHeader({
 						/>
 					))}
 				</div>
-				<Button size="icon" className="h-8 w-8" title="Add a member">
+				<Button
+					size="icon"
+					variant="gray"
+					className="h-8 w-8"
+					title="Add a member"
+				>
 					<Add className="h-[19px] w-[19px] text-gray-500" />
 				</Button>
 			</div>

@@ -50,9 +50,7 @@ export default function Navbar({ session }: { session: Session | null }) {
 						</div>
 						<div className="mx-6 border-r border-gray-200 h-9" />
 						<Link href="/boards">
-							<Button className="rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500">
-								All Boards
-							</Button>
+							<Button variant="gray">All Boards</Button>
 						</Link>
 					</div>
 				)}
