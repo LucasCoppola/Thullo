@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { AuthorProps, BoardProps } from '@/app/server'
+import { AuthorProps, BoardProps } from '@/app/types'
 import {
 	Sheet,
 	SheetContent,
