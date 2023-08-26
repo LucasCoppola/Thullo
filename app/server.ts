@@ -106,9 +106,9 @@ export async function updateVisibility({
 	}
 }
 
-export async function addMember({
+export async function addMembers({
 	boardId,
-	email,
+	keyword,
 	authorId,
 	currUserId
 }: AddMemberProps) {
@@ -116,14 +116,14 @@ export async function addMember({
 		if (authorId !== currUserId) {
 			throw new Error('Unauthorized')
 		}
-		const user = await prisma.user.findUnique({
+		const users = await prisma.user.findMany({
 			where: {
-				email
+				OR: [{ email: keyword }, { name: keyword }]
 			},
 			select: { id: true, name: true, image: true }
 		})
 
-		return { user }
+		return { users }
 	} catch (e) {
 		console.error(e)
 		return { e }
