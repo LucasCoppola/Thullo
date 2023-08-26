@@ -1,3 +1,7 @@
+import { useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { addMember } from '@/app/server'
+import { BoardProps } from '@/app/types'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -8,21 +12,23 @@ import {
 	DialogTrigger
 } from '@/components/ui/dialog'
 import { Add } from '@/components/ui/icons'
-import { useState } from 'react'
 import { Info } from 'lucide-react'
 
-export default function AddMemberModal() {
+export default function AddMemberModal({ authorId, id }: BoardProps) {
+	const { data: session } = useSession()
 	const [email, setEmail] = useState('')
 
 	async function handleOnSubmit(e: any) {
 		e.preventDefault()
-		const res = await fetch('/api/email', {
-			method: 'POST',
-			body: JSON.stringify({
-				username: email
-			})
+		if (authorId !== session?.userId) {
+			throw new Error('You are not the author of this board')
+		}
+		const { user } = await addMember({
+			boardId: id || '',
+			currUserId: session?.userId || '',
+			email,
+			authorId
 		})
-		console.log(await res.json())
 	}
 	return (
 		<Dialog>

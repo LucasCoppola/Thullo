@@ -2,7 +2,7 @@
 
 import prisma from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
-import { BoardProps, VisibilityMutation } from './types'
+import { AddMemberProps, BoardProps, VisibilityMutation } from './types'
 
 export async function getBoards({ userId }: { userId: string }) {
 	try {
@@ -100,6 +100,30 @@ export async function updateVisibility({
 		})
 
 		return { updatedBoard }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}
+
+export async function addMember({
+	boardId,
+	email,
+	authorId,
+	currUserId
+}: AddMemberProps) {
+	try {
+		if (authorId !== currUserId) {
+			throw new Error('Unauthorized')
+		}
+		const user = await prisma.user.findUnique({
+			where: {
+				email
+			},
+			select: { id: true, name: true, image: true }
+		})
+
+		return { user }
 	} catch (e) {
 		console.error(e)
 		return { e }
