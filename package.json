@@ -6,7 +6,8 @@
 		"dev": "prisma generate && next dev",
 		"build": "prisma generate && prisma db push && next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+		"email": "email dev"
 	},
 	"dependencies": {
 		"@next-auth/prisma-adapter": "^1.0.7",
@@ -15,6 +16,9 @@
 		"@radix-ui/react-dropdown-menu": "^2.0.5",
 		"@radix-ui/react-slot": "^1.0.2",
 		"@radix-ui/react-tabs": "^1.0.4",
+		"@react-email/button": "0.0.10",
+		"@react-email/components": "^0.0.7",
+		"@react-email/html": "0.0.4",
 		"@tanstack/react-query": "^4.32.6",
 		"@types/node": "20.4.9",
 		"@types/react": "18.2.20",
@@ -31,6 +35,8 @@
 		"postcss": "8.4.27",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
+		"react-email": "1.9.4",
+		"resend": "^1.0.0",
 		"tailwind-merge": "^1.14.0",
 		"tailwindcss": "3.3.3",
 		"tailwindcss-animate": "^1.0.6",
