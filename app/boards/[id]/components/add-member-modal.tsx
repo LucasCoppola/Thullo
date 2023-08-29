@@ -82,7 +82,7 @@ export default function AddMemberModal({ authorId, id }: BoardProps) {
 		},
 		onError: (error) => {
 			// add a toast
-			console.log('onError by react-query', error)
+			console.error('onError by react-query', error)
 		},
 		onSettled: () => {
 			setSelectedUser(null)

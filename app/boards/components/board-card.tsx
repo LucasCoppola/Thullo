@@ -1,23 +1,20 @@
 import Image from 'next/image'
 import { Lock } from 'lucide-react'
-import { Globe } from '../../../components/ui/icons'
+import { Globe } from '@/components/ui/icons'
 import Link from 'next/link'
 import { BoardProps } from '@/app/types'
+import { findUserById, getBoardMembers } from '@/app/server'
 
-const avatars = [
-	{ img: 'https://github.com/shadcn.png', name: 'shadcn' },
-	{ img: 'https://github.com/shadcn.png', name: 'shadcn' },
-	{ img: 'https://github.com/shadcn.png', name: 'shadcn' },
-	{ img: 'https://github.com/shadcn.png', name: 'shadcn' }
-]
-
-export default function BoardCard({
+export default async function BoardCard({
 	id,
 	title,
 	coverImage,
-	visibility
+	visibility,
+	authorId
 }: BoardProps) {
-	const remainingAvatars = avatars.length - 3
+	const { author } = await findUserById({ id: authorId })
+	const { members } = await getBoardMembers({ boardId: id || '' })
+	const remainingAvatars = members?.length! - 2
 	const typedCoverImage = coverImage as {
 		type: 'color' | 'image'
 		bg: string
@@ -61,13 +58,29 @@ export default function BoardCard({
 						)}
 					</div>
 					<div className="flex space-x-3 flex-row items-center">
-						{avatars.slice(0, 3).map(({ img, name }, i) => (
-							<img
-								key={i}
-								src={img}
+						<Image
+							src={
+								author?.image ||
+								`https://avatars.dicebear.com/api/micah/${author?.name}.svg`
+							}
+							alt={`${author?.name} avatar`}
+							title={author?.name!}
+							className="w-8 h-8 rounded-lg"
+							width={400}
+							height={400}
+						/>
+						{members?.slice(0, 2).map(({ image, name, id }) => (
+							<Image
+								key={id}
+								src={
+									image ||
+									`https://avatars.dicebear.com/api/micah/${name}.svg`
+								}
 								alt={`${name} avatar`}
-								title={name}
+								title={name!}
 								className="w-8 h-8 rounded-lg"
+								width={400}
+								height={400}
 							/>
 						))}
 						{remainingAvatars > 0 && (
