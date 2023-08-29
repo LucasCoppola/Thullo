@@ -2,7 +2,7 @@
 
 import prisma from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
-import { AddMemberProps, BoardProps, VisibilityMutation } from './types'
+import { BoardProps, VisibilityMutation } from './types'
 
 export async function getBoards({ userId }: { userId: string }) {
 	try {
@@ -106,24 +106,58 @@ export async function updateVisibility({
 	}
 }
 
-export async function addMembers({
-	boardId,
+export async function findUsers({
 	keyword,
-	authorId,
 	currUserId
-}: AddMemberProps) {
+}: {
+	keyword: string
+	currUserId: string
+}) {
 	try {
-		if (authorId !== currUserId) {
-			throw new Error('Unauthorized')
-		}
 		const users = await prisma.user.findMany({
 			where: {
-				OR: [{ email: keyword }, { name: keyword }]
+				OR: [{ email: keyword }, { name: keyword }],
+				AND: { id: { not: currUserId } }
 			},
 			select: { id: true, name: true, image: true }
 		})
 
 		return { users }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}
+
+export async function addMember({
+	boardId,
+	userId,
+	authorId,
+	currUserId
+}: {
+	boardId: string
+	userId: string
+	authorId: string
+	currUserId: string
+}) {
+	try {
+		if (authorId !== currUserId) {
+			throw new Error('Unauthorized')
+		}
+		const members = await prisma.membersOnBoards.findMany({})
+
+		if (members.some((member) => member.userId === userId)) {
+			throw new Error('User already added')
+		}
+
+		const addMemberToBoard = await prisma.membersOnBoards.create({
+			data: {
+				boardId,
+				userId
+			}
+		})
+
+		return { addMemberToBoard }
 	} catch (e) {
 		console.error(e)
 		return { e }

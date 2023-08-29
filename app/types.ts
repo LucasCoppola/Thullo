@@ -29,13 +29,6 @@ export type VisibilityMutation = {
 	currUserId: string
 }
 
-export type AddMemberProps = {
-	boardId: string
-	keyword: string
-	authorId: string
-	currUserId: string
-}
-
 export type User = {
 	id: string
 	name: string | null
