@@ -4,7 +4,8 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
-import { addMember, findUsers } from '@/app/server'
+import { findUsers } from '@/app/server'
+import { addMemberAction } from '@/app/actions'
 import { BoardProps, User } from '@/app/types'
 import { Button } from '@/components/ui/button'
 import {
@@ -55,7 +56,7 @@ export default function AddMemberModal({ authorId, id }: BoardProps) {
 		}
 
 		try {
-			const { addMemberToBoard, e } = await addMember({
+			const { addMemberToBoard, e } = await addMemberAction({
 				authorId,
 				boardId,
 				currUserId,

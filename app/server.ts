@@ -145,9 +145,19 @@ export async function addMember({
 		if (authorId !== currUserId) {
 			throw new Error('Unauthorized')
 		}
-		const members = await prisma.membersOnBoards.findMany({})
 
-		if (members.some((member) => member.userId === userId)) {
+		const membersOnBoardId = await prisma.membersOnBoards.findMany({
+			where: {
+				boardId,
+				userId
+			}
+		})
+
+		const isMemberOnBoard = membersOnBoardId.find(
+			(relation) => relation.userId === userId
+		)
+
+		if (isMemberOnBoard) {
 			throw new Error('User already added')
 		}
 
@@ -165,7 +175,6 @@ export async function addMember({
 	}
 }
 
-// Function to get board members based on boardId
 export async function getBoardMembers({ boardId }: { boardId: string }) {
 	try {
 		const boardMemberRelations = await prisma.membersOnBoards.findMany({

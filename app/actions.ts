@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { createBoard, updateVisibility } from './server'
+import { addMember, createBoard, updateVisibility } from './server'
 import { BoardProps, VisibilityMutation } from './types'
 
 export async function createBoardAction({
@@ -22,4 +22,29 @@ export async function updateVisibilityAction({
 }: VisibilityMutation) {
 	await updateVisibility({ boardId, visibility, authorId, currUserId })
 	revalidatePath(`/boards/${boardId}`)
+}
+
+export async function addMemberAction({
+	boardId,
+	userId,
+	authorId,
+	currUserId
+}: {
+	boardId: string
+	userId: string
+	authorId: string
+	currUserId: string
+}) {
+	try {
+		const { addMemberToBoard } = await addMember({
+			boardId,
+			userId,
+			authorId,
+			currUserId
+		})
+		revalidatePath(`/boards/${boardId}`)
+		return { addMemberToBoard }
+	} catch (e) {
+		return { e }
+	}
 }
