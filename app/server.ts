@@ -70,7 +70,8 @@ export async function findUserById({ id }: { id: string }) {
 		const author = await prisma.user.findUnique({
 			where: {
 				id
-			}
+			},
+			select: { id: true, name: true, image: true }
 		})
 
 		return { author }
@@ -161,5 +162,32 @@ export async function addMember({
 	} catch (e) {
 		console.error(e)
 		return { e }
+	}
+}
+
+// Function to get board members based on boardId
+export async function getBoardMembers({ boardId }: { boardId: string }) {
+	try {
+		const boardMemberRelations = await prisma.membersOnBoards.findMany({
+			where: { boardId }
+		})
+
+		const userIds = boardMemberRelations.map((relation) => relation.userId)
+
+		const members = await prisma.user.findMany({
+			where: {
+				id: { in: userIds }
+			},
+			select: {
+				id: true,
+				name: true,
+				image: true
+			}
+		})
+
+		return { members }
+	} catch (error) {
+		console.error(error)
+		return { error }
 	}
 }

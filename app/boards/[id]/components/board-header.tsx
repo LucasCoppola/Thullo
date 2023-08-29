@@ -1,6 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import BoardSheet from './board-sheet'
+import AddMemberModal from './add-member-modal'
+import Image from 'next/image'
+import { AuthorProps, BoardProps, User } from '@/app/types'
+import { updateVisibilityAction } from '@/app/actions'
+import { $Enums } from '@prisma/client'
 import { Lock } from 'lucide-react'
 import { Globe, LoadingCircle } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
@@ -13,36 +19,17 @@ import {
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { useMutation } from '@tanstack/react-query'
-import { AuthorProps, BoardProps } from '@/app/types'
-import { updateVisibilityAction } from '@/app/actions'
-import { $Enums } from '@prisma/client'
-import { useState } from 'react'
-import AddMemberModal from './add-member-modal'
-
-const avatars = [
-	{
-		img: 'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-		name: 'Juan'
-	},
-	{
-		img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80',
-		name: 'Esteban'
-	},
-	{
-		img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-		name: 'John'
-	},
-	{
-		img: 'https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-		name: 'Carla'
-	}
-]
 
 export default function BoardHeader({
 	author,
 	currUserId,
+	members,
 	...board
-}: { author: AuthorProps; currUserId: string } & BoardProps) {
+}: {
+	author: AuthorProps
+	currUserId: string
+	members: User[]
+} & BoardProps) {
 	const [updateVisibility, setUpdateVisibility] = useState(board.visibility)
 
 	const { mutate, isLoading } = useMutation(
@@ -139,13 +126,29 @@ export default function BoardHeader({
 					</DropdownMenuContent>
 				</DropdownMenu>
 				<div className="flex -space-x-1 overflow-hidden">
-					{avatars.map(({ img, name }, i) => (
-						<img
-							key={i}
-							src={img}
+					<Image
+						src={
+							author?.image ||
+							`https://avatars.dicebear.com/api/micah/${author?.name}.svg`
+						}
+						alt={`${author?.name} avatar`}
+						title={author?.name!}
+						className="w-8 h-8 inline-block rounded-full ring-2 ring-white"
+						width={400}
+						height={400}
+					/>
+					{members.map(({ image, name, id }) => (
+						<Image
+							key={id}
+							src={
+								image ||
+								`https://avatars.dicebear.com/api/micah/${name}.svg`
+							}
 							alt={`${name} avatar`}
-							title={name}
+							title={name!}
 							className="w-8 h-8 inline-block rounded-full ring-2 ring-white"
+							width={400}
+							height={400}
 						/>
 					))}
 				</div>
