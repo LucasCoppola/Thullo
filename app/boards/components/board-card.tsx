@@ -3,7 +3,8 @@ import { Lock } from 'lucide-react'
 import { Globe } from '@/components/ui/icons'
 import Link from 'next/link'
 import { BoardProps } from '@/app/types'
-import { findUserById, getBoardMembers } from '@/app/server'
+import { getBoardMembers } from '@/app/server/membersOperations'
+import { findUserById } from '@/app/server/usersOperations'
 
 export default async function BoardCard({
 	id,
@@ -39,7 +40,7 @@ export default async function BoardCard({
 						height={50}
 					/>
 				)}
-				<div className="px-3 mb-4">
+				<div className="px-3">
 					<div className="flex items-center justify-between mb-4">
 						<h5
 							className={`${

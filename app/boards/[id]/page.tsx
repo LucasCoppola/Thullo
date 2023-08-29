@@ -1,4 +1,6 @@
-import { findBoardById, findUserById, getBoardMembers } from '@/app/server'
+import { findBoardById } from '@/app/server/boardsOperations'
+import { getBoardMembers } from '@/app/server/membersOperations'
+import { findUserById } from '@/app/server/usersOperations'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
