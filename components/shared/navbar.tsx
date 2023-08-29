@@ -4,32 +4,23 @@ import UserDropdown from './user-dropdown'
 import Image from 'next/image'
 import Link from 'next/link'
 import { findBoardById } from '@/app/server'
-import { useState, useEffect } from 'react'
 import { Session } from 'next-auth'
 import { usePathname } from 'next/navigation'
 import { Button } from '../ui/button'
 import { Search } from '../ui/icons'
+import { useQuery } from '@tanstack/react-query'
 
 export default function Navbar({ session }: { session: Session | null }) {
-	const [boardTitle, setBoardTitle] = useState<string | null>(null)
 	const pathname = usePathname()
 	const boardId = pathname.split('/').pop() as string
 
-	async function getBoard(id: string) {
-		const { board } = await findBoardById({ id })
-		if (board) {
-			setBoardTitle(board.title)
-		}
-	}
-
-	useEffect(() => {
-		if (boardId) {
-			getBoard(boardId)
-		}
-	}, [boardId])
+	const { data } = useQuery(
+		['board', boardId],
+		async () => await findBoardById({ id: boardId })
+	)
 
 	return (
-		<nav className="relative bg-white mt-2 px-10 shadow-sm">
+		<nav className="relative bg-transparent mt-2 px-10 shadow-sm">
 			<div className="w-full py-3 md:flex md:justify-between items-center">
 				<div className="flex items-center">
 					<Link href="/">
@@ -43,10 +34,10 @@ export default function Navbar({ session }: { session: Session | null }) {
 					</Link>
 				</div>
 
-				{boardTitle && (
+				{data?.board && (
 					<div className="flex flex-row items-center">
 						<div className="ml-4 font-medium text-lg text-gray-800">
-							{boardTitle}
+							{data.board?.title}
 						</div>
 						<div className="mx-6 border-r border-gray-200 h-9" />
 						<Link href="/boards">
