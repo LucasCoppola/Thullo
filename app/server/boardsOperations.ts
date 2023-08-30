@@ -90,3 +90,35 @@ export async function updateVisibility({
 		return { e }
 	}
 }
+
+export async function updateBoardDescription({
+	boardId,
+	description,
+	authorId,
+	currUserId
+}: {
+	boardId: string
+	description: string
+	authorId: string
+	currUserId: string
+}) {
+	try {
+		if (authorId !== currUserId) {
+			throw new Error('Unauthorized')
+		}
+
+		const updatedBoard = await prisma.board.update({
+			where: {
+				id: boardId
+			},
+			data: {
+				description
+			}
+		})
+
+		return { updatedBoard }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}

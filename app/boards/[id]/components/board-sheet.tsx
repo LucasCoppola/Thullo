@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/sheet'
 import {
 	FileText,
+	Info,
 	MoreHorizontal,
 	Pencil,
 	User2,
@@ -17,16 +18,44 @@ import {
 	Users2
 } from 'lucide-react'
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { updateBoardDescriptionAction } from '@/app/actions'
 
 export default function BoardSheet({
+	id,
 	title,
 	author,
 	createdAt,
 	members,
-	description: boardDescription
-}: { author: AuthorProps; members: User[] } & BoardProps) {
+	description: boardDescription,
+	currUserId
+}: { author: AuthorProps; members: User[]; currUserId: string } & BoardProps) {
 	const [isEditing, setIsEditing] = useState(false)
 	const [description, setDescription] = useState(boardDescription)
+
+	async function updateBoardDescriptionClient() {
+		await updateBoardDescriptionAction({
+			boardId: id!,
+			description: description || '',
+			authorId: author?.id || '',
+			currUserId
+		})
+	}
+
+	const renderFormattedText = (text: string) => {
+		const boldRegex = /\*(.*?)\*/g
+		const lineBreaksReplaced = text.replace(/\n/g, '<br>')
+		const formattedText = lineBreaksReplaced.replace(
+			boldRegex,
+			'<strong>$1</strong>'
+		)
+		return formattedText
+	}
+
+	const { mutate, isLoading } = useMutation(updateBoardDescriptionClient, {
+		onSuccess: () => console.log('success'),
+		onError: () => console.error('error')
+	})
 
 	return (
 		<Sheet>
@@ -66,6 +95,7 @@ export default function BoardSheet({
 									</span>
 								</div>
 							</div>
+
 							<div className="mt-5 flex flex-row items-center">
 								<span className="text-xs font-medium text-gray-500 flex flex-row items-center">
 									<FileText className="h-3.5 w-3.5 mr-1" />
@@ -73,7 +103,7 @@ export default function BoardSheet({
 								</span>
 								{!isEditing && (
 									<button
-										className="ml-3 border border-gray-300 rounded-full p-1 hover:bg-gray-300 hover:text-white transition duration-200 flex flex-row items-center text-gray-400 text-xs font-medium focus:ring-1"
+										className="ml-3 border border-gray-300 rounded-full p-1 hover:bg-gray-200 transition duration-200 flex flex-row items-center text-gray-400"
 										title="Edit description"
 										onClick={() => setIsEditing(true)}
 									>
@@ -81,23 +111,45 @@ export default function BoardSheet({
 									</button>
 								)}
 							</div>
-							<div className="mt-3 text-sm">
+
+							<div className="relative mt-3 text-sm text-black">
 								{isEditing ? (
-									<textarea
-										className="w-full p-2 border border-gray-300 rounded-lg focus:outline-gray-300"
-										rows={12}
-										value={description || 'No Description'}
-										onChange={(e) =>
-											setDescription(e.target.value)
-										}
-									/>
+									<>
+										<Info className="h-4 w-4 absolute top-2 right-2 text-gray-700" />
+										<textarea
+											className="w-full p-2 border border-gray-300 rounded-lg focus:outline-gray-300"
+											rows={12}
+											value={description || ''}
+											onChange={(e) =>
+												setDescription(e.target.value)
+											}
+										/>
+									</>
 								) : (
-									<p>{description}</p>
+									<>
+										{description && (
+											<p
+												className="break-words"
+												dangerouslySetInnerHTML={{
+													__html: renderFormattedText(
+														description
+													)
+												}}
+											/>
+										)}
+									</>
 								)}
 							</div>
+
 							{isEditing && (
 								<div className="flex flex-row pt-2">
-									<button className="bg-[#219653] hover:bg-[#1e7b48] text-white text-xs rounded-lg px-3 py-1.5 mr-4 transition duration-200">
+									<button
+										className="bg-[#219653] hover:bg-[#1e7b48] text-white text-xs rounded-lg px-3 py-1.5 mr-4 transition duration-200"
+										onClick={() => {
+											setIsEditing(false)
+											mutate()
+										}}
+									>
 										Save
 									</button>
 									<button
@@ -108,6 +160,7 @@ export default function BoardSheet({
 									</button>
 								</div>
 							)}
+
 							<span
 								className={`${
 									isEditing ? 'mt-4' : 'mt-8'

@@ -2,7 +2,11 @@
 
 import { revalidatePath } from 'next/cache'
 import { addMember } from './server/membersOperations'
-import { createBoard, updateVisibility } from './server/boardsOperations'
+import {
+	createBoard,
+	updateVisibility,
+	updateBoardDescription
+} from './server/boardsOperations'
 import { BoardProps, VisibilityMutation } from './types'
 
 export async function createBoardAction({
@@ -37,15 +41,30 @@ export async function addMemberAction({
 	currUserId: string
 }) {
 	try {
-		const { addMemberToBoard } = await addMember({
+		const { addMemberToBoard, e } = await addMember({
 			boardId,
 			userId,
 			authorId,
 			currUserId
 		})
 		revalidatePath(`/boards/${boardId}`)
-		return { addMemberToBoard }
+		return { addMemberToBoard, e }
 	} catch (e) {
 		return { e }
 	}
+}
+
+export async function updateBoardDescriptionAction({
+	boardId,
+	description,
+	authorId,
+	currUserId
+}: {
+	boardId: string
+	description: string
+	authorId: string
+	currUserId: string
+}) {
+	await updateBoardDescription({ boardId, description, authorId, currUserId })
+	revalidatePath(`/boards/${boardId}`)
 }

@@ -154,7 +154,12 @@ export default function BoardHeader({
 				</div>
 				<AddMemberModal {...board} />
 			</div>
-			<BoardSheet {...board} author={author} members={members} />
+			<BoardSheet
+				{...board}
+				author={author}
+				members={members}
+				currUserId={currUserId}
+			/>
 		</div>
 	)
 }
