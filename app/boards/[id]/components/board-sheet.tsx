@@ -9,6 +9,17 @@ import {
 	SheetTrigger
 } from '@/components/ui/sheet'
 import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
+import {
 	FileText,
 	MoreHorizontal,
 	Pencil,
@@ -16,7 +27,7 @@ import {
 	UserX2,
 	Users2
 } from 'lucide-react'
-import { useState } from 'react'
+import { use, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { removeMemberAction, updateBoardDescriptionAction } from '@/app/actions'
 import Tooltip from '@/components/ui/tooltip'
@@ -32,6 +43,10 @@ export default function BoardSheet({
 }: { author: AuthorProps; members: User[]; currUserId: string } & BoardProps) {
 	const [isEditing, setIsEditing] = useState(false)
 	const [description, setDescription] = useState(boardDescription)
+	const [editTitle, setEditTitle] = useState({
+		isEditingTitle: false,
+		title: title
+	})
 
 	async function updateBoardDescriptionClient() {
 		await updateBoardDescriptionAction({
@@ -91,7 +106,26 @@ export default function BoardSheet({
 			</SheetTrigger>
 			<SheetContent>
 				<SheetHeader>
-					<SheetTitle className="mb-1">{title}</SheetTitle>
+					<SheetTitle className="mb-1" asChild>
+						{editTitle.isEditingTitle ? (
+							<input
+								className="border p-1 rounded-md focus:outline-gray-400 w-fit"
+								value={editTitle.title}
+							/>
+						) : (
+							<button
+								className="hover:bg-gray-100 mr-auto px-2 py-0.5 rounded-sm"
+								onClick={() =>
+									setEditTitle({
+										isEditingTitle: true,
+										title
+									})
+								}
+							>
+								{title}
+							</button>
+						)}
+					</SheetTitle>
 					<SheetDescription asChild>
 						<div className="overflow-y-auto max-h-[calc(100vh-6rem)]">
 							<hr className="mb-2" />
@@ -161,7 +195,7 @@ export default function BoardSheet({
 									</>
 								) : (
 									<>
-										{description && (
+										{description ? (
 											<p
 												className="break-words"
 												dangerouslySetInnerHTML={{
@@ -170,6 +204,12 @@ export default function BoardSheet({
 													)
 												}}
 											/>
+										) : (
+											<p className="mt-8 font-medium text-gray-600 text-center">
+												Add a description to let your
+												teammates know what this board
+												is used for.
+											</p>
 										)}
 									</>
 								)}
@@ -241,15 +281,44 @@ export default function BoardSheet({
 										<span className="font-semibold text-sm text-gray-900">
 											{name}
 										</span>
-										<button
-											className="border border-[#EB5757] text-[#EB5757] rounded-lg text-xs px-2 py-1 ml-auto hover:bg-[#EB5757] hover:text-white transition duration-200"
-											title="Remove member"
-											onClick={() =>
-												removeMember.mutate(id)
-											}
-										>
-											<UserX2 className="h-4 w-4" />
-										</button>
+										<AlertDialog>
+											<AlertDialogTrigger asChild>
+												<button
+													className="border border-[#EB5757] text-[#EB5757] rounded-lg text-xs px-2 py-1 ml-auto hover:bg-[#EB5757] hover:text-white transition duration-200"
+													title="Remove member"
+												>
+													<UserX2 className="h-4 w-4" />
+												</button>
+											</AlertDialogTrigger>
+											<AlertDialogContent>
+												<AlertDialogHeader>
+													<AlertDialogTitle>
+														Are you absolutely sure?
+													</AlertDialogTitle>
+													<AlertDialogDescription>
+														This action cannot be
+														undone. This will delete{' '}
+														<strong>{name}</strong>{' '}
+														from the board.
+													</AlertDialogDescription>
+												</AlertDialogHeader>
+												<AlertDialogFooter>
+													<AlertDialogCancel>
+														Cancel
+													</AlertDialogCancel>
+													<AlertDialogAction
+														className="bg-red-500 hover:bg-red-600"
+														onClick={() =>
+															removeMember.mutate(
+																id
+															)
+														}
+													>
+														Remove
+													</AlertDialogAction>
+												</AlertDialogFooter>
+											</AlertDialogContent>
+										</AlertDialog>
 									</li>
 								))}
 							</ul>
