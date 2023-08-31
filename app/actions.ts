@@ -1,13 +1,13 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { addMember } from './server/membersOperations'
+import { addMember, removeMember } from './server/membersOperations'
 import {
 	createBoard,
 	updateVisibility,
 	updateBoardDescription
 } from './server/boardsOperations'
-import { BoardProps, VisibilityMutation } from './types'
+import { BoardMemberRelation, BoardProps, VisibilityMutation } from './types'
 
 export async function createBoardAction({
 	authorId,
@@ -34,12 +34,7 @@ export async function addMemberAction({
 	userId,
 	authorId,
 	currUserId
-}: {
-	boardId: string
-	userId: string
-	authorId: string
-	currUserId: string
-}) {
+}: BoardMemberRelation) {
 	try {
 		const { addMemberToBoard, e } = await addMember({
 			boardId,
@@ -49,6 +44,25 @@ export async function addMemberAction({
 		})
 		revalidatePath(`/boards/${boardId}`)
 		return { addMemberToBoard, e }
+	} catch (e) {
+		return { e }
+	}
+}
+
+export async function removeMemberAction({
+	boardId,
+	userId,
+	authorId,
+	currUserId
+}: BoardMemberRelation) {
+	try {
+		await removeMember({
+			boardId,
+			userId,
+			authorId,
+			currUserId
+		})
+		revalidatePath(`/boards/${boardId}`)
 	} catch (e) {
 		return { e }
 	}

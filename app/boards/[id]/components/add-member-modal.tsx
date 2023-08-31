@@ -45,9 +45,6 @@ export default function AddMemberModal({ authorId, id }: BoardProps) {
 	)
 
 	async function addMemberClient(selectedUser: User | null) {
-		const boardId = id!
-		const userId = selectedUser?.id || '' // desired member id
-
 		if (authorId !== currUserId) {
 			throw new Error('Unauthorized')
 		}
@@ -58,9 +55,9 @@ export default function AddMemberModal({ authorId, id }: BoardProps) {
 		try {
 			const { addMemberToBoard, e } = await addMemberAction({
 				authorId,
-				boardId,
+				boardId: id!,
 				currUserId,
-				userId
+				userId: selectedUser?.id || '' // desired member id
 			})
 
 			if (
@@ -145,22 +142,26 @@ export default function AddMemberModal({ authorId, id }: BoardProps) {
 								</p>
 							) : users && users.length > 0 ? (
 								<ul>
-									{users.map((user) => (
-										<div key={user.id} className="relative">
+									{users.map(({ id, name, image }) => (
+										<div key={id} className="relative">
 											<div
 												className={`flex flex-row mt-3 py-1 px-2 rounded-md items-center cursor-pointer ${
-													selectedUser?.id === user.id
+													selectedUser?.id === id
 														? 'bg-blue-100'
 														: 'hover:bg-gray-200'
 												}`}
 												onClick={() =>
-													setSelectedUser(user)
+													setSelectedUser({
+														id,
+														name,
+														image
+													})
 												}
 											>
 												<Image
 													src={
-														user.image ||
-														`https://avatars.dicebear.com/api/micah/${user.name}.svg`
+														image ||
+														`https://avatars.dicebear.com/api/micah/${name}.svg`
 													}
 													width={20}
 													height={20}
@@ -169,16 +170,15 @@ export default function AddMemberModal({ authorId, id }: BoardProps) {
 												/>
 												<li
 													className={`${
-														selectedUser?.id ===
-														user.id
+														selectedUser?.id === id
 															? 'text-blue-500'
 															: 'text-gray-800'
 													}`}
 												>
-													{user.name}
+													{name}
 												</li>
 											</div>
-											{selectedUser?.id === user.id && (
+											{selectedUser?.id === id && (
 												<X
 													className="h-4 w-4 absolute right-1 top-[6px] text-blue-500 rounded-full hover:bg-blue-200"
 													onClick={() =>

@@ -1,18 +1,14 @@
 'use server'
 
 import prisma from '@/lib/prisma'
+import { BoardMemberRelation } from '../types'
 
 export async function addMember({
 	boardId,
 	userId,
 	authorId,
 	currUserId
-}: {
-	boardId: string
-	userId: string
-	authorId: string
-	currUserId: string
-}) {
+}: BoardMemberRelation) {
 	try {
 		if (authorId !== currUserId) {
 			throw new Error('Unauthorized')
@@ -70,5 +66,35 @@ export async function getBoardMembers({ boardId }: { boardId: string }) {
 	} catch (error) {
 		console.error(error)
 		return { error }
+	}
+}
+
+export async function removeMember({
+	boardId,
+	userId,
+	authorId,
+	currUserId
+}: BoardMemberRelation) {
+	try {
+		if (authorId !== currUserId) {
+			throw new Error('Unauthorized')
+		}
+		if (authorId === userId) {
+			throw new Error("You can't delete the author")
+		}
+		if (currUserId === userId) {
+			throw new Error("You can't delete yourself")
+		}
+
+		await prisma.membersOnBoards.deleteMany({
+			where: {
+				boardId,
+				userId
+			}
+		})
+		return { success: true }
+	} catch (e) {
+		console.error(e)
+		return { e }
 	}
 }

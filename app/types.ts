@@ -32,3 +32,10 @@ export type User = {
 	name: string | null
 	image: string | null
 }
+
+export type BoardMemberRelation = {
+	boardId: string
+	userId: string
+	authorId: string
+	currUserId: string
+}

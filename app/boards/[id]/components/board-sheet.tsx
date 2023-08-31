@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { updateBoardDescriptionAction } from '@/app/actions'
+import { removeMemberAction, updateBoardDescriptionAction } from '@/app/actions'
 import Tooltip from '@/components/ui/tooltip'
 
 export default function BoardSheet({
@@ -42,6 +42,25 @@ export default function BoardSheet({
 		})
 	}
 
+	async function removeMemberClient(userId: string) {
+		if (author?.id !== currUserId) {
+			throw new Error('Unauthorized')
+		}
+		if (userId === currUserId) {
+			throw new Error("You can't delete yourself")
+		}
+		if (author.id === userId) {
+			throw new Error("You can't delete the author")
+		}
+
+		await removeMemberAction({
+			authorId: author?.id || '',
+			boardId: id!,
+			currUserId,
+			userId
+		})
+	}
+
 	const renderFormattedText = (text: string) => {
 		const boldRegex = /\*(.*?)\*/g
 		const lineBreaksReplaced = text.replace(/\n/g, '<br>')
@@ -52,9 +71,14 @@ export default function BoardSheet({
 		return formattedText
 	}
 
-	const { mutate, isLoading } = useMutation(updateBoardDescriptionClient, {
-		onSuccess: () => console.log('success'),
-		onError: () => console.error('error')
+	const updateBoard = useMutation(updateBoardDescriptionClient, {
+		onSuccess: () => console.log('success, boardUpdated'),
+		onError: () => console.error('error, boardUpdated(?)')
+	})
+
+	const removeMember = useMutation(removeMemberClient, {
+		onSuccess: () => console.log('success, member removed'),
+		onError: () => console.error('error, member removed(?)')
 	})
 
 	return (
@@ -157,7 +181,7 @@ export default function BoardSheet({
 										className="bg-[#219653] hover:bg-[#1e7b48] text-white text-xs rounded-lg px-3 py-1.5 mr-4 transition duration-200"
 										onClick={() => {
 											setIsEditing(false)
-											mutate()
+											updateBoard.mutate()
 										}}
 									>
 										Save
@@ -220,6 +244,9 @@ export default function BoardSheet({
 										<button
 											className="border border-[#EB5757] text-[#EB5757] rounded-lg text-xs px-2 py-1 ml-auto hover:bg-[#EB5757] hover:text-white transition duration-200"
 											title="Remove member"
+											onClick={() =>
+												removeMember.mutate(id)
+											}
 										>
 											<UserX2 className="h-4 w-4" />
 										</button>
