@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/sheet'
 import {
 	FileText,
-	Info,
 	MoreHorizontal,
 	Pencil,
 	User2,
@@ -20,6 +19,7 @@ import {
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { updateBoardDescriptionAction } from '@/app/actions'
+import Tooltip from '@/components/ui/tooltip'
 
 export default function BoardSheet({
 	id,
@@ -32,7 +32,6 @@ export default function BoardSheet({
 }: { author: AuthorProps; members: User[]; currUserId: string } & BoardProps) {
 	const [isEditing, setIsEditing] = useState(false)
 	const [description, setDescription] = useState(boardDescription)
-	const [tooltipVisible, setTooltipVisible] = useState(false)
 
 	async function updateBoardDescriptionClient() {
 		await updateBoardDescriptionAction({
@@ -116,33 +115,16 @@ export default function BoardSheet({
 							<div className="relative mt-3 text-sm text-black">
 								{isEditing ? (
 									<>
-										<Info
-											className="h-4 w-4 absolute top-2 right-2 text-gray-700"
-											onMouseEnter={() =>
-												setTooltipVisible(true)
-											}
-											onMouseLeave={() =>
-												setTooltipVisible(false)
-											}
-										/>
-
-										<div
-											className={`${
-												tooltipVisible
-													? 'opacity-100'
-													: 'opacity-0'
-											} transition-opacity duration-300 absolute -top-12 right-0 border bg-white rounded-lg p-2 text-xs text-gray-700 shadow-lg`}
+										<Tooltip
+											iconClassName="absolute top-2 right-2 text-gray-700"
+											contentClassName="absolute -top-12 right-0"
 										>
-											<p>
-												Make a word{' '}
-												<strong>bold</strong> by
-												<br />
-												enclosing it in{' '}
-												<strong>*</strong>
-												asterisks
-												<strong>*</strong>.
-											</p>
-										</div>
+											Make a word <strong>bold</strong> by
+											<br />
+											enclosing it in <strong>*</strong>
+											asterisks
+											<strong>*</strong>.
+										</Tooltip>
 
 										<textarea
 											className="w-full p-2 border border-gray-300 rounded-lg focus:outline-gray-300"
