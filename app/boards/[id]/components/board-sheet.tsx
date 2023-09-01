@@ -8,29 +8,14 @@ import {
 	SheetTitle,
 	SheetTrigger
 } from '@/components/ui/sheet'
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger
-} from '@/components/ui/alert-dialog'
-import {
-	FileText,
-	MoreHorizontal,
-	Pencil,
-	User2,
-	UserX2,
-	Users2
-} from 'lucide-react'
-import { use, useState } from 'react'
+import { MoreHorizontal, User2, Users2 } from 'lucide-react'
+import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { removeMemberAction, updateBoardDescriptionAction } from '@/app/actions'
-import Tooltip from '@/components/ui/tooltip'
+
+import MemberList from './sheet-components/member-list'
+import Description from './sheet-components/description'
+import Title from './sheet-components/title'
 
 export default function BoardSheet({
 	id,
@@ -41,12 +26,8 @@ export default function BoardSheet({
 	description: boardDescription,
 	currUserId
 }: { author: AuthorProps; members: User[]; currUserId: string } & BoardProps) {
-	const [isEditing, setIsEditing] = useState(false)
+	const [editDescription, setEditDescription] = useState(false)
 	const [description, setDescription] = useState(boardDescription)
-	const [editTitle, setEditTitle] = useState({
-		isEditingTitle: false,
-		title: title
-	})
 
 	async function updateBoardDescriptionClient() {
 		await updateBoardDescriptionAction({
@@ -76,16 +57,6 @@ export default function BoardSheet({
 		})
 	}
 
-	const renderFormattedText = (text: string) => {
-		const boldRegex = /\*(.*?)\*/g
-		const lineBreaksReplaced = text.replace(/\n/g, '<br>')
-		const formattedText = lineBreaksReplaced.replace(
-			boldRegex,
-			'<strong>$1</strong>'
-		)
-		return formattedText
-	}
-
 	const updateBoard = useMutation(updateBoardDescriptionClient, {
 		onSuccess: () => console.log('success, boardUpdated'),
 		onError: () => console.error('error, boardUpdated(?)')
@@ -107,24 +78,7 @@ export default function BoardSheet({
 			<SheetContent>
 				<SheetHeader>
 					<SheetTitle className="mb-1" asChild>
-						{editTitle.isEditingTitle ? (
-							<input
-								className="border p-1 rounded-md focus:outline-gray-400 w-fit"
-								value={editTitle.title}
-							/>
-						) : (
-							<button
-								className="hover:bg-gray-100 mr-auto px-2 py-0.5 rounded-sm"
-								onClick={() =>
-									setEditTitle({
-										isEditingTitle: true,
-										title
-									})
-								}
-							>
-								{title}
-							</button>
-						)}
+						<Title title={title} />
 					</SheetTitle>
 					<SheetDescription asChild>
 						<div className="overflow-y-auto max-h-[calc(100vh-6rem)]">
@@ -154,174 +108,26 @@ export default function BoardSheet({
 								</div>
 							</div>
 
-							<div className="mt-5 flex flex-row items-center">
-								<span className="text-xs font-medium text-gray-500 flex flex-row items-center">
-									<FileText className="h-3.5 w-3.5 mr-1" />
-									Description
-								</span>
-								{!isEditing && (
-									<button
-										className="ml-3 border border-gray-300 rounded-full p-1 hover:bg-gray-200 transition duration-200 flex flex-row items-center text-gray-400"
-										title="Edit description"
-										onClick={() => setIsEditing(true)}
-									>
-										<Pencil className="h-3.5 w-3.5" />
-									</button>
-								)}
-							</div>
-
-							<div className="relative mt-3 text-sm text-black">
-								{isEditing ? (
-									<>
-										<Tooltip
-											iconClassName="absolute top-2 right-2 text-gray-700"
-											contentClassName="absolute -top-12 right-0"
-										>
-											Make a word <strong>bold</strong> by
-											<br />
-											enclosing it in <strong>*</strong>
-											asterisks
-											<strong>*</strong>.
-										</Tooltip>
-
-										<textarea
-											className="w-full p-2 border border-gray-300 rounded-lg focus:outline-gray-300"
-											rows={12}
-											value={description || ''}
-											onChange={(e) =>
-												setDescription(e.target.value)
-											}
-										/>
-									</>
-								) : (
-									<>
-										{description ? (
-											<p
-												className="break-words"
-												dangerouslySetInnerHTML={{
-													__html: renderFormattedText(
-														description
-													)
-												}}
-											/>
-										) : (
-											<p className="mt-8 font-medium text-gray-600 text-center">
-												Add a description to let your
-												teammates know what this board
-												is used for.
-											</p>
-										)}
-									</>
-								)}
-							</div>
-
-							{isEditing && (
-								<div className="flex flex-row pt-2">
-									<button
-										className="bg-[#219653] hover:bg-[#1e7b48] text-white text-xs rounded-lg px-3 py-1.5 mr-4 transition duration-200"
-										onClick={() => {
-											setIsEditing(false)
-											updateBoard.mutate()
-										}}
-									>
-										Save
-									</button>
-									<button
-										className="text-xs font-medium"
-										onClick={() => setIsEditing(false)}
-									>
-										Cancel
-									</button>
-								</div>
-							)}
+							<Description
+								editDescription={editDescription}
+								setEditDescription={setEditDescription}
+								description={description || ''}
+								setDescription={setDescription}
+								updateBoard={updateBoard}
+							/>
 
 							<span
 								className={`${
-									isEditing ? 'mt-4' : 'mt-8'
+									editDescription ? 'mt-4' : 'mt-8'
 								} text-xs font-medium text-gray-500 flex flex-row items-center`}
 							>
 								<Users2 className="h-3.5 w-3.5 mr-1" /> Team
 							</span>
-							<ul className="mt-4">
-								<li className="flex items-center gap-3 mb-3">
-									<Image
-										src={
-											author?.image ||
-											`https://avatars.dicebear.com/api/micah/${author?.name}.svg`
-										}
-										alt={`${author?.name} avatar`}
-										className="rounded-lg"
-										width={32}
-										height={32}
-									/>
-									<span className="font-semibold text-sm text-gray-900">
-										{author?.name}
-									</span>
-									<span className="ml-auto text-xs font-medium text-gray-400 flex flex-row items-center">
-										Author
-									</span>
-								</li>
-								{members.map(({ name, id, image }) => (
-									<li
-										key={id}
-										className="flex items-center gap-3"
-									>
-										<div>
-											<Image
-												src={
-													image ||
-													`https://avatars.dicebear.com/api/micah/${name}.svg`
-												}
-												alt={`${name} avatar`}
-												className="rounded-lg"
-												width={32}
-												height={32}
-											/>
-										</div>
-										<span className="font-semibold text-sm text-gray-900">
-											{name}
-										</span>
-										<AlertDialog>
-											<AlertDialogTrigger asChild>
-												<button
-													className="border border-[#EB5757] text-[#EB5757] rounded-lg text-xs px-2 py-1 ml-auto hover:bg-[#EB5757] hover:text-white transition duration-200"
-													title="Remove member"
-												>
-													<UserX2 className="h-4 w-4" />
-												</button>
-											</AlertDialogTrigger>
-											<AlertDialogContent>
-												<AlertDialogHeader>
-													<AlertDialogTitle>
-														Are you absolutely sure?
-													</AlertDialogTitle>
-													<AlertDialogDescription>
-														This action cannot be
-														undone. This will delete{' '}
-														<strong>{name}</strong>{' '}
-														from the board.
-													</AlertDialogDescription>
-												</AlertDialogHeader>
-												<AlertDialogFooter>
-													<AlertDialogCancel>
-														Cancel
-													</AlertDialogCancel>
-													<AlertDialogAction
-														className="bg-red-500 hover:bg-red-600"
-														onClick={() =>
-															removeMember.mutate(
-																id
-															)
-														}
-													>
-														Remove
-													</AlertDialogAction>
-												</AlertDialogFooter>
-											</AlertDialogContent>
-										</AlertDialog>
-									</li>
-								))}
-							</ul>
+							<MemberList
+								author={author}
+								members={members}
+								removeMember={removeMember}
+							/>
 						</div>
 					</SheetDescription>
 				</SheetHeader>
