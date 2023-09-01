@@ -26,7 +26,6 @@ export default function BoardSheet({
 	description: boardDescription,
 	currUserId
 }: { author: AuthorProps; members: User[]; currUserId: string } & BoardProps) {
-	const [editDescription, setEditDescription] = useState(false)
 	const [description, setDescription] = useState(boardDescription)
 
 	async function updateBoardDescriptionClient() {
@@ -109,18 +108,12 @@ export default function BoardSheet({
 							</div>
 
 							<Description
-								editDescription={editDescription}
-								setEditDescription={setEditDescription}
 								description={description || ''}
 								setDescription={setDescription}
 								updateBoard={updateBoard}
 							/>
 
-							<span
-								className={`${
-									editDescription ? 'mt-4' : 'mt-8'
-								} text-xs font-medium text-gray-500 flex flex-row items-center`}
-							>
+							<span className="text-xs font-medium text-gray-500 flex flex-row items-center">
 								<Users2 className="h-3.5 w-3.5 mr-1" /> Team
 							</span>
 							<MemberList

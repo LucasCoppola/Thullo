@@ -1,20 +1,19 @@
 import Tooltip from '@/components/ui/tooltip'
 import { UseMutationResult } from '@tanstack/react-query'
 import { FileText, Pencil } from 'lucide-react'
+import { useState } from 'react'
 
 export default function Description({
-	editDescription,
-	setEditDescription,
 	description,
 	setDescription,
 	updateBoard
 }: {
-	editDescription: boolean
-	setEditDescription: (editDescription: boolean) => void
 	description: string
 	setDescription: (description: string) => void
 	updateBoard: UseMutationResult<void, unknown, void, unknown>
 }) {
+	const [editDescription, setEditDescription] = useState(false)
+
 	const renderFormattedText = (text: string) => {
 		const boldRegex = /\*(.*?)\*/g
 		const lineBreaksReplaced = text.replace(/\n/g, '<br>')
@@ -43,7 +42,11 @@ export default function Description({
 				)}
 			</div>
 
-			<div className="relative mt-3 text-sm text-black">
+			<div
+				className={`relative mt-3 text-sm text-black ${
+					!editDescription && 'mb-8'
+				}`}
+			>
 				{editDescription ? (
 					<>
 						<Tooltip
@@ -84,7 +87,7 @@ export default function Description({
 			</div>
 
 			{editDescription && (
-				<div className="flex flex-row pt-2">
+				<div className="flex flex-row pt-2 pb-4">
 					<button
 						className="bg-[#219653] hover:bg-[#1e7b48] text-white text-xs rounded-lg px-3 py-1.5 mr-4 transition duration-200"
 						onClick={() => {
