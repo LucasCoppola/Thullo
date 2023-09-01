@@ -112,96 +112,106 @@ export default function AddMemberModal({ authorId, id }: BoardProps) {
 						Add a Member
 					</DialogTitle>
 					<DialogDescription asChild>
-						<div className="h-40 relative">
-							<form
-								onSubmit={handleSubmit}
-								className="flex flex-row"
-							>
-								<input
-									placeholder="Search by name or email"
-									className="bg-gray-50 border mr-3 border-gray-300 text-gray-800 text-sm rounded-lg w-full p-2.5 focus:outline-none focus:ring-1 hover:ring-1 hover:ring-gray-200 focus:ring-gray-200"
-									value={keyword}
-									onChange={(e) => setKeyword(e.target.value)}
-								/>
-								<Button
-									variant="blue"
-									type="submit"
-									disabled={isLoading}
+						<div className="relative">
+							<div className="h-44 overflow-y-auto">
+								<form
+									onSubmit={handleSubmit}
+									className="flex flex-row"
 								>
-									{isLoading ? (
-										<LoadingCircle className="fill-white mx-3 text-blue-200" />
-									) : (
-										'Invite'
-									)}
-								</Button>
-							</form>
+									<input
+										placeholder="Search by name or email"
+										className="bg-gray-50 border mr-3 border-gray-300 text-gray-800 text-sm rounded-lg w-full p-2.5 focus:outline-none focus:ring-1 hover:ring-1 hover:ring-gray-200 focus:ring-gray-200"
+										value={keyword}
+										onChange={(e) =>
+											setKeyword(e.target.value)
+										}
+									/>
+									<Button
+										variant="blue"
+										type="submit"
+										disabled={isLoading}
+									>
+										{isLoading ? (
+											<LoadingCircle className="fill-white mx-3 text-blue-200" />
+										) : (
+											'Invite'
+										)}
+									</Button>
+								</form>
 
-							{isLoadingUsers ? (
-								<p className="flex justify-center mt-8">
-									<LoadingCircle className="fill-gray-500 text-gray-300" />
-								</p>
-							) : users && users.length > 0 ? (
-								<ul>
-									{users.map(({ id, name, image }) => (
-										<div key={id} className="relative">
+								{isLoadingUsers ? (
+									<p className="flex justify-center mt-8">
+										<LoadingCircle className="fill-gray-500 text-gray-300" />
+									</p>
+								) : keyword && users && users.length > 0 ? (
+									<ul>
+										{users.map(({ id, name, image }) => (
 											<div
-												className={`flex flex-row mt-3 py-1 px-2 rounded-md items-center cursor-pointer ${
-													selectedUser?.id === id
-														? 'bg-blue-100'
-														: 'hover:bg-gray-200'
-												}`}
-												onClick={() =>
-													setSelectedUser({
-														id,
-														name,
-														image
-													})
-												}
+												key={id}
+												className="relative first:mt-2 last:pb-6 mb-1"
 											>
-												<Image
-													src={
-														image ||
-														`https://avatars.dicebear.com/api/micah/${name}.svg`
-													}
-													width={20}
-													height={20}
-													className="rounded-full mr-2"
-													alt="avatar"
-												/>
-												<li
-													className={`${
+												<div
+													className={`flex flex-row py-1 px-2 rounded-md items-center cursor-pointer ${
 														selectedUser?.id === id
-															? 'text-blue-500'
-															: 'text-gray-800'
+															? 'bg-blue-100'
+															: 'hover:bg-gray-200'
 													}`}
-												>
-													{name}
-												</li>
-											</div>
-											{selectedUser?.id === id && (
-												<X
-													className="h-4 w-4 absolute right-1 top-[6px] text-blue-500 rounded-full hover:bg-blue-200"
 													onClick={() =>
-														setSelectedUser(null)
+														setSelectedUser({
+															id,
+															name,
+															image
+														})
 													}
-												/>
-											)}
-										</div>
-									))}
-								</ul>
-							) : (
-								<p className="flex justify-center mt-8">
-									No results found.
-								</p>
-							)}
+												>
+													<Image
+														src={
+															image ||
+															`https://avatars.dicebear.com/api/micah/${name}.svg`
+														}
+														width={20}
+														height={20}
+														className="rounded-full mr-2"
+														alt="avatar"
+													/>
+													<li
+														className={`${
+															selectedUser?.id ===
+															id
+																? 'text-blue-500'
+																: 'text-gray-800'
+														}`}
+													>
+														{name}
+													</li>
+												</div>
+												{selectedUser?.id === id && (
+													<X
+														className="h-4 w-4 absolute right-1 top-[6px] text-blue-500 rounded-full hover:bg-blue-200"
+														onClick={() =>
+															setSelectedUser(
+																null
+															)
+														}
+													/>
+												)}
+											</div>
+										))}
+									</ul>
+								) : (
+									<p className="flex justify-center mt-10">
+										No results found.
+									</p>
+								)}
 
-							<p className="text-gray-500 justify-center text-xs absolute -bottom-3 border-t w-full pt-2 border-gray-300 flex flex-row items-center">
-								<Info
-									strokeWidth={1.25}
-									className="mr-2 text-gray-500"
-								/>
-								Make sure the member is signed up.
-							</p>
+								<p className="text-gray-500 bg-white justify-center text-xs absolute -bottom-3 border-t w-full pt-2 border-gray-300 flex flex-row items-center">
+									<Info
+										strokeWidth={1.25}
+										className="mr-2 text-gray-500"
+									/>
+									Make sure the member is signed up.
+								</p>
+							</div>
 						</div>
 					</DialogDescription>
 				</DialogHeader>

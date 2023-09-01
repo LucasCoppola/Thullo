@@ -28,7 +28,8 @@ export async function findUsers({
 	try {
 		const users = await prisma.user.findMany({
 			where: {
-				OR: [{ email: keyword }, { name: keyword }],
+				name: { startsWith: keyword, mode: 'insensitive' },
+				OR: [{ email: { startsWith: keyword, mode: 'insensitive' } }],
 				AND: { id: { not: currUserId } }
 			},
 			select: { id: true, name: true, image: true }
