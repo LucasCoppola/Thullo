@@ -5,7 +5,7 @@ import { addMember, removeMember } from './server/membersOperations'
 import {
 	createBoard,
 	updateVisibility,
-	updateBoardDescription
+	updateBoard
 } from './server/boardsOperations'
 import { BoardMemberRelation, BoardProps, VisibilityMutation } from './types'
 
@@ -68,17 +68,19 @@ export async function removeMemberAction({
 	}
 }
 
-export async function updateBoardDescriptionAction({
+export async function updateBoardAction({
 	boardId,
 	description,
+	title,
 	authorId,
 	currUserId
 }: {
 	boardId: string
-	description: string
+	description?: string
+	title?: string
 	authorId: string
 	currUserId: string
 }) {
-	await updateBoardDescription({ boardId, description, authorId, currUserId })
+	await updateBoard({ boardId, description, title, authorId, currUserId })
 	revalidatePath(`/boards/${boardId}`)
 }

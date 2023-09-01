@@ -91,29 +91,41 @@ export async function updateVisibility({
 	}
 }
 
-export async function updateBoardDescription({
+export async function updateBoard({
 	boardId,
 	description,
+	title,
 	authorId,
 	currUserId
 }: {
 	boardId: string
-	description: string
+	description?: string
+	title?: string
 	authorId: string
 	currUserId: string
 }) {
 	try {
+		if (!description && !title) {
+			throw new Error('Either description or title is required.')
+		}
 		if (authorId !== currUserId) {
 			throw new Error('Unauthorized')
+		}
+
+		const updatedData = {} as { title: string; description: string }
+
+		if (title) {
+			updatedData.title = title
+		}
+		if (description) {
+			updatedData.description = description
 		}
 
 		const updatedBoard = await prisma.board.update({
 			where: {
 				id: boardId
 			},
-			data: {
-				description
-			}
+			data: updatedData
 		})
 
 		return { updatedBoard }

@@ -11,7 +11,7 @@ import {
 import { MoreHorizontal, User2, Users2 } from 'lucide-react'
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { removeMemberAction, updateBoardDescriptionAction } from '@/app/actions'
+import { removeMemberAction, updateBoardAction } from '@/app/actions'
 
 import MemberList from './sheet-components/member-list'
 import Description from './sheet-components/description'
@@ -19,23 +19,42 @@ import Title from './sheet-components/title'
 
 export default function BoardSheet({
 	id,
-	title,
 	author,
 	createdAt,
 	members,
+	title: boardTitle,
 	description: boardDescription,
 	currUserId
 }: { author: AuthorProps; members: User[]; currUserId: string } & BoardProps) {
 	const [description, setDescription] = useState(boardDescription)
+	const [title, setTitle] = useState(boardTitle)
 
-	async function updateBoardDescriptionClient() {
-		await updateBoardDescriptionAction({
-			boardId: id!,
-			description: description || '',
-			authorId: author?.id || '',
-			currUserId
-		})
+	async function updateBoardClient() {
+		if (title === boardTitle && description === boardDescription) {
+			return
+		} else if (title === boardTitle && description !== boardDescription) {
+			await updateBoardAction({
+				boardId: id!,
+				description: description || '',
+				authorId: author?.id || '',
+				currUserId
+			})
+			return
+		} else if (title !== boardTitle && description === boardDescription) {
+			await updateBoardAction({
+				boardId: id!,
+				title: title || '',
+				authorId: author?.id || '',
+				currUserId
+			})
+			return
+		}
 	}
+
+	const updateBoard = useMutation(updateBoardClient, {
+		onSuccess: () => console.log('success, boardUpdated'),
+		onError: () => console.error('error, boardUpdated(?)')
+	})
 
 	async function removeMemberClient(userId: string) {
 		if (author?.id !== currUserId) {
@@ -56,11 +75,6 @@ export default function BoardSheet({
 		})
 	}
 
-	const updateBoard = useMutation(updateBoardDescriptionClient, {
-		onSuccess: () => console.log('success, boardUpdated'),
-		onError: () => console.error('error, boardUpdated(?)')
-	})
-
 	const removeMember = useMutation(removeMemberClient, {
 		onSuccess: () => console.log('success, member removed'),
 		onError: () => console.error('error, member removed(?)')
@@ -77,7 +91,11 @@ export default function BoardSheet({
 			<SheetContent>
 				<SheetHeader>
 					<SheetTitle className="mb-1" asChild>
-						<Title title={title} />
+						<Title
+							title={title}
+							setTitle={setTitle}
+							updateBoard={updateBoard}
+						/>
 					</SheetTitle>
 					<SheetDescription asChild>
 						<div className="overflow-y-auto max-h-[calc(100vh-6rem)]">

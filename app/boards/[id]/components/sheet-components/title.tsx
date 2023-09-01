@@ -1,11 +1,19 @@
+import { UseMutationResult } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 
-export default function Title({ title }: { title: string }) {
+export default function Title({
+	title,
+	setTitle,
+	updateBoard
+}: {
+	title: string
+	setTitle: (title: string) => void
+	updateBoard: UseMutationResult<void, unknown, void, unknown>
+}) {
 	const [isEditingTitle, setIsEditingTitle] = useState(false)
 	const [editedTitle, setEditedTitle] = useState(title)
-	const titleRef = useRef<HTMLDivElement>(null)
 	const [titleWidth, setTitleWidth] = useState<number>(0)
-	console.log(titleWidth)
+	const titleRef = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -13,6 +21,10 @@ export default function Title({ title }: { title: string }) {
 				titleRef.current &&
 				!titleRef.current.contains(event.target as Node)
 			) {
+				if (editedTitle !== title) {
+					setTitle(editedTitle)
+					updateBoard.mutate()
+				}
 				setIsEditingTitle(false)
 			}
 		}
@@ -31,7 +43,18 @@ export default function Title({ title }: { title: string }) {
 			document.removeEventListener('mousedown', handleClickOutside)
 			window.removeEventListener('resize', updateTitleWidth)
 		}
-	}, [editedTitle])
+	}, [editedTitle, title, setTitle, updateBoard])
+
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter') {
+			e.preventDefault()
+			if (editedTitle !== title) {
+				setTitle(editedTitle)
+				updateBoard.mutate()
+			}
+			setIsEditingTitle(false)
+		}
+	}
 
 	return (
 		<>
@@ -44,7 +67,14 @@ export default function Title({ title }: { title: string }) {
 						type="text"
 						value={editedTitle}
 						onChange={(e) => setEditedTitle(e.target.value)}
-						onBlur={() => setIsEditingTitle(false)}
+						onBlur={() => {
+							if (editedTitle !== title) {
+								setTitle(editedTitle)
+								updateBoard.mutate()
+							}
+							setIsEditingTitle(false)
+						}}
+						onKeyDown={handleKeyDown}
 						autoFocus
 						className="border-2 border-blue-200 px-2 py-0.5 text-xl font-semibold mb-1 rounded-sm focus:outline-none"
 						style={{ width: titleWidth + 'px' }}
