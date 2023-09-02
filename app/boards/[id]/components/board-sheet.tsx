@@ -11,7 +11,8 @@ import {
 import { MoreHorizontal, User2, Users2 } from 'lucide-react'
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { removeMemberAction, updateBoardAction } from '@/app/actions'
+import { updateBoard } from '@/app/server/boardsOperations'
+import { removeMemberAction } from '@/app/actions'
 
 import MemberList from './sheet-components/member-list'
 import Description from './sheet-components/description'
@@ -33,7 +34,7 @@ export default function BoardSheet({
 		if (title === boardTitle && description === boardDescription) {
 			return
 		} else if (title === boardTitle && description !== boardDescription) {
-			await updateBoardAction({
+			await updateBoard({
 				boardId: id!,
 				description: description || '',
 				authorId: author?.id || '',
@@ -41,7 +42,7 @@ export default function BoardSheet({
 			})
 			return
 		} else if (title !== boardTitle && description === boardDescription) {
-			await updateBoardAction({
+			await updateBoard({
 				boardId: id!,
 				title: title || '',
 				authorId: author?.id || '',
@@ -51,7 +52,7 @@ export default function BoardSheet({
 		}
 	}
 
-	const updateBoard = useMutation(updateBoardClient, {
+	const updateBoardMutation = useMutation(updateBoardClient, {
 		onSuccess: () => console.log('success, boardUpdated'),
 		onError: () => console.error('error, boardUpdated(?)')
 	})
@@ -94,7 +95,7 @@ export default function BoardSheet({
 						<Title
 							title={title}
 							setTitle={setTitle}
-							updateBoard={updateBoard}
+							updateBoardMutation={updateBoardMutation}
 						/>
 					</SheetTitle>
 					<SheetDescription asChild>
@@ -128,7 +129,7 @@ export default function BoardSheet({
 							<Description
 								description={description || ''}
 								setDescription={setDescription}
-								updateBoard={updateBoard}
+								updateBoardMutation={updateBoardMutation}
 							/>
 
 							<span className="text-xs font-medium text-gray-500 flex flex-row items-center">

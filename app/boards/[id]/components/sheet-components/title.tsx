@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from 'react'
 export default function Title({
 	title,
 	setTitle,
-	updateBoard
+	updateBoardMutation
 }: {
 	title: string
 	setTitle: (title: string) => void
-	updateBoard: UseMutationResult<void, unknown, void, unknown>
+	updateBoardMutation: UseMutationResult<void, unknown, void, unknown>
 }) {
 	const [isEditingTitle, setIsEditingTitle] = useState(false)
 	const [editedTitle, setEditedTitle] = useState(title)
@@ -23,7 +23,7 @@ export default function Title({
 			) {
 				if (editedTitle !== title) {
 					setTitle(editedTitle)
-					updateBoard.mutate()
+					updateBoardMutation.mutate()
 				}
 				setIsEditingTitle(false)
 			}
@@ -43,14 +43,14 @@ export default function Title({
 			document.removeEventListener('mousedown', handleClickOutside)
 			window.removeEventListener('resize', updateTitleWidth)
 		}
-	}, [editedTitle, title, setTitle, updateBoard])
+	}, [editedTitle, title, setTitle, updateBoardMutation])
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			e.preventDefault()
 			if (editedTitle !== title) {
 				setTitle(editedTitle)
-				updateBoard.mutate()
+				updateBoardMutation.mutate()
 			}
 			setIsEditingTitle(false)
 		}
@@ -70,7 +70,7 @@ export default function Title({
 						onBlur={() => {
 							if (editedTitle !== title) {
 								setTitle(editedTitle)
-								updateBoard.mutate()
+								updateBoardMutation.mutate()
 							}
 							setIsEditingTitle(false)
 						}}

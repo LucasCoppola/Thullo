@@ -67,20 +67,3 @@ export async function removeMemberAction({
 		return { e }
 	}
 }
-
-export async function updateBoardAction({
-	boardId,
-	description,
-	title,
-	authorId,
-	currUserId
-}: {
-	boardId: string
-	description?: string
-	title?: string
-	authorId: string
-	currUserId: string
-}) {
-	await updateBoard({ boardId, description, title, authorId, currUserId })
-	revalidatePath(`/boards/${boardId}`)
-}
