@@ -58,7 +58,7 @@ export default function BoardHeader({
 	}
 
 	return (
-		<div className="mt-6 mx-8 flex justify-between items-center">
+		<div className="mt-4 mx-8 flex justify-between items-center">
 			<div className="flex space-x-4 flex-row items-center">
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>

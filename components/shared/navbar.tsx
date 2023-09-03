@@ -20,8 +20,8 @@ export default function Navbar({ session }: { session: Session | null }) {
 	)
 
 	return (
-		<nav className="relative bg-transparent mt-2 px-10 shadow-sm">
-			<div className="w-full py-3 md:flex md:justify-between items-center">
+		<nav className="relative bg-transparent mt-1 px-10 shadow-sm">
+			<div className="w-full py-2 md:flex md:justify-between items-center">
 				<div className="flex items-center">
 					<Link href="/">
 						<Image
