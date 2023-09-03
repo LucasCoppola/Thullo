@@ -36,9 +36,9 @@ export default async function BoardPage({
 			/>
 			<div className="w-full overflow-x-auto bg-[#fafbfe] px-8 rounded-lg mt-4">
 				<div className="flex flex-row gap-8">
-					<List />
-					<List />
-					<List />
+					<List members={members as User[]} />
+					<List members={members as User[]} />
+					<List members={members as User[]} />
 					<AddButtonComponent name="list" />
 				</div>
 			</div>
