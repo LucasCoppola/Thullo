@@ -67,5 +67,20 @@
 }
 
 *::-webkit-scrollbar {
-	width: fit-content;
+	width: 8px;
+	height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+	background-color: #e5e7eb; /* Track color using Tailwind gray-200 */
+	border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: #d1d5db; /* Thumb color using Tailwind gray-300 */
+	border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+	background-color: #9ca3af; /* Thumb color on hover using Tailwind gray-400 */
 }
