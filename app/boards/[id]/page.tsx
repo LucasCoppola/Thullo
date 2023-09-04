@@ -6,8 +6,8 @@ import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
 import BoardHeader from './components/board-header'
 import { User } from '@/app/types'
-import List from './components/list'
-import { Add } from '@/components/ui/icons'
+import List from './components/list-components/list'
+import { AddButtonComponent } from './components/list-components/add-list'
 
 export default async function BoardPage({
 	params
@@ -34,26 +34,14 @@ export default async function BoardPage({
 				currUserId={session.userId}
 				members={members as User[]}
 			/>
-			<div className="w-full overflow-x-auto bg-[#fafbfe] px-8 rounded-lg mt-4">
+			<div className="w-full overflow-x-auto bg-[#fafbfe] px-2 rounded-lg mt-4">
 				<div className="flex flex-row gap-8">
-					<List members={members as User[]} />
-					<List members={members as User[]} />
-					<List members={members as User[]} />
-					<AddButtonComponent name="list" />
+					<List members={members as User[]} boardId={board.id} />
+					<List members={members as User[]} boardId={board.id} />
+					<List members={members as User[]} boardId={board.id} />
+					<AddButtonComponent name="list" boardId={board.id} />
 				</div>
 			</div>
 		</div>
-	)
-}
-
-export function AddButtonComponent({ name }: { name: 'card' | 'list' }) {
-	return (
-		<button
-			className="mt-4 flex flex-row bg-blue-50 h-8 items-center px-2.5 py-1 rounded-lg hover:bg-blue-100"
-			style={{ minWidth: '243px' }}
-		>
-			<span className="text-blue-400 text-sm">Add another {name}</span>
-			<Add className="text-blue-300 ml-auto w-5 h-5" strokeWidth={1.5} />
-		</button>
 	)
 }

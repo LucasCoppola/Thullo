@@ -134,3 +134,25 @@ export async function updateBoard({
 		return { e }
 	}
 }
+
+export async function createList({
+	boardId,
+	title
+}: {
+	boardId: string
+	title: string
+}) {
+	try {
+		const createList = await prisma.list.create({
+			data: {
+				boardId,
+				title
+			}
+		})
+
+		return { createList }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}

@@ -89,5 +89,13 @@ model MembersOnBoards {
 model List {
   id      String @id @default(cuid())
   boardId String
+  title   String 
+  cards   Card[]
   board   Board  @relation(fields: [boardId], references: [id])
+}
+
+model Card{
+  id String @id @default(cuid())
+  listId String
+  list List @relation(fields: [listId], references: [id])
 }

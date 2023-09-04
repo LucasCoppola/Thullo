@@ -2,11 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { addMember, removeMember } from './server/membersOperations'
-import {
-	createBoard,
-	updateVisibility,
-	updateBoard
-} from './server/boardsOperations'
+import { createBoard, updateVisibility } from './server/boardsOperations'
 import { BoardMemberRelation, BoardProps, VisibilityMutation } from './types'
 
 export async function createBoardAction({
