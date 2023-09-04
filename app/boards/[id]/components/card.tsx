@@ -14,16 +14,16 @@ export default function Card({ members }: { members: User[] }) {
 				width={200}
 				height={50}
 			/>
-			<h2>Card Title</h2>
+			<h3 className="font-medium">Card Title</h3>
 			<div className="flex flex-row space-x-2">
-				<span className="text-xs text-green-600 bg-green-200 rounded-full px-2 py-[1px]">
+				<span className="text-[10px] font-medium text-green-600 bg-green-200 rounded-full px-2 py-[1px]">
 					Design
 				</span>
-				<span className="text-xs text-blue-600 bg-blue-200 rounded-full px-2 py-[1px]">
+				<span className="text-[10px] font-medium text-blue-600 bg-blue-200 rounded-full px-2 py-[1px]">
 					Technical
 				</span>
 			</div>
-			<div className="flex flex-row justify-between items-center pt-1">
+			<div className="flex flex-row justify-between items-center pt-2">
 				<div className="flex -space-x-1 overflow-hidden items-center">
 					{members.map(({ image, name, id }) => (
 						<Image
