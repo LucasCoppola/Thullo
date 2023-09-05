@@ -134,3 +134,64 @@ export async function updateBoard({
 		return { e }
 	}
 }
+
+export async function createList({
+	boardId,
+	title
+}: {
+	boardId: string
+	title: string
+}) {
+	try {
+		const createList = await prisma.list.create({
+			data: {
+				boardId,
+				title
+			}
+		})
+
+		return { createList }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}
+
+export async function getLists({ boardId }: { boardId: string }) {
+	try {
+		const lists = await prisma.list.findMany({
+			where: {
+				boardId
+			}
+		})
+
+		return { lists }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}
+
+export async function updateListTitle({
+	listId,
+	title
+}: {
+	listId: string
+	title: string
+}) {
+	try {
+		const list = await prisma.list.update({
+			where: {
+				id: listId
+			},
+			data: {
+				title
+			}
+		})
+
+		return { list }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}

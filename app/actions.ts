@@ -4,8 +4,8 @@ import { revalidatePath } from 'next/cache'
 import { addMember, removeMember } from './server/membersOperations'
 import {
 	createBoard,
-	updateVisibility,
-	updateBoard
+	createList,
+	updateVisibility
 } from './server/boardsOperations'
 import { BoardMemberRelation, BoardProps, VisibilityMutation } from './types'
 
@@ -66,4 +66,15 @@ export async function removeMemberAction({
 	} catch (e) {
 		return { e }
 	}
+}
+
+export async function createListAction({
+	boardId,
+	title
+}: {
+	boardId: string
+	title: string
+}) {
+	await createList({ boardId, title })
+	revalidatePath(`/boards/${boardId}`)
 }

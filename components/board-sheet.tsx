@@ -16,7 +16,7 @@ import { removeMemberAction } from '@/app/actions'
 
 import MemberList from './sheet-components/member-list'
 import Description from './sheet-components/description'
-import Title from './sheet-components/title'
+import EditableTitle from './shared/editable-title'
 
 export default function BoardSheet({
 	id,
@@ -92,10 +92,14 @@ export default function BoardSheet({
 			<SheetContent>
 				<SheetHeader>
 					<SheetTitle className="mb-1" asChild>
-						<Title
-							title={title}
-							setTitle={setTitle}
-							updateBoardMutation={updateBoardMutation}
+						<EditableTitle
+							initialValue={title}
+							onSave={(editedTitle) => {
+								setTitle(editedTitle)
+								updateBoardMutation.mutate()
+							}}
+							titleClassName="text-xl font-semibold px-2.5 py-1 hover:bg-gray-200 mb-1 rounded-sm"
+							inputClassName="px-2 py-0.5 text-xl font-semibold mb-1"
 						/>
 					</SheetTitle>
 					<SheetDescription asChild>

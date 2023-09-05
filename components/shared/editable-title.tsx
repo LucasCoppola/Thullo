@@ -1,19 +1,20 @@
-import { UseMutationResult } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 
-export default function Title({
-	title,
-	setTitle,
-	updateBoardMutation
+export default function EditableTitle({
+	initialValue,
+	onSave,
+	titleClassName,
+	inputClassName
 }: {
-	title: string
-	setTitle: (title: string) => void
-	updateBoardMutation: UseMutationResult<void, unknown, void, unknown>
+	initialValue: string
+	onSave: (value: string) => void
+	titleClassName: string
+	inputClassName: string
 }) {
 	const [isEditingTitle, setIsEditingTitle] = useState(false)
-	const [editedTitle, setEditedTitle] = useState(title)
+	const [editedTitle, setEditedTitle] = useState(initialValue)
 	const [titleWidth, setTitleWidth] = useState<number>(0)
-	const titleRef = useRef<HTMLDivElement>(null)
+	const titleRef = useRef<HTMLHeadingElement>(null)
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -21,9 +22,8 @@ export default function Title({
 				titleRef.current &&
 				!titleRef.current.contains(event.target as Node)
 			) {
-				if (editedTitle !== title) {
-					setTitle(editedTitle)
-					updateBoardMutation.mutate()
+				if (editedTitle !== initialValue) {
+					onSave(editedTitle)
 				}
 				setIsEditingTitle(false)
 			}
@@ -31,8 +31,8 @@ export default function Title({
 
 		const updateTitleWidth = () => {
 			if (titleRef.current) {
-				const width = titleRef.current.offsetWidth
-				setTitleWidth(width / 2)
+				const width = titleRef.current.scrollWidth
+				setTitleWidth(width)
 			}
 		}
 
@@ -43,14 +43,13 @@ export default function Title({
 			document.removeEventListener('mousedown', handleClickOutside)
 			window.removeEventListener('resize', updateTitleWidth)
 		}
-	}, [editedTitle, title, setTitle, updateBoardMutation])
+	}, [editedTitle, initialValue, onSave])
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			e.preventDefault()
-			if (editedTitle !== title) {
-				setTitle(editedTitle)
-				updateBoardMutation.mutate()
+			if (editedTitle !== initialValue) {
+				onSave(editedTitle)
 			}
 			setIsEditingTitle(false)
 		}
@@ -68,15 +67,14 @@ export default function Title({
 						value={editedTitle}
 						onChange={(e) => setEditedTitle(e.target.value)}
 						onBlur={() => {
-							if (editedTitle !== title) {
-								setTitle(editedTitle)
-								updateBoardMutation.mutate()
+							if (editedTitle !== initialValue) {
+								onSave(editedTitle)
 							}
 							setIsEditingTitle(false)
 						}}
 						onKeyDown={handleKeyDown}
 						autoFocus
-						className="border-2 border-blue-200 px-2 py-0.5 text-xl font-semibold mb-1 rounded-sm focus:outline-none"
+						className={`border-2 border-blue-200 focus:outline-none rounded-sm ${inputClassName}`}
 						style={{ width: titleWidth + 'px' }}
 					/>
 				</div>
@@ -85,11 +83,10 @@ export default function Title({
 					role="button"
 					className="flex items-center"
 					onClick={() => setIsEditingTitle(true)}
-					ref={titleRef}
 				>
-					<h1 className="text-xl font-semibold px-2.5 py-1 hover:bg-gray-200 mb-1 rounded-sm">
+					<h2 ref={titleRef} className={titleClassName}>
 						{editedTitle}
-					</h1>
+					</h2>
 				</div>
 			)}
 		</>
