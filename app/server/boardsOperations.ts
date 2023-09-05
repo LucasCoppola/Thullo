@@ -156,3 +156,18 @@ export async function createList({
 		return { e }
 	}
 }
+
+export async function getLists({ boardId }: { boardId: string }) {
+	try {
+		const lists = await prisma.list.findMany({
+			where: {
+				boardId
+			}
+		})
+
+		return { lists }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}

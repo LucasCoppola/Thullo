@@ -1,4 +1,4 @@
-import { findBoardById } from '@/app/server/boardsOperations'
+import { findBoardById, getLists } from '@/app/server/boardsOperations'
 import { getBoardMembers } from '@/app/server/membersOperations'
 import { findUserById } from '@/app/server/usersOperations'
 import { getServerSession } from 'next-auth'
@@ -19,9 +19,11 @@ export default async function BoardPage({
 
 	if (!board) return <div>No board found</div>
 
-	const { author } = await findUserById({ id: board.authorId })
 	const session = await getServerSession(authOptions)
+	const { author } = await findUserById({ id: board.authorId })
 	const { members } = await getBoardMembers({ boardId: id })
+	const { lists } = await getLists({ boardId: id })
+
 	if (!session) {
 		redirect('/')
 	}
@@ -36,9 +38,15 @@ export default async function BoardPage({
 			/>
 			<div className="w-full overflow-x-auto bg-[#fafbfe] px-2 rounded-lg mt-4">
 				<div className="flex flex-row gap-8">
-					<List members={members as User[]} boardId={board.id} />
-					<List members={members as User[]} boardId={board.id} />
-					<List members={members as User[]} boardId={board.id} />
+					{lists?.map(({ id, title }) => (
+						<List
+							key={id}
+							title={title}
+							members={members as User[]}
+							boardId={board.id}
+						/>
+					))}
+
 					<AddButtonComponent name="list" boardId={board.id} />
 				</div>
 			</div>
