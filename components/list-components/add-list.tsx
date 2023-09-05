@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import { Add } from '@/components/ui/icons'
 import { useMutation } from '@tanstack/react-query'
-import { createList } from '@/app/server/boardsOperations'
+import { updateListTitle } from '@/app/server/boardsOperations'
+import EditableTitle from '../shared/editable-title'
+import { createListAction } from '@/app/actions'
 
 export default function AddList({
 	setCreateMode,
@@ -14,15 +16,15 @@ export default function AddList({
 }) {
 	const [listTitle, setListTitle] = useState('')
 
-	const { mutate } = useMutation(
-		async () => await createList({ boardId, title: listTitle }),
+	const { mutate: mutateList, isLoading } = useMutation(
+		async () => await createListAction({ boardId, title: listTitle }),
 		{
 			onSuccess: () => {
 				console.log('List created')
 				setCreateMode(false)
 			},
 			onError: (e) => {
-				console.log(e)
+				console.error(e)
 			}
 		}
 	)
@@ -37,12 +39,14 @@ export default function AddList({
 				className="border-2 border-blue-200 px-2 py-0.5 mb-1 rounded-sm focus:outline-none"
 				value={listTitle}
 				onChange={(e) => setListTitle(e.target.value)}
+				disabled={isLoading}
 				required
 			/>
 			<div className="flex flex-row gap-2 mt-0.5">
 				<button
 					className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded-md"
-					onClick={() => mutate()}
+					onClick={() => mutateList()}
+					disabled={isLoading}
 				>
 					Add List
 				</button>
@@ -54,6 +58,39 @@ export default function AddList({
 				</button>
 			</div>
 		</form>
+	)
+}
+
+export function EditableListTitle({
+	title: listTitle,
+	listId
+}: {
+	title: string
+	listId: string
+}) {
+	const [title, setTitle] = useState(listTitle)
+
+	const { mutate: mutateListTitle, error } = useMutation(
+		async () => await updateListTitle({ listId, title }),
+		{
+			onSuccess: () => {
+				console.log('List title updated')
+			},
+			onError: () => {
+				console.error(error)
+			}
+		}
+	)
+	return (
+		<EditableTitle
+			initialValue={title}
+			onSave={(editedTitle) => {
+				setTitle(editedTitle)
+				mutateListTitle()
+			}}
+			titleClassName="text-lg font-medium px-1 py-0.5 hover:bg-gray-100 rounded-md"
+			inputClassName="text-lg font-medium px-1"
+		/>
 	)
 }
 

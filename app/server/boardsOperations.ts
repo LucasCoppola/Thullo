@@ -171,3 +171,27 @@ export async function getLists({ boardId }: { boardId: string }) {
 		return { e }
 	}
 }
+
+export async function updateListTitle({
+	listId,
+	title
+}: {
+	listId: string
+	title: string
+}) {
+	try {
+		const list = await prisma.list.update({
+			where: {
+				id: listId
+			},
+			data: {
+				title
+			}
+		})
+
+		return { list }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}

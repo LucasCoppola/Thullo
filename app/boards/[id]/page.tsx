@@ -41,6 +41,7 @@ export default async function BoardPage({
 					{lists?.map(({ id, title }) => (
 						<List
 							key={id}
+							listId={id}
 							title={title}
 							members={members as User[]}
 							boardId={board.id}
