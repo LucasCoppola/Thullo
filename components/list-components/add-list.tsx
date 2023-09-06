@@ -15,6 +15,7 @@ export default function AddList({
 	boardId: string
 }) {
 	const [listTitle, setListTitle] = useState('')
+	const isListTitleValid = listTitle.trim().length >= 1
 
 	const { mutate: mutateList, isLoading } = useMutation(
 		async () => await createListAction({ boardId, title: listTitle }),
@@ -45,7 +46,9 @@ export default function AddList({
 			<div className="flex flex-row gap-2 mt-0.5">
 				<button
 					className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded-md"
-					onClick={() => mutateList()}
+					onClick={() => {
+						if (isListTitleValid) mutateList()
+					}}
 					disabled={isLoading}
 				>
 					Add List
@@ -85,11 +88,13 @@ export function EditableListTitle({
 		<EditableTitle
 			initialValue={title}
 			onSave={(editedTitle) => {
+				console.log('is this running??')
+				if (editedTitle.trim().length === 0) return
 				setTitle(editedTitle)
 				mutateListTitle()
 			}}
 			titleClassName="text-lg font-medium px-1 py-0.5 hover:bg-gray-100 rounded-md"
-			inputClassName="text-lg font-medium px-1"
+			inputClassName="text-lg font-medium px-0.5"
 		/>
 	)
 }

@@ -22,8 +22,12 @@ export default function EditableTitle({
 				titleRef.current &&
 				!titleRef.current.contains(event.target as Node)
 			) {
-				if (editedTitle !== initialValue) {
-					onSave(editedTitle)
+				if (editedTitle.trim() !== '') {
+					if (editedTitle !== initialValue) {
+						onSave(editedTitle)
+					}
+				} else {
+					setEditedTitle(initialValue)
 				}
 				setIsEditingTitle(false)
 			}
@@ -48,8 +52,12 @@ export default function EditableTitle({
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			e.preventDefault()
-			if (editedTitle !== initialValue) {
-				onSave(editedTitle)
+			if (editedTitle.trim() !== '') {
+				if (editedTitle !== initialValue) {
+					onSave(editedTitle)
+				}
+			} else {
+				setEditedTitle(initialValue)
 			}
 			setIsEditingTitle(false)
 		}
@@ -67,8 +75,12 @@ export default function EditableTitle({
 						value={editedTitle}
 						onChange={(e) => setEditedTitle(e.target.value)}
 						onBlur={() => {
-							if (editedTitle !== initialValue) {
-								onSave(editedTitle)
+							if (editedTitle.trim() !== '') {
+								if (editedTitle !== initialValue) {
+									onSave(editedTitle)
+								}
+							} else {
+								setEditedTitle(initialValue)
 							}
 							setIsEditingTitle(false)
 						}}
