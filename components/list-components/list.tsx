@@ -18,7 +18,6 @@ export default function List({
 		<div className="mt-4" style={{ minWidth: '243px' }}>
 			<div className="flex flex-row justify-between pb-4">
 				<EditableListTitle title={title} listId={listId} />
-				<MoreHorizontal className="text-gray-400" />
 			</div>
 			<Card members={members} />
 			<AddButtonComponent name="card" boardId={boardId} />

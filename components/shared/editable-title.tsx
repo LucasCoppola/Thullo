@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export default function EditableTitle({
 	initialValue,
@@ -13,8 +13,20 @@ export default function EditableTitle({
 }) {
 	const [isEditingTitle, setIsEditingTitle] = useState(false)
 	const [editedTitle, setEditedTitle] = useState(initialValue)
-	const [titleWidth, setTitleWidth] = useState<number>(0)
+	const [inputWidth, setInputWidth] = useState<number>(0)
 	const titleRef = useRef<HTMLHeadingElement>(null)
+	const inputRef = useRef<HTMLInputElement>(null)
+
+	const handleSave = useCallback(() => {
+		if (editedTitle.trim() !== '') {
+			if (editedTitle !== initialValue) {
+				onSave(editedTitle)
+			}
+		} else {
+			setEditedTitle(initialValue)
+		}
+		setIsEditingTitle(false)
+	}, [editedTitle, initialValue, onSave])
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -22,72 +34,55 @@ export default function EditableTitle({
 				titleRef.current &&
 				!titleRef.current.contains(event.target as Node)
 			) {
-				if (editedTitle.trim() !== '') {
-					if (editedTitle !== initialValue) {
-						onSave(editedTitle)
-					}
-				} else {
-					setEditedTitle(initialValue)
-				}
-				setIsEditingTitle(false)
+				handleSave()
 			}
 		}
 
 		const updateTitleWidth = () => {
 			if (titleRef.current) {
 				const width = titleRef.current.scrollWidth
-				setTitleWidth(width)
+				setInputWidth(width)
 			}
 		}
 
 		document.addEventListener('mousedown', handleClickOutside)
 		window.addEventListener('resize', updateTitleWidth)
 		updateTitleWidth()
+
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside)
 			window.removeEventListener('resize', updateTitleWidth)
 		}
-	}, [editedTitle, initialValue, onSave])
+	}, [handleSave])
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === 'Enter') {
-			e.preventDefault()
-			if (editedTitle.trim() !== '') {
-				if (editedTitle !== initialValue) {
-					onSave(editedTitle)
-				}
-			} else {
-				setEditedTitle(initialValue)
-			}
-			setIsEditingTitle(false)
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setEditedTitle(e.target.value)
+		const input = inputRef.current
+
+		if (input) {
+			setInputWidth(Math.max(input.scrollWidth, input.clientWidth) + 4) // +4 for padding
 		}
 	}
 
 	return (
 		<>
 			{isEditingTitle ? (
-				<div
-					className="flex items-center"
-					style={{ width: titleWidth + 'px' }}
-				>
+				<div className="flex items-center">
 					<input
 						type="text"
 						value={editedTitle}
-						onChange={(e) => setEditedTitle(e.target.value)}
-						onBlur={() => {
-							if (editedTitle.trim() !== '') {
-								if (editedTitle !== initialValue) {
-									onSave(editedTitle)
-								}
-							} else {
-								setEditedTitle(initialValue)
+						onChange={handleInputChange}
+						onBlur={handleSave}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') {
+								e.preventDefault()
+								handleSave()
 							}
-							setIsEditingTitle(false)
 						}}
-						onKeyDown={handleKeyDown}
 						autoFocus
+						ref={inputRef}
 						className={`border-2 border-blue-200 focus:outline-none rounded-sm ${inputClassName}`}
-						style={{ width: titleWidth + 'px' }}
+						style={{ width: `${inputWidth}px`, maxWidth: '240px' }}
 					/>
 				</div>
 			) : (
