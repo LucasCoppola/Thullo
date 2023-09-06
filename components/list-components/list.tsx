@@ -1,7 +1,8 @@
 import { MoreHorizontal } from 'lucide-react'
-import Card from '../card'
+import Card from '../card-components/card'
 import { User } from '@/app/types'
-import { AddButtonComponent, EditableListTitle } from './add-list'
+import { EditableListTitle } from './add-list'
+import AddButtonComponent from '../add-list-btn'
 
 export default function List({
 	listId,

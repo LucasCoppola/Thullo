@@ -5,9 +5,9 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
 import { User } from '@/app/types'
-import { AddButtonComponent } from '@/components/list-components/add-list'
 import BoardHeader from '@/components/board-header'
 import List from '@/components/list-components/list'
+import AddButtonComponent from '@/components/add-list-btn'
 
 export default async function BoardPage({
 	params
