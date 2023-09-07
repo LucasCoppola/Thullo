@@ -1,17 +1,15 @@
-import Tooltip from '@/components/ui/tooltip'
-import { UseMutationResult } from '@tanstack/react-query'
 import { FileText, Pencil } from 'lucide-react'
 import { useState } from 'react'
+import Tooltip from '../ui/tooltip'
 
-export default function Description({
-	description,
-	setDescription,
-	updateBoardMutation
+export default function CardDescription({
+	cardDescription,
+	cardDescriptionMutation
 }: {
-	description: string
-	setDescription: (description: string) => void
-	updateBoardMutation: UseMutationResult<void, unknown, void, unknown>
+	cardDescription: string
+	cardDescriptionMutation: string // should be react-query mutation not string
 }) {
+	const [description, setDescription] = useState(cardDescription)
 	const [editDescription, setEditDescription] = useState(false)
 
 	const renderFormattedText = (text: string) => {
@@ -26,8 +24,8 @@ export default function Description({
 
 	return (
 		<>
-			<div className="mt-5 flex flex-row items-center">
-				<span className="text-xs font-medium text-gray-500 flex flex-row items-center">
+			<div className="flex flex-row items-center">
+				<span className="text-xs font-medium text-gray-600 flex flex-row items-center">
 					<FileText className="h-3.5 w-3.5 mr-1" />
 					Description
 				</span>
@@ -43,7 +41,7 @@ export default function Description({
 			</div>
 
 			<div
-				className={`relative mt-3 text-sm text-black ${
+				className={`relative text-sm text-black ${
 					!editDescription && 'mb-8'
 				}`}
 			>
@@ -62,7 +60,7 @@ export default function Description({
 
 						<textarea
 							className="w-full p-2 border border-gray-300 rounded-lg focus:outline-gray-300"
-							rows={12}
+							rows={4}
 							value={description || ''}
 							onChange={(e) => setDescription(e.target.value)}
 						/>
@@ -71,13 +69,13 @@ export default function Description({
 					<>
 						{description ? (
 							<p
-								className="break-words"
+								className="break-words -mt-2"
 								dangerouslySetInnerHTML={{
 									__html: renderFormattedText(description)
 								}}
 							/>
 						) : (
-							<p className="mt-8 font-medium text-gray-600 text-center">
+							<p className="mt-3 text-gray-500 text-center text-xs">
 								Add a description to let your teammates know
 								what this board is used for.
 							</p>
@@ -85,14 +83,13 @@ export default function Description({
 					</>
 				)}
 			</div>
-
 			{editDescription && (
-				<div className="flex flex-row pt-2 pb-4">
+				<div className="flex flex-row pb-4">
 					<button
 						className="bg-[#219653] hover:bg-[#1e7b48] text-white text-xs rounded-lg px-3 py-1.5 mr-4 transition duration-200"
 						onClick={() => {
 							setEditDescription(false)
-							updateBoardMutation.mutate()
+							// cardDescriptionMutation.mutate()
 						}}
 					>
 						Save
