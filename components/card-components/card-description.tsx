@@ -1,5 +1,5 @@
 import { FileText, Pencil } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Tooltip from '../ui/tooltip'
 
 export default function CardDescription({
@@ -11,6 +11,15 @@ export default function CardDescription({
 }) {
 	const [description, setDescription] = useState(cardDescription)
 	const [editDescription, setEditDescription] = useState(false)
+	const [textareaHeight, setTextareaHeight] = useState(0)
+	const paragraphRef = useRef<HTMLParagraphElement>(null)
+
+	useEffect(() => {
+		if (paragraphRef.current) {
+			const paragraphHeight = paragraphRef.current.scrollHeight
+			setTextareaHeight(paragraphHeight)
+		}
+	}, [editDescription])
 
 	const renderFormattedText = (text: string) => {
 		const boldRegex = /\*(.*?)\*/g
@@ -23,7 +32,7 @@ export default function CardDescription({
 	}
 
 	return (
-		<>
+		<div className="w-full">
 			<div className="flex flex-row items-center">
 				<span className="text-xs font-medium text-gray-600 flex flex-row items-center">
 					<FileText className="h-3.5 w-3.5 mr-1" />
@@ -42,13 +51,13 @@ export default function CardDescription({
 
 			<div
 				className={`relative text-sm text-black ${
-					!editDescription && 'mb-8'
+					!editDescription && 'mb-4'
 				}`}
 			>
 				{editDescription ? (
 					<>
 						<Tooltip
-							iconClassName="absolute top-2 right-2 text-gray-700 bg-white"
+							iconClassName="absolute top-4 right-2 text-gray-700 bg-white"
 							contentClassName="absolute -top-12 right-0"
 						>
 							Make a word <strong>bold</strong> by
@@ -59,8 +68,7 @@ export default function CardDescription({
 						</Tooltip>
 
 						<textarea
-							className="w-full p-2 border border-gray-300 rounded-lg focus:outline-gray-300"
-							rows={4}
+							className={`w-full p-2 border mt-3 mb-1 border-gray-300 rounded-lg focus:outline-gray-300 h-[${textareaHeight}px]`}
 							value={description || ''}
 							onChange={(e) => setDescription(e.target.value)}
 						/>
@@ -69,10 +77,11 @@ export default function CardDescription({
 					<>
 						{description ? (
 							<p
-								className="break-words -mt-2"
+								className="break-words mt-2"
 								dangerouslySetInnerHTML={{
 									__html: renderFormattedText(description)
 								}}
+								ref={paragraphRef}
 							/>
 						) : (
 							<p className="mt-3 text-gray-500 text-center text-xs">
@@ -102,6 +111,6 @@ export default function CardDescription({
 					</button>
 				</div>
 			)}
-		</>
+		</div>
 	)
 }
