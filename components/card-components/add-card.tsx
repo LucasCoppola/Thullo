@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
 	Dialog,
 	DialogContent,
@@ -6,7 +7,13 @@ import {
 	DialogTitle
 } from '@/components/ui/dialog'
 import Image from 'next/image'
-import { Activity, Download, Paperclip, Trash } from 'lucide-react'
+import {
+	Activity,
+	Download,
+	Paperclip,
+	Trash,
+	ArrowUpCircle
+} from 'lucide-react'
 import CardDescription from './card-description'
 import { Add } from '../ui/icons'
 
@@ -19,7 +26,7 @@ export default function AddCard({
 }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogContent className="overflow-y-auto">
+			<DialogContent className="overflow-y-auto max-h-[80vh]">
 				<DialogHeader>
 					<DialogTitle asChild className="mb-2">
 						<>
@@ -58,8 +65,8 @@ export default function AddCard({
 							<Activity className="h-3.5 w-3.5 mr-1" />
 							Activity
 						</span>
-						<SendComment />
 						<Comment />
+						<SendComment />
 					</>
 				</DialogDescription>
 			</DialogContent>
@@ -68,23 +75,42 @@ export default function AddCard({
 }
 
 function SendComment() {
+	const [comment, setComment] = useState('')
+	const [isEditing, setIsEditing] = useState(false)
+
 	return (
-		<div className="flex flex-row w-4/6">
+		<div className="flex flex-row w-4/6 items-center h-10 border-b border-gray-300 pb-4">
 			<img
 				src="https://avatars.dicebear.com/api/micah/lucas.svg"
 				alt=""
 				className="h-8 w-8 rounded-full object-cover mr-2"
 			/>
-			<div className="flex-grow w-full">
-				<textarea
-					placeholder="Add a comment..."
-					className="w-full text-sm text-gray-900 border border-gray-300 rounded-lg p-2 outline-none focus:ring-2 focus:ring-blue-300"
-					rows={1}
-					required
-				/>
-				<button className="bg-blue-500 text-white rounded-lg px-3 py-1.5 text-xs hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
-					Comment
-				</button>
+			<div className="w-full relative flex items-center">
+				{isEditing || comment.length > 0 ? (
+					<div className="absolute flex flex-row w-full">
+						<input
+							placeholder="Add a comment..."
+							className="w-full text-xs text-gray-900 p-1.5 outline-none"
+							value={comment}
+							onBlur={() => setIsEditing(false)}
+							onChange={(e) => setComment(e.target.value)}
+							autoFocus
+							required
+						/>
+						<ArrowUpCircle
+							role={`${comment.length > 0 ? 'button' : 'none'}`}
+							color={`${comment.length > 0 ? 'blue' : 'gray'}`}
+							className="relative top-1 right-0"
+						/>
+					</div>
+				) : (
+					<button
+						onClick={() => setIsEditing(true)}
+						className="w-full text-xs text-gray-400 rounded-sm p-1.5 hover:bg-gray-100 flex justify-start text-left"
+					>
+						Add a comment...
+					</button>
+				)}
 			</div>
 		</div>
 	)
@@ -92,14 +118,40 @@ function SendComment() {
 
 function Comment() {
 	return (
-		<div className="flex flex-row w-4/6">
-			<img
-				src="https://avatars.dicebear.com/api/micah/lucas.svg"
-				alt=""
-				className="h-8 w-8 rounded-full object-cover mr-2"
-			/>
-			<h2>John Wick</h2>
-			<span>24 August at 20:43</span>
+		<div className="w-4/6">
+			<div className="flex flex-row items-center">
+				<img
+					src="https://avatars.dicebear.com/api/micah/lucas.svg"
+					alt=""
+					className="h-8 w-8 rounded-full object-cover mr-2"
+				/>
+				<div className="flex flex-col w-full">
+					<div className="flex flex-row justify-between items-center">
+						<h2 className="text-xs font-medium">John Wick</h2>
+						<div>
+							<span
+								role="button"
+								className="text-[10px] text-gray-500 hover:underline mr-2"
+							>
+								Edit
+							</span>
+							<span
+								role="button"
+								className="text-[10px] text-gray-500 hover:underline"
+							>
+								Delete
+							</span>
+						</div>
+					</div>
+					<span className="text-[8px] text-gray-500">
+						Sep 6 at 11:28 AM
+					</span>
+				</div>
+			</div>
+			<p className="pl-10 text-xs text-gray-900 mt-1">
+				Once the ideas is clearly defined, the task can move to #todo
+				stage.
+			</p>
 		</div>
 	)
 }
