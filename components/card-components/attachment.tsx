@@ -45,8 +45,8 @@ export default function Attachment() {
 					<text
 						x="50%"
 						y="50%"
-						font-size="20"
-						text-anchor="middle"
+						fontSize="20"
+						textAnchor="middle"
 						dy=".3em"
 						fill="#999"
 					>
