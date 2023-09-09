@@ -127,6 +127,17 @@ export default function CreateBoard() {
 										})
 									}}
 									coverImage={formData.coverImage}
+									triggerButton={
+										<span
+											className={`absolute top-0 right-0 bg-gray-100 p-1.5 cursor-pointer text-center text-xs rounded-es-lg rounded-se-lg font-medium text-gray-700 ${
+												isHovered
+													? 'opacity-100 visibility-visible transition-opacity duration-300 ease-in-out'
+													: 'opacity-0 visibility-hidden transition-opacity duration-300 ease-in-out'
+											}`}
+										>
+											Change cover
+										</span>
+									}
 								/>
 							</div>
 							<div>
