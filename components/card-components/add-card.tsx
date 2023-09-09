@@ -4,20 +4,13 @@ import {
 	DialogDescription
 } from '@/components/ui/dialog'
 import Image from 'next/image'
-import {
-	Activity,
-	ImageIcon,
-	Info,
-	Paperclip,
-	Tag,
-	Tags,
-	Users2
-} from 'lucide-react'
+import { Activity, Paperclip, Tags } from 'lucide-react'
 import CardDescription from './card-description'
 import { Comment, SendComment } from './comment'
 import { Add } from '../ui/icons'
 import Attachment from './attachment'
 import CardMembers from './card-members'
+import CoverImage from './card-cover-image'
 
 export default function AddCard({
 	open,
@@ -74,10 +67,7 @@ export default function AddCard({
 									<Tags className="h-4 w-4 mr-2" />
 									Labels
 								</button>
-								<button className="flex flex-row items-center text-gray-700 text-sm ml-auto bg-gray-200 px-4 py-1.5 rounded-md w-4/5">
-									<ImageIcon className="h-4 w-4 mr-2" />
-									Cover
-								</button>
+								<CoverImage />
 							</div>
 						</div>
 					</>

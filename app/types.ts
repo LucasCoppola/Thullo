@@ -11,6 +11,13 @@ export type BoardProps = {
 	visibility: $Enums.BoardVisibility
 }
 
+export type ImageData = {
+	id: string
+	alt: string
+	urls: { small: string }
+	user: { id: string; username: string; links: { html: string } }
+}
+
 export type AuthorProps =
 	| {
 			id: string

@@ -3,20 +3,14 @@
 import axios from 'axios'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ImageData } from '@/app/types'
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { LoadingCircle, Search } from '@/components/ui/icons'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-type ImageData = {
-	id: string
-	alt: string
-	urls: { small: string }
-	user: { id: string; username: string; links: { html: string } }
-}
-
-export default function CoverImageModal({
+export function CoverImageModal({
 	isHovered,
 	coverImage,
 	setCoverImage
