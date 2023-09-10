@@ -6,6 +6,7 @@ import ReactQueryProvider from './react-query-provider'
 const poppins = Poppins({
 	weight: ['400', '500'],
 	subsets: ['latin'],
+	display: 'swap',
 	preload: true
 })
 
