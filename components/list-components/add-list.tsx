@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { updateListTitle } from '@/app/server/boardsOperations'
+import { createList, updateListTitle } from '@/app/server/boardsOperations'
 import EditableTitle from '../shared/editable-title'
-import { createListAction } from '@/app/actions'
+import { useSession } from 'next-auth/react'
 
 export default function AddList({
 	setCreateMode,
@@ -15,9 +15,15 @@ export default function AddList({
 }) {
 	const [listTitle, setListTitle] = useState('')
 	const isListTitleValid = listTitle.trim().length >= 1
+	const { data: session } = useSession()
 
 	const { mutate: mutateList, isLoading } = useMutation(
-		async () => await createListAction({ boardId, title: listTitle }),
+		async () =>
+			await createList({
+				boardId,
+				title: listTitle,
+				authorId: session?.userId!
+			}),
 		{
 			onSuccess: () => {
 				console.log('List created')

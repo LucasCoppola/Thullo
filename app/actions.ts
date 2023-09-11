@@ -86,14 +86,3 @@ export async function removeMemberAction({
 		return { e }
 	}
 }
-
-export async function createListAction({
-	boardId,
-	title
-}: {
-	boardId: string
-	title: string
-}) {
-	await createList({ boardId, title })
-	revalidatePath(`/boards/${boardId}`)
-}

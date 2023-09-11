@@ -92,6 +92,7 @@ model MembersOnBoards {
 
 model List {
   id      String @id @default(cuid())
+  authorId String
   boardId String
   title   String
   cards   Card[]
@@ -100,6 +101,7 @@ model List {
 
 model Card {
   id          String           @id @default(cuid())
+  authorId String
   listId      String
   title       String
   description String?

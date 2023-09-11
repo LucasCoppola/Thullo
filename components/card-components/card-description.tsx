@@ -1,18 +1,39 @@
 import { FileText, Pencil } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import Tooltip from '../ui/tooltip'
+import { useMutation } from '@tanstack/react-query'
+import { updateCardDescription } from '@/app/server/cardOperations'
+import { useSession } from 'next-auth/react'
 
 export default function CardDescription({
 	cardDescription,
-	cardDescriptionMutation
+	cardId,
+	authorId
 }: {
 	cardDescription: string
-	cardDescriptionMutation: string // should be react-query mutation not string
+	cardId: string
+	authorId: string
 }) {
 	const [description, setDescription] = useState(cardDescription)
 	const [editDescription, setEditDescription] = useState(false)
 	const [textareaHeight, setTextareaHeight] = useState(0)
 	const paragraphRef = useRef<HTMLParagraphElement>(null)
+	const { data: session } = useSession()
+
+	const cardDescriptionMutation = useMutation(
+		async () => {
+			await updateCardDescription({
+				authorId,
+				cardId,
+				description,
+				userId: session?.userId!
+			})
+		},
+		{
+			onSuccess: () => console.log('success, card description updated!'),
+			onError: () => console.error('error, card updated(?)')
+		}
+	)
 
 	useEffect(() => {
 		if (paragraphRef.current) {
@@ -68,7 +89,11 @@ export default function CardDescription({
 						</Tooltip>
 
 						<textarea
-							className={`w-full p-2 border mt-3 mb-1 border-gray-300 rounded-lg focus:outline-gray-300 h-[${textareaHeight}px]`}
+							className="w-full p-2 border mt-3 mb-1 border-gray-300 rounded-lg focus:outline-gray-300"
+							style={{
+								height: textareaHeight,
+								minHeight: '100px'
+							}}
 							value={description || ''}
 							onChange={(e) => setDescription(e.target.value)}
 						/>
@@ -77,7 +102,7 @@ export default function CardDescription({
 					<>
 						{description ? (
 							<p
-								className="break-words mt-2"
+								className="break-words mt-2 max-w-[350px]"
 								dangerouslySetInnerHTML={{
 									__html: renderFormattedText(description)
 								}}
@@ -98,7 +123,7 @@ export default function CardDescription({
 						className="bg-[#219653] hover:bg-[#1e7b48] text-white text-xs rounded-lg px-3 py-1.5 mr-4 transition duration-200"
 						onClick={() => {
 							setEditDescription(false)
-							// cardDescriptionMutation.mutate()
+							cardDescriptionMutation.mutate()
 						}}
 					>
 						Save

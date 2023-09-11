@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import AddList from './list-components/add-list'
 import { Add } from './ui/icons'
-import { AddCard } from './card-components/card-modal'
+import AddCard from './card-components/add-card'
 
 export default function AddButtonComponent({
 	name,

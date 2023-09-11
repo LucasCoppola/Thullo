@@ -3,6 +3,7 @@
 import prisma from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 import { CreateBoardType, VisibilityMutation } from '../types'
+import { revalidatePath } from 'next/cache'
 
 type coverImageType = Prisma.NullTypes.JsonNull | Prisma.InputJsonValue
 
@@ -135,15 +136,18 @@ export async function updateBoard({
 }
 
 export async function createList({
+	authorId,
 	boardId,
 	title
 }: {
+	authorId: string
 	boardId: string
 	title: string
 }) {
 	try {
 		const createList = await prisma.list.create({
 			data: {
+				authorId,
 				boardId,
 				title
 			}
