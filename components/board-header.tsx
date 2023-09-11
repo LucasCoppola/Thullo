@@ -4,7 +4,7 @@ import { useState } from 'react'
 import BoardSheet from './board-sheet'
 import AddMemberModal from './add-member-modal'
 import Image from 'next/image'
-import { AuthorProps, BoardProps, User } from '@/app/types'
+import type { User, Board } from '@prisma/client'
 import { updateVisibilityAction } from '@/app/actions'
 import { $Enums } from '@prisma/client'
 import { Lock } from 'lucide-react'
@@ -26,10 +26,10 @@ export default function BoardHeader({
 	members,
 	...board
 }: {
-	author: AuthorProps
+	author: User
 	currUserId: string
 	members: User[]
-} & BoardProps) {
+} & Board) {
 	const [updateVisibility, setUpdateVisibility] = useState(board.visibility)
 
 	const { mutate, isLoading } = useMutation(

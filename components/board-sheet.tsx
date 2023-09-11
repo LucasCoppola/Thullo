@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { AuthorProps, BoardProps, User } from '@/app/types'
+import type { User, Board } from '@prisma/client'
 import {
 	Sheet,
 	SheetContent,
@@ -26,7 +26,7 @@ export default function BoardSheet({
 	title: boardTitle,
 	description: boardDescription,
 	currUserId
-}: { author: AuthorProps; members: User[]; currUserId: string } & BoardProps) {
+}: { author: User; members: User[]; currUserId: string } & Board) {
 	const [description, setDescription] = useState(boardDescription)
 	const [title, setTitle] = useState(boardTitle)
 
