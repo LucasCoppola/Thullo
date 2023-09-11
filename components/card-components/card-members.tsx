@@ -6,10 +6,13 @@ import {
 	PopoverTrigger
 } from '@/components/ui/popover'
 import { Info, Users2, X } from 'lucide-react'
-import { User } from '@/app/types'
+import { User } from '@prisma/client'
 
 export default function CardMembers() {
-	const [selectedUser, setSelectedUser] = useState<User | null>(null)
+	const [selectedUser, setSelectedUser] = useState<Omit<
+		User,
+		'email' | 'emailVerified'
+	> | null>(null)
 
 	const users = [
 		{
