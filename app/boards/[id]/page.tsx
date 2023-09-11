@@ -4,7 +4,7 @@ import { findUserById } from '@/app/server/usersOperations'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
-import { User } from '@/app/types'
+import type { Board, User } from '@prisma/client'
 import BoardHeader from '@/components/board-header'
 import List from '@/components/list-components/list'
 import AddButtonComponent from '@/components/add-list-btn'
@@ -31,8 +31,8 @@ export default async function BoardPage({
 	return (
 		<div className="mx-8">
 			<BoardHeader
-				{...board}
-				author={author}
+				{...(board as Board)}
+				author={author as User}
 				currUserId={session.userId}
 				members={members as User[]}
 			/>
@@ -48,7 +48,11 @@ export default async function BoardPage({
 						/>
 					))}
 
-					<AddButtonComponent name="list" boardId={board.id} />
+					<AddButtonComponent
+						name="list"
+						boardId={board.id}
+						listId={id}
+					/>
 				</div>
 			</div>
 		</div>
