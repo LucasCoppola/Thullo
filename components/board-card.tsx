@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { Lock } from 'lucide-react'
 import { Globe } from '@/components/ui/icons'
 import Link from 'next/link'
-import { BoardProps } from '@/app/types'
+import type { Board } from '@prisma/client'
 import { getBoardMembers } from '@/app/server/membersOperations'
 import { findUserById } from '@/app/server/usersOperations'
 
@@ -12,7 +12,7 @@ export default async function BoardCard({
 	coverImage,
 	visibility,
 	authorId
-}: BoardProps) {
+}: Board) {
 	const { author } = await findUserById({ id: authorId })
 	const { members } = await getBoardMembers({ boardId: id || '' })
 	const remainingAvatars = members?.length! - 2
