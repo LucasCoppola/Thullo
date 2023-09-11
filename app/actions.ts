@@ -7,15 +7,24 @@ import {
 	createList,
 	updateVisibility
 } from './server/boardsOperations'
-import { BoardMemberRelation, BoardProps, VisibilityMutation } from './types'
+import { Prisma } from '@prisma/client'
+import { CreateBoardType, VisibilityMutation } from './types'
 
 export async function createBoardAction({
 	authorId,
 	title,
-	coverImage,
-	visibility
-}: BoardProps) {
-	await createBoard({ authorId, title, coverImage, visibility })
+
+	visibility,
+	coverImage
+}: CreateBoardType & {
+	coverImage: Prisma.NullTypes.JsonNull | Prisma.InputJsonValue
+}) {
+	await createBoard({
+		authorId,
+		title,
+		visibility,
+		coverImage
+	})
 	revalidatePath('/boards')
 }
 
@@ -34,7 +43,12 @@ export async function addMemberAction({
 	userId,
 	authorId,
 	currUserId
-}: BoardMemberRelation) {
+}: {
+	boardId: string
+	userId: string
+	authorId: string
+	currUserId: string
+}) {
 	try {
 		const { addMemberToBoard, e } = await addMember({
 			boardId,
@@ -54,7 +68,12 @@ export async function removeMemberAction({
 	userId,
 	authorId,
 	currUserId
-}: BoardMemberRelation) {
+}: {
+	boardId: string
+	userId: string
+	authorId: string
+	currUserId: string
+}) {
 	try {
 		await removeMember({
 			boardId,

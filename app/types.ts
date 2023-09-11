@@ -1,4 +1,4 @@
-import { BoardVisibility } from '@prisma/client'
+import { Board, BoardVisibility } from '@prisma/client'
 
 export type ImageData = {
 	id: string
@@ -13,3 +13,8 @@ export type VisibilityMutation = {
 	authorId: string
 	currUserId: string
 }
+
+export type CreateBoardType = Omit<
+	Board,
+	'id' | 'createdAt' | 'updatedAt' | 'description'
+>

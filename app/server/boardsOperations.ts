@@ -1,8 +1,8 @@
 'use server'
 
 import prisma from '@/lib/prisma'
-import { Prisma, Board } from '@prisma/client'
-import { VisibilityMutation } from '../types'
+import { Prisma } from '@prisma/client'
+import { CreateBoardType, VisibilityMutation } from '../types'
 
 type coverImageType = Prisma.NullTypes.JsonNull | Prisma.InputJsonValue
 
@@ -23,18 +23,16 @@ export async function getBoards({ userId }: { userId: string }) {
 export async function createBoard({
 	authorId,
 	title,
-	description,
 	visibility,
 	coverImage
-}: Board & { coverImage: coverImageType }) {
+}: CreateBoardType & { coverImage: coverImageType }) {
 	try {
 		const board = await prisma.board.create({
 			data: {
 				authorId,
 				title,
-				description,
-				coverImage,
-				visibility
+				visibility,
+				coverImage
 			}
 		})
 
