@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useMutation } from '@tanstack/react-query'
-import { $Enums } from '@prisma/client'
+import { type BoardVisibility } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import { createBoardAction } from '@/app/actions'
 
@@ -22,7 +22,7 @@ import CoverImageModal from '@/components/cover-image-modal'
 type FormDataType = {
 	title: string
 	coverImage: { type: 'color' | 'image'; bg: string }
-	visibility: $Enums.BoardVisibility
+	visibility: BoardVisibility
 }
 
 const defaultGrayColor = '#adb5bd'
@@ -176,7 +176,7 @@ export default function CreateBoard() {
 											setFormData({
 												...formData,
 												visibility: e.target
-													.value as $Enums.BoardVisibility
+													.value as BoardVisibility
 											})
 										}
 									/>
@@ -202,7 +202,7 @@ export default function CreateBoard() {
 											setFormData({
 												...formData,
 												visibility: e.target
-													.value as $Enums.BoardVisibility
+													.value as BoardVisibility
 											})
 										}
 									/>
