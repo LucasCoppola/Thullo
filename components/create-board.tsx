@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useMutation } from '@tanstack/react-query'
-import { type BoardVisibility } from '@prisma/client'
+import type { BoardVisibility } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import { createBoardAction } from '@/app/actions'
 
