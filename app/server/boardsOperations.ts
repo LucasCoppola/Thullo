@@ -198,3 +198,18 @@ export async function updateListTitle({
 		return { e }
 	}
 }
+
+export async function findListById({ listId }: { listId: string }) {
+	try {
+		const list = await prisma.list.findUnique({
+			where: {
+				id: listId
+			}
+		})
+
+		return { list }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}

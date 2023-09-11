@@ -3,7 +3,8 @@ import Card from '../card-components/card'
 import { EditableListTitle } from './add-list'
 import AddButtonComponent from '../add-list-btn'
 import { getCards } from '@/app/server/cardOperations'
-import type { User } from '@prisma/client'
+import type { List, User } from '@prisma/client'
+import { findListById } from '@/app/server/boardsOperations'
 
 export default async function List({
 	listId,
@@ -17,6 +18,7 @@ export default async function List({
 	title: string
 }) {
 	const { cards } = await getCards({ listId })
+	const { list } = await findListById({ listId })
 
 	return (
 		<div className="mt-4" style={{ minWidth: '243px' }}>
@@ -25,7 +27,12 @@ export default async function List({
 			</div>
 			<div className="space-y-4">
 				{cards?.map((card) => (
-					<Card key={card.id} members={members} card={card} />
+					<Card
+						key={card.id}
+						members={members}
+						card={card}
+						list={list as List}
+					/>
 				))}
 			</div>
 

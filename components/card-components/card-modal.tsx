@@ -12,18 +12,20 @@ import CardDescription from './card-description'
 import CardMembers from './card-members'
 import CoverImage from './card-cover-image'
 import AddLabel from './card-label'
-import type { Card, User } from '@prisma/client'
+import type { Card, List, User } from '@prisma/client'
 
 export default function CardModal({
 	open,
 	setOpen,
 	card,
-	cardMembers
+	cardMembers,
+	list
 }: {
 	open: boolean
 	setOpen: (val: boolean) => void
 	card: Card
 	cardMembers: User[]
+	list: List
 }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -41,7 +43,7 @@ export default function CardModal({
 							<div className="w-4/6">
 								<h1 className="font-medium">{card.title}</h1>
 								<h2 className="text-xs text-gray-600 mt-1 mb-4">
-									in list <strong>In Progress</strong>
+									in list <strong>{list?.title}</strong>
 								</h2>
 								<CardDescription
 									cardDescription={card.description || ''}

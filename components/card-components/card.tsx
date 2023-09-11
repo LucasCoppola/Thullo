@@ -1,6 +1,6 @@
 'use client'
 
-import type { User, Card } from '@prisma/client'
+import type { User, Card, List } from '@prisma/client'
 import { MessageSquare, Paperclip } from 'lucide-react'
 import Image from 'next/image'
 import CardModal from './card-modal'
@@ -8,10 +8,12 @@ import { useState } from 'react'
 
 export default function Card({
 	members,
-	card
+	card,
+	list
 }: {
 	members: User[]
 	card: Card
+	list: List
 }) {
 	const [open, setOpen] = useState(false)
 	const remainingAvatars = members?.length! - 2
@@ -119,6 +121,7 @@ export default function Card({
 				setOpen={setOpen}
 				card={card}
 				cardMembers={members}
+				list={list}
 			/>
 		</>
 	)
