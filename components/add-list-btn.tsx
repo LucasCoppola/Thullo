@@ -3,14 +3,16 @@
 import { useState } from 'react'
 import AddList from './list-components/add-list'
 import { Add } from './ui/icons'
-import AddCard from './card-components/add-card'
+import { AddCard } from './card-components/card-modal'
 
 export default function AddButtonComponent({
 	name,
-	boardId
+	boardId,
+	listId
 }: {
 	name: 'card' | 'list'
 	boardId: string
+	listId: string
 }) {
 	const [createMode, setCreateMode] = useState(false)
 
@@ -19,7 +21,7 @@ export default function AddButtonComponent({
 			{createMode && name === 'list' ? (
 				<AddList setCreateMode={setCreateMode} boardId={boardId} />
 			) : createMode && name === 'card' ? (
-				<AddCard open={createMode} setOpen={setCreateMode} />
+				<AddCard setCreateMode={setCreateMode} listId={listId} />
 			) : (
 				<button
 					className="mt-4 flex flex-row bg-blue-50 h-8 items-center px-2.5 py-1 rounded-lg hover:bg-blue-100"

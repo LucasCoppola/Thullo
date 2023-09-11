@@ -12,13 +12,21 @@ import CardDescription from './card-description'
 import CardMembers from './card-members'
 import CoverImage from './card-cover-image'
 import AddLabel from './card-label'
+import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { createCard } from '@/app/server/cardOperations'
+import type { Card, User } from '@prisma/client'
 
-export default function AddCard({
+export default function CardModal({
 	open,
-	setOpen
+	setOpen,
+	card,
+	cardMembers
 }: {
 	open: boolean
 	setOpen: (val: boolean) => void
+	card: Card
+	cardMembers: User[]
 }) {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -34,7 +42,7 @@ export default function AddCard({
 						/>
 						<div className="flex flex-row">
 							<div className="w-4/6">
-								<h1 className="font-medium">Card Title</h1>
+								<h1 className="font-medium">{card.title}</h1>
 								<h2 className="text-xs text-gray-600 mt-1 mb-4">
 									in list <strong>In Progress</strong>
 								</h2>
@@ -72,5 +80,62 @@ export default function AddCard({
 				</DialogDescription>
 			</DialogContent>
 		</Dialog>
+	)
+}
+
+export function AddCard({
+	setCreateMode,
+	listId
+}: {
+	setCreateMode: (val: boolean) => void
+	listId: string
+}) {
+	const [cardTitle, setCardTitle] = useState('')
+	const isCardTitleValid = cardTitle.trim().length >= 1
+
+	const { mutate: mutateCardTitle, isLoading } = useMutation(
+		async () => await createCard({ listId, title: cardTitle }),
+		{
+			onSuccess: () => {
+				console.log('Card created')
+				setCreateMode(false)
+			},
+			onError: (e) => {
+				console.error(e)
+			}
+		}
+	)
+	return (
+		<form
+			className="mt-4 bg-blue-50 items-center px-2.5 py-2 rounded-md h-20"
+			style={{ minWidth: '243px' }}
+		>
+			<input
+				type="text"
+				placeholder="Enter card title..."
+				className="border-2 border-blue-200 px-2 py-0.5 mb-1 rounded-sm focus:outline-none"
+				value={cardTitle}
+				onChange={(e) => setCardTitle(e.target.value)}
+				disabled={isLoading}
+				required
+			/>
+			<div className="flex flex-row gap-2 mt-0.5">
+				<button
+					className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded-md"
+					onClick={() => {
+						if (isCardTitleValid) mutateCardTitle()
+					}}
+					disabled={isLoading}
+				>
+					Add List
+				</button>
+				<button
+					className="text-sm text-gray-600"
+					onClick={() => setCreateMode(false)}
+				>
+					Cancel
+				</button>
+			</div>
+		</form>
 	)
 }

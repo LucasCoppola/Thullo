@@ -103,8 +103,8 @@ model Card {
   listId      String
   title       String
   description String?
-  coverImage  String
-  labels      String[]
+  coverImage  String?
+  labels      Json[]
   comments    Comment[]
   attachment  Attachment[]
   members     MembersOnCards[]
