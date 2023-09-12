@@ -22,6 +22,7 @@ import { useMutation } from '@tanstack/react-query'
 import { createAttachment } from '@/app/server/cardOperations'
 import { UploadFileResponse } from 'uploadthing/client'
 import { useSession } from 'next-auth/react'
+import { MIMEType } from 'util'
 
 export default function CardModal({
 	card,
@@ -60,7 +61,7 @@ export default function CardModal({
 		},
 
 		{
-			id: 'bveureobveybo8',
+			id: 'viwrno',
 			name: 'Technical',
 			color: { text: '#16a34a', bg: '#dcfce7' }
 		}
@@ -70,13 +71,11 @@ export default function CardModal({
 	const { data: session } = useSession()
 
 	const attachmentMutation = useMutation(async () => {
-		console.log('stopped here?')
 		if (!file) return
-		console.log('or here?')
+
 		await createAttachment({
 			filename: file.fileName,
 			url: file.url,
-			mimeType: null,
 			size: file.size,
 			userId: session?.userId!,
 			cardId: card.id

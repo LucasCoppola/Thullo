@@ -138,8 +138,7 @@ model Comment {
 model Attachment {
   id         String   @id @default(cuid())
   filename   String
-  url        String
-  mimeType   String?
+  url        String 
   size       Int
   uploadedAt DateTime @default(now())
   userId     String
@@ -147,6 +146,4 @@ model Attachment {
 
   user User @relation(fields: [userId], references: [id])
   card Card @relation(fields: [cardId], references: [id])
-
-  @@unique([userId, cardId])
 }
