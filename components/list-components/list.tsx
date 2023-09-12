@@ -8,12 +8,12 @@ import { findListById } from '@/app/server/boardsOperations'
 
 export default async function List({
 	listId,
-	members,
+	boardMembers,
 	boardId,
 	title
 }: {
 	listId: string
-	members: User[]
+	boardMembers: User[]
 	boardId: string
 	title: string
 }) {
@@ -29,7 +29,7 @@ export default async function List({
 				{cards?.map((card) => (
 					<Card
 						key={card.id}
-						members={members}
+						boardMembers={boardMembers}
 						card={card}
 						list={list as List}
 					/>

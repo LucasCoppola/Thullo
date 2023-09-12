@@ -1,12 +1,20 @@
 import Image from 'next/image'
-import { Download, Trash } from 'lucide-react'
+import { Download, Paperclip, Trash } from 'lucide-react'
 
-export default function Attachment() {
+import type { Attachment } from '@prisma/client'
+
+export default function AttachmentComponent({
+	cardId,
+	attachment
+}: {
+	cardId: string
+	attachment: Attachment
+}) {
 	return (
 		<>
 			<div className="flex flex-row w-full mb-3">
 				<Image
-					src="https://images.unsplash.com/photo-1693856757774-e749742aefe4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80"
+					src={attachment.url}
 					alt="unsplash random image"
 					width={400}
 					height={400}
@@ -15,7 +23,7 @@ export default function Attachment() {
 				<div className="flex flex-col w-4/6">
 					<div className="flex flex-row mb-1.5">
 						<span className="text-[10px] text-gray-500">
-							Added July 5, 2023
+							Added {attachment.uploadedAt.toDateString()}
 						</span>
 						<div className="ml-auto flex flex-row items-center">
 							<Download
@@ -29,10 +37,11 @@ export default function Attachment() {
 						</div>
 					</div>
 					<h3 className="text-xs text-gray-900 font-medium">
-						Reasoning by Ranganath Krishnamani
+						{attachment.filename}
 					</h3>
 				</div>
 			</div>
+
 			<div className="flex flex-row w-full">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"

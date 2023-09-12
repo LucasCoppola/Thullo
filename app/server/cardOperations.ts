@@ -1,6 +1,7 @@
 'use server'
 
 import prisma from '@/lib/prisma'
+import type { Attachment } from '@prisma/client'
 
 export async function getCards({ listId }: { listId: string }) {
 	try {
@@ -66,6 +67,46 @@ export async function updateCardDescription({
 		})
 
 		return { updateDescription }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}
+
+export async function createAttachment({
+	filename,
+	url,
+	size,
+	userId,
+	cardId
+}: Omit<Attachment, 'uploadedAt' | 'id'>) {
+	try {
+		const attachment = await prisma.attachment.create({
+			data: {
+				filename,
+				url,
+				size,
+				userId,
+				cardId
+			}
+		})
+
+		return { attachment }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}
+
+export async function getAttachments({ cardId }: { cardId: string }) {
+	try {
+		const attachments = await prisma.attachment.findMany({
+			where: {
+				cardId
+			}
+		})
+
+		return { attachments }
 	} catch (e) {
 		console.error(e)
 		return { e }
