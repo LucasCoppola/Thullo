@@ -23,7 +23,7 @@ export default function Tooltip({
 			<div
 				className={`${
 					tooltipVisible ? 'opacity-100' : 'opacity-0'
-				} transition-opacity duration-300 border bg-white rounded-lg p-2 text-xs text-gray-700 shadow-lg ${contentClassName}`}
+				} transition-opacity duration-300 border bg-white rounded-lg text-gray-700 shadow-lg ${contentClassName}`}
 			>
 				<p>{children}</p>
 			</div>

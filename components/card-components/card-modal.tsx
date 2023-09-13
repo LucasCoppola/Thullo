@@ -22,7 +22,7 @@ import { useMutation } from '@tanstack/react-query'
 import { createAttachment } from '@/app/server/cardOperations'
 import { UploadFileResponse } from 'uploadthing/client'
 import { useSession } from 'next-auth/react'
-import { MIMEType } from 'util'
+import Tooltip from '../ui/tooltip'
 
 export default function CardModal({
 	card,
@@ -71,7 +71,9 @@ export default function CardModal({
 	const { data: session } = useSession()
 
 	const attachmentMutation = useMutation(async () => {
+		console.log(file, 'is this? 1')
 		if (!file) return
+		console.log(file, 'is this?')
 
 		await createAttachment({
 			filename: file.fileName,
@@ -216,14 +218,27 @@ export default function CardModal({
 											alert(`ERROR! ${error.message}`)
 										}}
 									/>
+									<Tooltip
+										iconClassName="ml-2 text-gray-500"
+										contentClassName="text-[10px] p-1"
+									>
+										Only supports Images and pdf files.
+									</Tooltip>
 								</div>
-								{attachments.map((attachment) => (
-									<AttachmentComponent
-										key={attachment.id}
-										cardId={card.id}
-										attachment={attachment}
-									/>
-								))}
+
+								{attachments.length > 0 ? (
+									attachments.map((attachment) => (
+										<AttachmentComponent
+											key={attachment.id}
+											cardId={card.id}
+											attachment={attachment}
+										/>
+									))
+								) : (
+									<p className="text-xs text-gray-500 my-6 flex items-center justify-center">
+										There is no attachments yet...
+									</p>
+								)}
 
 								<span className="text-xs font-medium text-gray-600 flex flex-row items-center mt-4 mb-2">
 									<Activity className="h-3.5 w-3.5 mr-1" />
