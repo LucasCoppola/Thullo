@@ -14,12 +14,12 @@ import CardDescription from './card-description'
 import CardMembers from './card-members'
 import CoverImage from './card-cover-image'
 import AddLabel from './card-label'
-import type { Attachment, Card, List, User } from '@prisma/client'
+import type { Card, List, User } from '@prisma/client'
 
 import { useState } from 'react'
 import { UploadButton } from '@/lib/uploadthing'
-import { useMutation } from '@tanstack/react-query'
-import { createAttachment } from '@/app/server/cardOperations'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { createAttachment, getAttachments } from '@/app/server/cardOperations'
 import { UploadFileResponse } from 'uploadthing/client'
 import { useSession } from 'next-auth/react'
 import Tooltip from '../ui/tooltip'
@@ -27,13 +27,11 @@ import Tooltip from '../ui/tooltip'
 export default function CardModal({
 	card,
 	boardMembers,
-	list,
-	attachments
+	list
 }: {
 	card: Card
 	boardMembers: User[]
 	list: List
-	attachments: Attachment[]
 }) {
 	const [open, setOpen] = useState(false)
 	const remainingAvatars = boardMembers?.length! - 2
@@ -67,13 +65,18 @@ export default function CardModal({
 		}
 	]
 
-	const [file, setFile] = useState<UploadFileResponse | null>(null)
 	const { data: session } = useSession()
 
-	const attachmentMutation = useMutation(async () => {
-		console.log(file, 'is this? 1')
+	const { data: attachments, refetch: refetchAttachments } = useQuery(
+		['attachments', card.id],
+		async () => {
+			const { attachments } = await getAttachments({ cardId: card.id })
+			return attachments
+		}
+	)
+
+	const attachmentMutation = useMutation(async (file: UploadFileResponse) => {
 		if (!file) return
-		console.log(file, 'is this?')
 
 		await createAttachment({
 			filename: file.fileName,
@@ -81,18 +84,8 @@ export default function CardModal({
 			size: file.size,
 			userId: session?.userId!,
 			cardId: card.id
-		}),
-			{
-				onSuccess: () => {
-					console.log(
-						'Success, uploaded file: ',
-						attachmentMutation.data
-					)
-				},
-				onError: () => {
-					console.error('Error: ', attachmentMutation.error)
-				}
-			}
+		})
+		refetchAttachments()
 	})
 
 	return (
@@ -206,8 +199,9 @@ export default function CardModal({
 										endpoint="imageUploader"
 										onClientUploadComplete={(res) => {
 											if (res) {
-												setFile(res[0])
-												attachmentMutation.mutate()
+												attachmentMutation.mutate(
+													res[0]
+												)
 											}
 										}}
 										onUploadError={(error: Error) => {
@@ -226,19 +220,21 @@ export default function CardModal({
 									</Tooltip>
 								</div>
 
-								{attachments.length > 0 ? (
-									attachments.map((attachment) => (
-										<AttachmentComponent
-											key={attachment.id}
-											cardId={card.id}
-											attachment={attachment}
-										/>
-									))
-								) : (
-									<p className="text-xs text-gray-500 my-6 flex items-center justify-center">
-										There is no attachments yet...
-									</p>
-								)}
+								<div className="space-y-2">
+									{attachments && attachments.length > 0 ? (
+										attachments?.map((attachment) => (
+											<AttachmentComponent
+												key={attachment.id}
+												cardId={card.id}
+												attachment={attachment}
+											/>
+										))
+									) : (
+										<p className="text-xs text-gray-500 my-6 flex items-center justify-center">
+											There is no attachments yet...
+										</p>
+									)}
+								</div>
 
 								<span className="text-xs font-medium text-gray-600 flex flex-row items-center mt-4 mb-2">
 									<Activity className="h-3.5 w-3.5 mr-1" />

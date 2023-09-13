@@ -2,11 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { addMember, removeMember } from './server/membersOperations'
-import {
-	createBoard,
-	createList,
-	updateVisibility
-} from './server/boardsOperations'
+import { createBoard, updateVisibility } from './server/boardsOperations'
 import { Prisma } from '@prisma/client'
 import { CreateBoardType, VisibilityMutation } from './types'
 
