@@ -39,7 +39,16 @@ function ImageAttachment({ attachment }: { attachment: Attachment }) {
 			<div className="flex flex-col w-4/6">
 				<div className="flex flex-row mb-1.5">
 					<span className="text-[10px] text-gray-500">
-						Added {attachment.uploadedAt.toDateString()}
+						Added{' '}
+						{new Date(attachment.uploadedAt).toLocaleDateString(
+							'en-us',
+							{
+								weekday: 'short',
+								year: 'numeric',
+								month: 'short',
+								day: 'numeric'
+							}
+						)}
 					</span>
 					<div className="ml-auto flex flex-row items-center">
 						<Download
@@ -88,7 +97,16 @@ function PdfAttachment({ attachment }: { attachment: Attachment }) {
 			<div className="flex flex-col w-4/6">
 				<div className="flex flex-row mb-1.5 justify-between">
 					<span className="text-[10px] text-gray-500">
-						Added {attachment.uploadedAt.toDateString()}
+						Added{' '}
+						{new Date(attachment.uploadedAt).toLocaleDateString(
+							'en-us',
+							{
+								weekday: 'short',
+								year: 'numeric',
+								month: 'short',
+								day: 'numeric'
+							}
+						)}
 					</span>
 					<div className="flex flex-row items-center">
 						<Download

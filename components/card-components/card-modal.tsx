@@ -34,6 +34,7 @@ export default function CardModal({
 	list: List
 }) {
 	const [open, setOpen] = useState(false)
+	const { data: session } = useSession()
 	const remainingAvatars = boardMembers?.length! - 2
 
 	const fakeLabelJson = [
@@ -64,8 +65,6 @@ export default function CardModal({
 			color: { text: '#16a34a', bg: '#dcfce7' }
 		}
 	]
-
-	const { data: session } = useSession()
 
 	const { data: attachments, refetch: refetchAttachments } = useQuery(
 		['attachments', card.id],
