@@ -43,7 +43,7 @@ export default async function BoardPage({
 							key={id}
 							listId={id}
 							title={title}
-							members={members as User[]}
+							boardMembers={members as User[]}
 							boardId={board.id}
 						/>
 					))}
