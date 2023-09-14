@@ -1,5 +1,5 @@
 import Tooltip from '@/components/ui/tooltip'
-import { UseMutationResult } from '@tanstack/react-query'
+import type { UseMutationResult } from '@tanstack/react-query'
 import { FileText, Pencil } from 'lucide-react'
 import { useState } from 'react'
 

@@ -79,7 +79,7 @@ export default function CardDescription({
 					<>
 						<Tooltip
 							iconClassName="absolute top-4 right-2 text-gray-700 bg-white"
-							contentClassName="absolute -top-12 right-0"
+							contentClassName="absolute -top-12 right-0 text-xs p-2"
 						>
 							Make a word <strong>bold</strong> by
 							<br />
