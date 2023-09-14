@@ -1,11 +1,12 @@
 import Image from 'next/image'
 import { Download, Paperclip, Trash } from 'lucide-react'
 
-import type { Attachment, User } from '@prisma/client'
+import type { Attachment } from '@prisma/client'
 import Link from 'next/link'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { removeAttachment } from '@/app/server/cardOperations'
 import { findUserById } from '@/app/server/usersOperations'
+import { Suspense } from 'react'
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -34,6 +35,26 @@ export default function AttachmentComponent({
 			return (bytes / (1024 * 1024)).toFixed(2) + ' MB'
 		} else {
 			return (bytes / 1024).toFixed(2) + ' KB'
+		}
+	}
+
+	async function downloadFile() {
+		try {
+			const outsideRes = await fetch(attachment.url)
+
+			if (!outsideRes.ok) {
+				throw new Error('Failed to fetch the file')
+			}
+
+			const blob = await outsideRes.blob()
+			const url = window.URL.createObjectURL(blob)
+
+			const link = document.createElement('a')
+			link.href = url
+			link.download = attachment.filename
+			link.click()
+		} catch (error) {
+			console.error('Error downloading the file:', error)
 		}
 	}
 
@@ -104,15 +125,12 @@ export default function AttachmentComponent({
 							)}
 						</span>
 						<div className="ml-auto flex flex-row items-center">
-							<a
-								href={attachment.url}
-								download={attachment.filename}
-							>
-								<Download
-									className="h-3.5 w-3.5 text-blue-600"
-									role="button"
-								/>
-							</a>
+							<Download
+								className="h-3.5 w-3.5 text-blue-600"
+								role="button"
+								onClick={downloadFile}
+							/>
+
 							<AlertDialog>
 								<AlertDialogTrigger asChild>
 									<Trash
@@ -153,7 +171,7 @@ export default function AttachmentComponent({
 						</span>
 					</h3>
 					<span className="text-[10px] text-gray-500 mt-auto">
-						by {user?.name}
+						{user?.name ? `by ${user.name}` : null}
 					</span>
 				</div>
 			</div>
