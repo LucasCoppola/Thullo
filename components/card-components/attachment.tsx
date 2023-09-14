@@ -104,10 +104,15 @@ export default function AttachmentComponent({
 							)}
 						</span>
 						<div className="ml-auto flex flex-row items-center">
-							<Download
-								className="h-3.5 w-3.5 text-blue-600"
-								role="button"
-							/>
+							<a
+								href={attachment.url}
+								download={attachment.filename}
+							>
+								<Download
+									className="h-3.5 w-3.5 text-blue-600"
+									role="button"
+								/>
+							</a>
 							<AlertDialog>
 								<AlertDialogTrigger asChild>
 									<Trash

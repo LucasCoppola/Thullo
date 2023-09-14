@@ -78,6 +78,7 @@ export default function CardModal({
 		if (!file) return
 
 		await createAttachment({
+			id: file.fileKey,
 			filename: file.fileName,
 			url: file.url,
 			size: file.size,

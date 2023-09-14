@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/prisma'
 import type { Attachment } from '@prisma/client'
+import { utapi } from 'uploadthing/server'
 
 export async function getCards({ listId }: { listId: string }) {
 	try {
@@ -74,15 +75,17 @@ export async function updateCardDescription({
 }
 
 export async function createAttachment({
+	id,
 	filename,
 	url,
 	size,
 	userId,
 	cardId
-}: Omit<Attachment, 'uploadedAt' | 'id'>) {
+}: Omit<Attachment, 'uploadedAt'>) {
 	try {
 		const attachment = await prisma.attachment.create({
 			data: {
+				id,
 				filename,
 				url,
 				size,
@@ -127,6 +130,7 @@ export async function removeAttachment({
 				id: attachmentId
 			}
 		})
+		await utapi.deleteFiles(attachmentId)
 
 		return { removeAttachment }
 	} catch (e) {
