@@ -1,12 +1,11 @@
 import Image from 'next/image'
-import { Download, Paperclip, Trash } from 'lucide-react'
+import { Download, Trash } from 'lucide-react'
 
 import type { Attachment } from '@prisma/client'
 import Link from 'next/link'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { removeAttachment } from '@/app/server/cardOperations'
 import { findUserById } from '@/app/server/usersOperations'
-import { Suspense } from 'react'
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -166,9 +165,6 @@ export default function AttachmentComponent({
 					</div>
 					<h3 className="text-xs text-gray-900 font-medium my-auto">
 						{attachment.filename}
-						<span className="text-[8px] text-gray-500 ml-2">
-							{formatFileSize(attachment.size)}
-						</span>
 					</h3>
 					<span className="text-[10px] text-gray-500 mt-auto">
 						{user?.name ? `by ${user.name}` : null}
