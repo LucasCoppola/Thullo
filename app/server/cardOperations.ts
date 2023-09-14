@@ -112,3 +112,25 @@ export async function getAttachments({ cardId }: { cardId: string }) {
 		return { e }
 	}
 }
+
+export async function removeAttachment({
+	cardId,
+	attachmentId
+}: {
+	cardId: string
+	attachmentId: string
+}) {
+	try {
+		const removeAttachment = await prisma.attachment.delete({
+			where: {
+				cardId,
+				id: attachmentId
+			}
+		})
+
+		return { removeAttachment }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}
