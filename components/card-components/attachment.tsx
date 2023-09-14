@@ -116,10 +116,11 @@ export default function AttachmentComponent({
 							{new Date(attachment.uploadedAt).toLocaleDateString(
 								'en-us',
 								{
-									weekday: 'short',
-									year: 'numeric',
 									month: 'short',
-									day: 'numeric'
+									day: 'numeric',
+									hour: 'numeric',
+									minute: 'numeric',
+									hour12: true
 								}
 							)}
 						</span>
