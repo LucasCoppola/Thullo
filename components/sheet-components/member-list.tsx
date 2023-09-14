@@ -12,7 +12,7 @@ import {
 	AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import type { User } from '@prisma/client'
-import { UseMutationResult } from '@tanstack/react-query'
+import type { UseMutationResult } from '@tanstack/react-query'
 
 export default function MemberList({
 	author,

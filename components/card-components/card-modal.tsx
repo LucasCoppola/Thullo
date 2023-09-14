@@ -20,7 +20,7 @@ import { useState } from 'react'
 import { UploadButton } from '@/lib/uploadthing'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { createAttachment, getAttachments } from '@/app/server/cardOperations'
-import { UploadFileResponse } from 'uploadthing/client'
+import type { UploadFileResponse } from 'uploadthing/client'
 import { useSession } from 'next-auth/react'
 import Tooltip from '../ui/tooltip'
 
@@ -199,7 +199,7 @@ export default function CardModal({
 										onClientUploadComplete={(res) => {
 											if (res) {
 												attachmentMutation.mutate(
-													res[0]
+													res[0]!
 												)
 											}
 										}}
@@ -226,6 +226,9 @@ export default function CardModal({
 												key={attachment.id}
 												cardId={card.id}
 												attachment={attachment}
+												refetchAttachments={
+													refetchAttachments
+												}
 											/>
 										))
 									) : (
