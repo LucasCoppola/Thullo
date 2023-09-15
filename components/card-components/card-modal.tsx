@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dialog'
 import { useState } from 'react'
 import { Activity, Paperclip, MessageSquare } from 'lucide-react'
-import { Comment, SendComment } from './comment'
+import SendComment from './comment'
 import Image from 'next/image'
 import AttachmentComponent from './attachment'
 import CardDescription from './card-description'
@@ -136,6 +136,7 @@ export default function CardModal({
 											<AttachmentComponent
 												key={attachment.id}
 												cardId={card.id}
+												cardAuthorId={card.authorId}
 												attachment={attachment}
 												refetchAttachments={
 													refetchAttachments
@@ -153,8 +154,11 @@ export default function CardModal({
 									<Activity className="h-3.5 w-3.5 mr-1" />
 									Activity
 								</span>
-								<Comment />
-								<SendComment />
+
+								<SendComment
+									cardId={card.id}
+									cardAuthorId={card.authorId}
+								/>
 							</div>
 
 							<div className="flex flex-col w-2/6 gap-3 items-end">

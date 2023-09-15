@@ -17,25 +17,22 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
+import { useSession } from 'next-auth/react'
 
 export default function AttachmentComponent({
 	cardId,
+	cardAuthorId,
 	attachment,
 	refetchAttachments
 }: {
 	cardId: string
+	cardAuthorId: string
+
 	attachment: Attachment
 	refetchAttachments: () => void
 }) {
+	const { data: session } = useSession()
 	const isPDF = attachment.filename.toLowerCase().endsWith('.pdf')
-
-	function formatFileSize(bytes: number) {
-		if (bytes >= 1024 * 1024) {
-			return (bytes / (1024 * 1024)).toFixed(2) + ' MB'
-		} else {
-			return (bytes / 1024).toFixed(2) + ' KB'
-		}
-	}
 
 	async function downloadFile() {
 		try {
@@ -66,7 +63,10 @@ export default function AttachmentComponent({
 		async () =>
 			await removeAttachment({
 				cardId,
-				attachmentId: attachment.id
+				attachmentId: attachment.id,
+				attachmentAuthor: attachment.userId,
+				cardAuthor: cardAuthorId,
+				userId: session?.userId!
 			}),
 		{
 			onSettled: () => refetchAttachments()
