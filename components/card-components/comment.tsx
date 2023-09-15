@@ -1,15 +1,15 @@
 import Image from 'next/image'
-import { ArrowUpCircle } from 'lucide-react'
-import { useSession } from 'next-auth/react'
-import { useEffect, useState } from 'react'
+import {
+	ArrowUpCircle,
+	MoreHorizontal,
+	PencilLine,
+	Trash2,
+	XCircle
+} from 'lucide-react'
+import { useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { findUserById } from '@/app/server/usersOperations'
-import {
-	addComment,
-	getComments,
-	removeComment,
-	updateComment
-} from '@/app/server/cardOperations'
+import { removeComment, updateComment } from '@/app/server/cardOperations'
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -21,107 +21,18 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 
 import type { Comment } from '@prisma/client'
 
-export default function SendComment({
-	cardId,
-	cardAuthorId
-}: {
-	cardId: string
-	cardAuthorId: string
-}) {
-	const { data: session } = useSession()
-	const [comment, setComment] = useState('')
-	const [isEditing, setIsEditing] = useState(false)
+// ...
 
-	const { data: comments, refetch } = useQuery(
-		['comments', cardId],
-		async () => {
-			const { comments } = await getComments({ cardId })
-			return comments
-		}
-	)
-
-	const addCommentMutation = useMutation(
-		async () => {
-			await addComment({ authorId: session?.userId!, cardId, comment })
-		},
-
-		{
-			onSuccess: () => {
-				console.log('comment added')
-				setComment('')
-			},
-			onError: (e) => console.error((e as Error).message),
-			onSettled: () => refetch()
-		}
-	)
-
-	return (
-		<>
-			<div className="space-y-3">
-				{comments?.map((comment) => (
-					<Comment
-						key={comment.id}
-						userId={session?.userId!}
-						cardAuthorId={cardAuthorId}
-						refetchComments={refetch}
-						{...comment}
-					/>
-				))}
-			</div>
-			<div className="border-b border-gray-300 pb-3 w-full mt-3">
-				<div className="flex flex-row items-center h-10">
-					<Image
-						src={
-							session?.user?.image ||
-							`https://avatars.dicebear.com/api/micah/${session?.user?.name}.svg`
-						}
-						alt="user avatar"
-						className="h-8 w-8 rounded-full object-cover mr-2"
-						width={400}
-						height={400}
-					/>
-					<div className="w-full relative flex items-center">
-						{isEditing || comment.length > 0 ? (
-							<div className="absolute flex flex-row w-full">
-								<input
-									placeholder="Add a comment..."
-									className="w-full text-xs text-gray-900 p-1.5 outline-none"
-									value={comment}
-									onBlur={() => setIsEditing(false)}
-									onChange={(e) => setComment(e.target.value)}
-									autoFocus
-									required
-								/>
-								<ArrowUpCircle
-									role={`${
-										comment.length > 0 ? 'button' : 'none'
-									}`}
-									color={`${
-										comment.length > 0 ? 'blue' : 'gray'
-									}`}
-									className="relative top-1 right-0"
-									onClick={() => addCommentMutation.mutate()}
-								/>
-							</div>
-						) : (
-							<button
-								onClick={() => setIsEditing(true)}
-								className="w-full text-xs text-gray-400 rounded-sm p-1.5 hover:bg-gray-100 flex justify-start text-left"
-							>
-								Add a comment...
-							</button>
-						)}
-					</div>
-				</div>
-			</div>
-		</>
-	)
-}
-
-function Comment({
+export default function Comment({
 	id,
 	userId,
 	authorId,
@@ -135,6 +46,7 @@ function Comment({
 	cardAuthorId: string
 	refetchComments: () => void
 }) {
+	const [openAlertDialog, setOpenAlertDialog] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
 	const [comment, setComment] = useState(originalText)
 
@@ -152,7 +64,7 @@ function Comment({
 				comment,
 				userId
 			})
-			setIsEditing(false) // Exit edit mode after saving
+			setIsEditing(false)
 		},
 		{
 			onSettled: () => refetchComments()
@@ -174,11 +86,6 @@ function Comment({
 		}
 	)
 
-	const editComment = () => {
-		setComment(originalText) // Reset comment text to original when editing starts
-		setIsEditing(true)
-	}
-
 	return (
 		<div className="w-full">
 			<div className="flex flex-row items-center">
@@ -192,61 +99,47 @@ function Comment({
 					width={400}
 					height={400}
 				/>
-				<div className="w-full relative flex items-center">
-					{isEditing ? (
-						<div className="absolute flex flex-row w-full">
-							<input
-								placeholder="Edit your comment..."
-								className="w-full text-xs text-gray-900 p-1.5 outline-none"
-								value={comment}
-								onChange={(e) => setComment(e.target.value)}
-								autoFocus
-								required
-							/>
-							<button
-								className="text-[10px] text-gray-500 hover:underline ml-2"
-								onClick={() => updateCommentMutation.mutate()}
-							>
-								Save
-							</button>
-						</div>
-					) : (
-						<div className="flex flex-row justify-between w-full">
-							<div className="flex flex-col">
+				<div className="w-full relative flex items-start">
+					<div className="flex flex-row justify-between items-start w-full">
+						<div className="flex flex-col w-full">
+							<div className="flex items-center justify-between h-3.5">
 								<h2 className="text-xs font-medium">
 									{user?.name}
 								</h2>
-								<span className="text-[8px] text-gray-500">
-									{new Date(updatedAt).toLocaleDateString(
-										'en-us',
-										{
-											month: 'short',
-											day: 'numeric',
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true
-										}
-									)}
-								</span>
-							</div>
-							<div>
-								<button
-									className="text-[10px] text-gray-500 hover:underline mr-2"
-									onClick={editComment}
-								>
-									Edit
-								</button>
-								<AlertDialog>
-									<AlertDialogTrigger asChild>
-										<button
-											className="text-[10px] text-gray-500 hover:underline"
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
+										<MoreHorizontal
+											className="text-gray-500 hover:bg-gray-100 rounded-sm w-5 h-5"
+											role="button"
+										/>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent>
+										<DropdownMenuItem
+											className="text-xs"
+											role="button"
+											onClick={() => setIsEditing(true)}
+										>
+											<PencilLine className="h-4 w-4 mr-2 text-gray-700" />{' '}
+											Edit Comment
+										</DropdownMenuItem>
+
+										<DropdownMenuItem
+											className="text-xs"
+											role="button"
 											onClick={() =>
-												removeCommentMutation.mutate()
+												setOpenAlertDialog(true)
 											}
 										>
-											Delete
-										</button>
-									</AlertDialogTrigger>
+											<Trash2 className="h-4 w-4 mr-2 text-gray-700" />
+											Delete Comment
+										</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
+
+								<AlertDialog
+									open={openAlertDialog}
+									onOpenChange={setOpenAlertDialog}
+								>
 									<AlertDialogContent>
 										<AlertDialogHeader>
 											<AlertDialogTitle>
@@ -274,11 +167,55 @@ function Comment({
 									</AlertDialogContent>
 								</AlertDialog>
 							</div>
+							<span className="text-[8px] text-gray-500">
+								{new Date(updatedAt).toLocaleDateString(
+									'en-us',
+									{
+										month: 'short',
+										day: 'numeric',
+										hour: 'numeric',
+										minute: 'numeric',
+										hour12: true
+									}
+								)}
+							</span>
 						</div>
-					)}
+					</div>
 				</div>
 			</div>
-			{!isEditing && (
+			{isEditing ? (
+				<>
+					<input
+						placeholder="Edit your comment..."
+						className="w-full text-xs text-gray-900 pr-1.5 py-1.5 outline-none pl-10"
+						value={comment}
+						onChange={(e) => setComment(e.target.value)}
+						autoFocus
+						required
+					/>
+					<div className="flex justify-end mt-1">
+						<XCircle
+							role="button"
+							className="text-gray-500 hover:text-gray-400 mr-1"
+							onClick={() => setIsEditing(false)}
+						/>
+						<ArrowUpCircle
+							role={`${comment.length > 0 ? 'button' : 'none'}`}
+							className={`${
+								comment.length > 0
+									? 'text-blue-600'
+									: 'text-gray-400 cursor-not-allowed'
+							}`}
+							onClick={() => {
+								if (comment.length > 0) {
+									updateCommentMutation.mutate()
+									setIsEditing(false)
+								}
+							}}
+						/>
+					</div>
+				</>
+			) : (
 				<p className="pl-10 text-xs text-gray-900">{comment}</p>
 			)}
 		</div>

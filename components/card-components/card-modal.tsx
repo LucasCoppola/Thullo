@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dialog'
 import { useState } from 'react'
 import { Activity, Paperclip, MessageSquare } from 'lucide-react'
-import SendComment from './comment'
+import SendComment from './send-comment'
 import Image from 'next/image'
 import AttachmentComponent from './attachment'
 import CardDescription from './card-description'
