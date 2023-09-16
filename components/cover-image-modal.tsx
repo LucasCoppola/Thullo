@@ -3,7 +3,7 @@
 import axios from 'axios'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ImageData } from '@/app/types'
+import type { ImageData } from '@/app/types'
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { LoadingCircle, Search } from '@/components/ui/icons'

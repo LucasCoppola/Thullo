@@ -1,7 +1,6 @@
 import { createAttachment } from '@/app/server/cardOperations'
 import { UploadButton } from '@/lib/uploadthing'
 import { useMutation } from '@tanstack/react-query'
-import type { Session } from 'next-auth'
 import { useSession } from 'next-auth/react'
 import type { UploadFileResponse } from 'uploadthing/client'
 

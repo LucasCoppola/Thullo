@@ -1,4 +1,4 @@
-import { Board, BoardVisibility } from '@prisma/client'
+import { type Board, BoardVisibility } from '@prisma/client'
 
 export type ImageData = {
 	id: string
