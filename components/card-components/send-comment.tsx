@@ -1,29 +1,27 @@
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { useState } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { addComment, getComments } from '@/app/server/cardOperations'
+import { useMutation } from '@tanstack/react-query'
+import { addComment } from '@/app/server/cardOperations'
 import { ArrowUpCircle } from 'lucide-react'
-import Comment from './comment'
+import CommentComponent from './comment'
+
+import type { Comment } from '@prisma/client'
 
 export default function SendComment({
 	cardId,
-	cardAuthorId
+	cardAuthorId,
+	comments,
+	refetchComments
 }: {
 	cardId: string
 	cardAuthorId: string
+	comments: Comment[] | undefined
+	refetchComments: () => void
 }) {
 	const { data: session } = useSession()
 	const [comment, setComment] = useState('')
 	const [isEditing, setIsEditing] = useState(false)
-
-	const { data: comments, refetch } = useQuery(
-		['comments', cardId],
-		async () => {
-			const { comments } = await getComments({ cardId })
-			return comments
-		}
-	)
 
 	const addCommentMutation = useMutation(
 		async () => {
@@ -36,7 +34,7 @@ export default function SendComment({
 				setComment('')
 			},
 			onError: (e) => console.error((e as Error).message),
-			onSettled: () => refetch()
+			onSettled: () => refetchComments()
 		}
 	)
 
@@ -44,11 +42,11 @@ export default function SendComment({
 		<>
 			<div className="space-y-3">
 				{comments?.map((comment) => (
-					<Comment
+					<CommentComponent
 						key={comment.id}
 						userId={session?.userId!}
 						cardAuthorId={cardAuthorId}
-						refetchComments={refetch}
+						refetchComments={refetchComments}
 						{...comment}
 					/>
 				))}

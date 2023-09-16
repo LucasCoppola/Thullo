@@ -65,9 +65,6 @@ export default function Comment({
 			setIsEditing(false)
 		},
 		{
-			onError: (e) => {
-				console.error('Client-side error:', (e as Error).message)
-			},
 			onSettled: () => refetchComments()
 		}
 	)
