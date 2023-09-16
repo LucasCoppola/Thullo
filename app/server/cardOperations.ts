@@ -14,8 +14,8 @@ export async function getCards({ listId }: { listId: string }) {
 
 		return { cards }
 	} catch (e) {
-		console.error(e)
-		return { e }
+		console.error((e as Error).message)
+		throw e
 	}
 }
 
@@ -39,8 +39,8 @@ export async function createCard({
 
 		return { createCard }
 	} catch (e) {
-		console.error(e)
-		return { e }
+		console.error((e as Error).message)
+		throw e
 	}
 }
 
@@ -69,8 +69,8 @@ export async function updateCardDescription({
 
 		return { updateDescription }
 	} catch (e) {
-		console.error(e)
-		return { e }
+		console.error((e as Error).message)
+		throw e
 	}
 }
 
@@ -96,8 +96,8 @@ export async function createAttachment({
 
 		return { attachment }
 	} catch (e) {
-		console.error(e)
-		return { e }
+		console.error((e as Error).message)
+		throw e
 	}
 }
 
@@ -111,8 +111,8 @@ export async function getAttachments({ cardId }: { cardId: string }) {
 
 		return { attachments }
 	} catch (e) {
-		console.error(e)
-		return { e }
+		console.error((e as Error).message)
+		throw e
 	}
 }
 
@@ -144,8 +144,8 @@ export async function removeAttachment({
 
 		return { removeAttachment }
 	} catch (e) {
-		console.error(e)
-		return { e }
+		console.error((e as Error).message)
+		throw e
 	}
 }
 
@@ -159,8 +159,8 @@ export async function getComments({ cardId }: { cardId: string }) {
 
 		return { comments }
 	} catch (e) {
-		console.error(e)
-		return { e }
+		console.error((e as Error).message)
+		throw e
 	}
 }
 
@@ -184,8 +184,8 @@ export async function addComment({
 
 		return { addComment }
 	} catch (e) {
-		console.error(e)
-		return { e }
+		console.error((e as Error).message)
+		throw e
 	}
 }
 
@@ -214,8 +214,8 @@ export async function removeComment({
 			}
 		})
 	} catch (e) {
-		console.error(e)
-		return (e as Error).message
+		console.error((e as Error).message)
+		throw e
 	}
 }
 
@@ -249,6 +249,6 @@ export async function updateComment({
 		return { updatedComment }
 	} catch (e) {
 		console.error((e as Error).message)
-		return (e as Error).message
+		throw e
 	}
 }
