@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import {
 	DropdownMenu,
@@ -8,21 +8,49 @@ import {
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, Tags, Trash2 } from 'lucide-react'
+import { useMutation } from '@tanstack/react-query'
+import { createLabel } from '@/app/server/card-operations/labels'
+import type { ColorProps } from '@/app/types'
 
-export default function AddLabel() {
+const colors: ColorProps[] = [
+	{ color: { text: '#4b5563', bg: '#f3f4f6' }, colorName: 'Gray' },
+	{ color: { text: '#dc2626', bg: '#fee2e2' }, colorName: 'Red' },
+	{ color: { text: '#2563eb', bg: '#dbeafe' }, colorName: 'Blue' },
+	{ color: { text: '#16a34a', bg: '#dcfce7' }, colorName: 'Green' },
+	{ color: { text: '#ea580c', bg: '#ffedd5' }, colorName: 'Orange' },
+	{ color: { text: '#ca8a04', bg: '#fef9c3' }, colorName: 'Yellow' },
+	{ color: { text: '#db2777', bg: '#fce7f3' }, colorName: 'Pink' },
+	{ color: { text: '#9333ea', bg: '#f3e8ff' }, colorName: 'Purple' }
+]
+
+export default function AddLabel({ cardId }: { cardId: string }) {
 	const [label, setLabel] = useState('')
+	const [previewColor, setPreviewColor] = useState<ColorProps | null>(null)
 	const [hoveredLabelId, setHoveredLabelId] = useState<string | null>(null)
 
-	const colors = [
-		{ color: { text: '#4b5563', bg: '#f3f4f6' }, name: 'Gray' },
-		{ color: { text: '#dc2626', bg: '#fee2e2' }, name: 'Red' },
-		{ color: { text: '#2563eb', bg: '#dbeafe' }, name: 'Blue' },
-		{ color: { text: '#16a34a', bg: '#dcfce7' }, name: 'Green' },
-		{ color: { text: '#ea580c', bg: '#ffedd5' }, name: 'Orange' },
-		{ color: { text: '#ca8a04', bg: '#fef9c3' }, name: 'Yellow' },
-		{ color: { text: '#db2777', bg: '#fce7f3' }, name: 'Pink' },
-		{ color: { text: '#9333ea', bg: '#f3e8ff' }, name: 'Purple' }
-	]
+	useEffect(() => {
+		setPreviewColor(
+			colors[Math.floor(Math.random() * colors.length)] || null
+		)
+	}, [])
+
+	const createLabelMutation = useMutation(
+		async () => {
+			const color = previewColor || {
+				color: { text: '#2563eb', bg: '#dbeafe' },
+				colorName: 'Blue'
+			}
+			await createLabel({ cardId, color, name: label })
+		},
+		{
+			onSuccess: () => console.log('label created!'),
+			onError: (e) =>
+				console.error('Error Client:', (e as Error).message),
+			onSettled: () => {
+				setLabel('')
+			}
+		}
+	)
 
 	const labels = [
 		{
@@ -66,9 +94,8 @@ export default function AddLabel() {
 				<span className="text-xs text-gray-700 font-medium">
 					Select a label or create one
 				</span>
-				{/* these should be the ones on the database */}
 				<ul className="text-xs">
-					{labels.map(({ id, name, color }) => (
+					{/* {labels.map(({ id, name, color }) => (
 						<li
 							key={id}
 							className={`hover:bg-gray-100 rounded-sm py-1 px-2 cursor-pointer flex flex-row justify-between ${
@@ -128,12 +155,22 @@ export default function AddLabel() {
 								</DropdownMenuContent>
 							</DropdownMenu>
 						</li>
-					))}
+					))} */}
 
 					{label && (
-						<div className="text-xs hover:bg-gray-100 rounded-sm px-2 py-1 cursor-pointer mt-2">
+						<div
+							className="text-xs hover:bg-gray-100 rounded-sm px-2 py-1 cursor-pointer mt-2"
+							role="button"
+							onClick={() => createLabelMutation.mutate()}
+						>
 							Create
-							<span className="text-[10px] text-emerald-600 bg-emerald-100 rounded-sm px-2 py-[1px] ml-1">
+							<span
+								className="text-[10px] text-emerald-600 bg-emerald-100 rounded-sm px-2 py-[1px] ml-1"
+								style={{
+									backgroundColor: previewColor?.color.bg,
+									color: previewColor?.color.text
+								}}
+							>
 								{label}
 							</span>
 						</div>

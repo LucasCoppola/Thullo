@@ -9,8 +9,6 @@ import {
 import { useState } from 'react'
 import { Activity, Paperclip } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { getAttachments, getComments } from '@/app/server/cardOperations'
-import { useSession } from 'next-auth/react'
 
 import SendComment from './send-comment'
 import Image from 'next/image'
@@ -24,6 +22,8 @@ import CardView from './card-view'
 import UploadFile from '../upload-file'
 
 import type { Card, List, User } from '@prisma/client'
+import { getAttachments } from '@/app/server/card-operations/attachments'
+import { getComments } from '@/app/server/card-operations/comments'
 
 export default function CardModal({
 	card,
@@ -135,7 +135,7 @@ export default function CardModal({
 
 							<div className="flex flex-col w-2/6 gap-3 items-end">
 								<CardMembers />
-								<AddLabel />
+								<AddLabel cardId={card.id} />
 								<CoverImage />
 							</div>
 						</div>
