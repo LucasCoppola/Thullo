@@ -18,3 +18,11 @@ export type CreateBoardType = Omit<
 	Board,
 	'id' | 'createdAt' | 'updatedAt' | 'description'
 >
+
+export type ColorProps = {
+	color: {
+		text: string
+		bg: string
+	}
+	colorName: string
+}

@@ -106,7 +106,7 @@ model Card {
   title       String
   description String?
   coverImage  String?
-  labels      Json[]
+  labels      Label[]
   comments    Comment[]
   attachment  Attachment[]
   members     MembersOnCards[]
@@ -145,5 +145,14 @@ model Attachment {
   cardId     String
 
   user User @relation(fields: [userId], references: [id])
+  card Card @relation(fields: [cardId], references: [id])
+}
+
+model Label {
+  id String @id @default(cuid())
+  name String
+  color Json
+
+  cardId String
   card Card @relation(fields: [cardId], references: [id])
 }
