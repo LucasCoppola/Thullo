@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { addComment } from '@/app/server/cardOperations'
+import { addComment } from '@/app/server/card-operations/comments'
 import { ArrowUpCircle } from 'lucide-react'
 import CommentComponent from './comment'
 

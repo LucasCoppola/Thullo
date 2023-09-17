@@ -2,7 +2,7 @@ import { MoreHorizontal } from 'lucide-react'
 import Card from '../card-components/card'
 import { EditableListTitle } from './add-list'
 import AddButtonComponent from '../add-list-btn'
-import { getCards } from '@/app/server/cardOperations'
+import { getCards } from '@/app/server/card-operations/card'
 import type { List, User } from '@prisma/client'
 import { findListById } from '@/app/server/boardsOperations'
 

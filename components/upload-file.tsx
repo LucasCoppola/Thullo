@@ -1,4 +1,4 @@
-import { createAttachment } from '@/app/server/cardOperations'
+import { createAttachment } from '@/app/server/card-operations/attachments'
 import { UploadButton } from '@/lib/uploadthing'
 import { useMutation } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'

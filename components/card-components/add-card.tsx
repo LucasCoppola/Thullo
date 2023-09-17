@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { createCard } from '@/app/server/cardOperations'
+import { createCard } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
 
 export default function AddCard({

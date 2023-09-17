@@ -2,7 +2,7 @@ import { FileText, Pencil } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import Tooltip from '../ui/tooltip'
 import { useMutation } from '@tanstack/react-query'
-import { updateCardDescription } from '@/app/server/cardOperations'
+import { updateCardDescription } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
 
 export default function CardDescription({

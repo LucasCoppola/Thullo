@@ -4,7 +4,7 @@ import { Download, Trash } from 'lucide-react'
 import type { Attachment } from '@prisma/client'
 import Link from 'next/link'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { removeAttachment } from '@/app/server/cardOperations'
+import { removeAttachment } from '@/app/server/card-operations/attachments'
 import { findUserById } from '@/app/server/usersOperations'
 import {
 	AlertDialog,

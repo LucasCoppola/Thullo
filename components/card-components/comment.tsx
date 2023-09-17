@@ -9,7 +9,10 @@ import {
 import { useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { findUserById } from '@/app/server/usersOperations'
-import { removeComment, updateComment } from '@/app/server/cardOperations'
+import {
+	removeComment,
+	updateComment
+} from '@/app/server/card-operations/comments'
 import {
 	AlertDialog,
 	AlertDialogAction,
