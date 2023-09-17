@@ -8,8 +8,8 @@ import {
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, Tags, Trash2 } from 'lucide-react'
-import { useMutation } from '@tanstack/react-query'
-import { createLabel } from '@/app/server/card-operations/labels'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { createLabel, getLabels } from '@/app/server/card-operations/labels'
 import type { ColorProps } from '@/app/types'
 
 const colors: ColorProps[] = [
@@ -34,6 +34,14 @@ export default function AddLabel({ cardId }: { cardId: string }) {
 		)
 	}, [])
 
+	const { data: labels, refetch: refetchLabels } = useQuery(
+		['labels', cardId],
+		async () => {
+			const { labels } = await getLabels({ cardId })
+			return labels
+		}
+	)
+
 	const createLabelMutation = useMutation(
 		async () => {
 			const color = previewColor || {
@@ -48,32 +56,10 @@ export default function AddLabel({ cardId }: { cardId: string }) {
 				console.error('Error Client:', (e as Error).message),
 			onSettled: () => {
 				setLabel('')
+				refetchLabels()
 			}
 		}
 	)
-
-	const labels = [
-		{
-			id: 'bveureobveybo8',
-			name: 'Technical',
-			color: { text: '#16a34a', bg: '#dcfce7' }
-		},
-		{
-			id: 'brwuvbrwu9br',
-			name: 'Fast',
-			color: { text: '#dc2626', bg: '#fee2e2' }
-		},
-		{
-			id: 'verget',
-			name: 'Do it now',
-			color: { text: '#2563eb', bg: '#dbeafe' }
-		},
-		{
-			id: 'obveybo8',
-			name: 'Critical',
-			color: { text: '#ea580c', bg: '#ffedd5' }
-		}
-	]
 
 	return (
 		<Popover>
@@ -95,67 +81,75 @@ export default function AddLabel({ cardId }: { cardId: string }) {
 					Select a label or create one
 				</span>
 				<ul className="text-xs">
-					{/* {labels.map(({ id, name, color }) => (
-						<li
-							key={id}
-							className={`hover:bg-gray-100 rounded-sm py-1 px-2 cursor-pointer flex flex-row justify-between ${
-								hoveredLabelId === id ? 'bg-gray-100' : ''
-							}`}
-							onMouseEnter={() => setHoveredLabelId(id)}
-							onMouseLeave={() => setHoveredLabelId(null)}
-						>
-							<span
-								className="text-[10px] rounded-sm px-2 py-[1px]"
-								style={{
-									backgroundColor: color.bg,
-									color: color.text
-								}}
+					{labels?.map(({ id, name, color }) => {
+						const parsedColor = JSON.parse(
+							JSON.stringify(color)
+						) as ColorProps
+
+						return (
+							<li
+								key={id}
+								className={`hover:bg-gray-100 rounded-sm py-1 px-2 cursor-pointer flex flex-row justify-between ${
+									hoveredLabelId === id ? 'bg-gray-100' : ''
+								}`}
+								onMouseEnter={() => setHoveredLabelId(id)}
+								onMouseLeave={() => setHoveredLabelId(null)}
 							>
-								{name}
-							</span>
-							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									{hoveredLabelId === id && (
-										<MoreHorizontal
-											className="h-4 w-4 text-gray-500 hover:bg-gray-200 rounded-sm"
-											strokeWidth={2.5}
-										/>
-									)}
-								</DropdownMenuTrigger>
-								<DropdownMenuContent>
-									<DropdownMenuItem>
-										<div
-											role="button"
-											className="flex flex-row items-center text-gray-700"
-										>
-											<Trash2 className="h-4 w-4 mr-2" />
-											Delete
-										</div>
-									</DropdownMenuItem>
-									<DropdownMenuSeparator />
-									<span className="text-gray-500 uppercase text-xs font-medium pl-2">
-										Colors
-									</span>
-									{colors.map(({ color, name }) => (
-										<DropdownMenuItem
-											key={name}
-											className="flex flex-row items-center py-1"
-										>
-											<div
-												className="h-4 w-4 rounded-sm border"
-												style={{
-													backgroundColor: color.bg
-												}}
+								<span
+									className="text-[10px] rounded-sm px-2 py-[1px]"
+									style={{
+										backgroundColor: parsedColor.color.bg,
+										color: parsedColor.color.text
+									}}
+								>
+									{name}
+								</span>
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
+										{hoveredLabelId === id && (
+											<MoreHorizontal
+												className="h-4 w-4 text-gray-500 hover:bg-gray-200 rounded-sm"
+												strokeWidth={2.5}
 											/>
-											<span className="text-xs rounded-sm ml-2 py-[1px] text-gray-700">
-												{name}
-											</span>
+										)}
+									</DropdownMenuTrigger>
+									<DropdownMenuContent>
+										<DropdownMenuItem>
+											<div
+												role="button"
+												className="flex flex-row items-center text-gray-700"
+											>
+												<Trash2 className="h-4 w-4 mr-2" />
+												Delete
+											</div>
 										</DropdownMenuItem>
-									))}
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</li>
-					))} */}
+										<DropdownMenuSeparator />
+										<span className="text-gray-500 uppercase text-xs font-medium pl-2">
+											Colors
+										</span>
+										{colors.map(({ color, colorName }) => (
+											<DropdownMenuItem
+												key={colorName}
+												className="flex flex-row items-center py-1"
+											>
+												<div
+													className="h-4 w-4 rounded-sm border"
+													style={{
+														backgroundColor:
+															color.bg,
+														color: color.text
+													}}
+												/>
+												<span className="text-xs rounded-sm ml-2 py-[1px] text-gray-700">
+													{colorName}
+												</span>
+											</DropdownMenuItem>
+										))}
+									</DropdownMenuContent>
+								</DropdownMenu>
+							</li>
+						)
+					})}
 
 					{label && (
 						<div

@@ -91,17 +91,17 @@ model MembersOnBoards {
 }
 
 model List {
-  id      String @id @default(cuid())
+  id       String @id @default(cuid())
   authorId String
-  boardId String
-  title   String
-  cards   Card[]
-  board   Board  @relation(fields: [boardId], references: [id])
+  boardId  String
+  title    String
+  cards    Card[]
+  board    Board  @relation(fields: [boardId], references: [id])
 }
 
 model Card {
   id          String           @id @default(cuid())
-  authorId String
+  authorId    String
   listId      String
   title       String
   description String?
@@ -138,7 +138,7 @@ model Comment {
 model Attachment {
   id         String   @id @default(cuid())
   filename   String
-  url        String 
+  url        String
   size       Int
   uploadedAt DateTime @default(now())
   userId     String
@@ -149,10 +149,10 @@ model Attachment {
 }
 
 model Label {
-  id String @id @default(cuid())
-  name String
-  color Json
-
-  cardId String
-  card Card @relation(fields: [cardId], references: [id])
+  id      String @id @default(cuid())
+  name    String
+  color   Json
+  cardId  String
+  card    Card   @relation(fields: [cardId], references: [id])
 }
+
