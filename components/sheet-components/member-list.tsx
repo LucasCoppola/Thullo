@@ -11,15 +11,15 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
-import { AuthorProps, User } from '@/app/types'
-import { UseMutationResult } from '@tanstack/react-query'
+import type { User } from '@prisma/client'
+import type { UseMutationResult } from '@tanstack/react-query'
 
 export default function MemberList({
 	author,
 	members,
 	removeMember
 }: {
-	author: AuthorProps
+	author: User
 	members: User[]
 	removeMember: UseMutationResult<void, unknown, string, unknown>
 }) {

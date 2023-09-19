@@ -3,27 +3,23 @@
 import axios from 'axios'
 import Link from 'next/link'
 import Image from 'next/image'
+import type { ImageData } from '@/app/types'
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { LoadingCircle, Search } from '@/components/ui/icons'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-type ImageData = {
-	id: string
-	alt: string
-	urls: { small: string }
-	user: { id: string; username: string; links: { html: string } }
-}
-
 export default function CoverImageModal({
 	isHovered,
 	coverImage,
-	setCoverImage
+	setCoverImage,
+	triggerButton
 }: {
-	isHovered: boolean
+	isHovered?: boolean
 	coverImage: { type: 'color' | 'image'; bg: string }
 	setCoverImage: (value: { type: 'color' | 'image'; bg: string }) => void
+	triggerButton: React.ReactNode
 }) {
 	const [open, setOpen] = useState(false)
 
@@ -35,17 +31,7 @@ export default function CoverImageModal({
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild>
-				<span
-					className={`absolute top-0 right-0 bg-gray-100 p-1.5 cursor-pointer text-center text-xs rounded-es-lg rounded-se-lg font-medium text-gray-700 ${
-						isHovered
-							? 'opacity-100 visibility-visible transition-opacity duration-300 ease-in-out'
-							: 'opacity-0 visibility-hidden transition-opacity duration-300 ease-in-out'
-					}`}
-				>
-					Change cover
-				</span>
-			</DialogTrigger>
+			<DialogTrigger asChild>{triggerButton}</DialogTrigger>
 			<DialogContent>
 				<Tabs defaultValue="colors" className="w-[400px]">
 					<TabsList>
@@ -54,13 +40,13 @@ export default function CoverImageModal({
 					</TabsList>
 					<TabsContent
 						value="colors"
-						className="w-[29rem] overflow-y-scroll md:overflow-y-auto max-h-72"
+						className="w-[29rem] overflow-y-scroll md:overflow-y-auto max-h-[232px]"
 					>
 						<ColorsTabContent setCoverImage={setCoverImage} />
 					</TabsContent>
 					<TabsContent
 						value="unsplash"
-						className="w-[29rem] overflow-y-scroll md:overflow-y-auto max-h-72"
+						className="w-[29rem] overflow-y-scroll md:overflow-y-auto max-h-[232px]"
 					>
 						<UnsplashTabContent setCoverImage={setCoverImage} />
 					</TabsContent>

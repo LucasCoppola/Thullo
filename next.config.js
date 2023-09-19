@@ -4,7 +4,8 @@ const nextConfig = {
 		domains: [
 			'lh3.googleusercontent.com',
 			'res.cloudinary.com',
-			'images.unsplash.com'
+			'images.unsplash.com',
+			'utfs.io'
 		]
 	},
 	experimental: {

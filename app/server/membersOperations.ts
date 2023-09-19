@@ -1,14 +1,18 @@
 'use server'
 
 import prisma from '@/lib/prisma'
-import { BoardMemberRelation } from '../types'
 
 export async function addMember({
 	boardId,
 	userId,
 	authorId,
 	currUserId
-}: BoardMemberRelation) {
+}: {
+	boardId: string
+	userId: string
+	authorId: string
+	currUserId: string
+}) {
 	try {
 		if (authorId !== currUserId) {
 			throw new Error('Unauthorized')
@@ -74,7 +78,12 @@ export async function removeMember({
 	userId,
 	authorId,
 	currUserId
-}: BoardMemberRelation) {
+}: {
+	boardId: string
+	userId: string
+	authorId: string
+	currUserId: string
+}) {
 	try {
 		if (authorId !== currUserId) {
 			throw new Error('Unauthorized')

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useMutation } from '@tanstack/react-query'
-import { $Enums } from '@prisma/client'
+import type { BoardVisibility } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import { createBoardAction } from '@/app/actions'
 
@@ -22,7 +22,7 @@ import CoverImageModal from '@/components/cover-image-modal'
 type FormDataType = {
 	title: string
 	coverImage: { type: 'color' | 'image'; bg: string }
-	visibility: $Enums.BoardVisibility
+	visibility: BoardVisibility
 }
 
 const defaultGrayColor = '#adb5bd'
@@ -127,6 +127,17 @@ export default function CreateBoard() {
 										})
 									}}
 									coverImage={formData.coverImage}
+									triggerButton={
+										<span
+											className={`absolute top-0 right-0 bg-gray-100 p-1.5 cursor-pointer text-center text-xs rounded-es-lg rounded-se-lg font-medium text-gray-700 ${
+												isHovered
+													? 'opacity-100 visibility-visible transition-opacity duration-300 ease-in-out'
+													: 'opacity-0 visibility-hidden transition-opacity duration-300 ease-in-out'
+											}`}
+										>
+											Change cover
+										</span>
+									}
 								/>
 							</div>
 							<div>
@@ -165,7 +176,7 @@ export default function CreateBoard() {
 											setFormData({
 												...formData,
 												visibility: e.target
-													.value as $Enums.BoardVisibility
+													.value as BoardVisibility
 											})
 										}
 									/>
@@ -191,7 +202,7 @@ export default function CreateBoard() {
 											setFormData({
 												...formData,
 												visibility: e.target
-													.value as $Enums.BoardVisibility
+													.value as BoardVisibility
 											})
 										}
 									/>

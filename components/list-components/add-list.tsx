@@ -1,11 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Add } from '@/components/ui/icons'
 import { useMutation } from '@tanstack/react-query'
-import { updateListTitle } from '@/app/server/boardsOperations'
+import { createList, updateListTitle } from '@/app/server/boardsOperations'
 import EditableTitle from '../shared/editable-title'
-import { createListAction } from '@/app/actions'
+import { useSession } from 'next-auth/react'
 
 export default function AddList({
 	setCreateMode,
@@ -15,9 +14,16 @@ export default function AddList({
 	boardId: string
 }) {
 	const [listTitle, setListTitle] = useState('')
+	const isListTitleValid = listTitle.trim().length >= 1
+	const { data: session } = useSession()
 
 	const { mutate: mutateList, isLoading } = useMutation(
-		async () => await createListAction({ boardId, title: listTitle }),
+		async () =>
+			await createList({
+				boardId,
+				title: listTitle,
+				authorId: session?.userId!
+			}),
 		{
 			onSuccess: () => {
 				console.log('List created')
@@ -45,7 +51,9 @@ export default function AddList({
 			<div className="flex flex-row gap-2 mt-0.5">
 				<button
 					className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded-md"
-					onClick={() => mutateList()}
+					onClick={() => {
+						if (isListTitleValid) mutateList()
+					}}
 					disabled={isLoading}
 				>
 					Add List
@@ -85,45 +93,13 @@ export function EditableListTitle({
 		<EditableTitle
 			initialValue={title}
 			onSave={(editedTitle) => {
+				console.log('is this running??')
+				if (editedTitle.trim().length === 0) return
 				setTitle(editedTitle)
 				mutateListTitle()
 			}}
 			titleClassName="text-lg font-medium px-1 py-0.5 hover:bg-gray-100 rounded-md"
-			inputClassName="text-lg font-medium px-1"
+			inputClassName="text-lg font-medium px-0.5"
 		/>
-	)
-}
-
-export function AddButtonComponent({
-	name,
-	boardId
-}: {
-	name: 'card' | 'list'
-	boardId: string
-}) {
-	const [createMode, setCreateMode] = useState(false)
-
-	return (
-		<>
-			{createMode && name === 'list' ? (
-				<AddList setCreateMode={setCreateMode} boardId={boardId} />
-			) : createMode && name === 'card' ? (
-				<h1>Create Card Modal</h1>
-			) : (
-				<button
-					className="mt-4 flex flex-row bg-blue-50 h-8 items-center px-2.5 py-1 rounded-lg hover:bg-blue-100"
-					style={{ minWidth: '243px' }}
-					onClick={() => setCreateMode(true)}
-				>
-					<span className="text-blue-400 text-sm">
-						Add another {name}
-					</span>
-					<Add
-						className="text-blue-300 ml-auto w-5 h-5"
-						strokeWidth={1.5}
-					/>
-				</button>
-			)}
-		</>
 	)
 }

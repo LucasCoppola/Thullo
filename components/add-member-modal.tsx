@@ -6,7 +6,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
 import { findUsers } from '@/app/server/usersOperations'
 import { addMemberAction } from '@/app/actions'
-import { BoardProps, User } from '@/app/types'
+import type { User, Board } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
@@ -29,12 +29,15 @@ import { Info, X } from 'lucide-react'
 	- Once selected, click invite and the send the invitation
 	- This should appear in a box with notifications where you can accept or decline
 */
-export default function AddMemberModal({ authorId, id }: BoardProps) {
+export default function AddMemberModal({ authorId, id }: Board) {
 	const { data: session } = useSession()
 	const currUserId = session?.userId || ''
 	const [keyword, setKeyword] = useState('')
 	const [open, setOpen] = useState(false)
-	const [selectedUser, setSelectedUser] = useState<User | null>(null)
+	const [selectedUser, setSelectedUser] = useState<Omit<
+		User,
+		'email' | 'emailVerified'
+	> | null>(null)
 
 	const { data: users, isLoading: isLoadingUsers } = useQuery(
 		['searchUsers', keyword],
@@ -90,7 +93,7 @@ export default function AddMemberModal({ authorId, id }: BoardProps) {
 
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault()
-		mutate(selectedUser)
+		mutate(selectedUser as User)
 	}
 
 	return (

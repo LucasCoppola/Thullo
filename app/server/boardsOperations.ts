@@ -2,7 +2,10 @@
 
 import prisma from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
-import { BoardProps, VisibilityMutation } from '../types'
+import type { CreateBoardType, VisibilityMutation } from '../types'
+import { revalidatePath } from 'next/cache'
+
+type coverImageType = Prisma.NullTypes.JsonNull | Prisma.InputJsonValue
 
 export async function getBoards({ userId }: { userId: string }) {
 	try {
@@ -18,22 +21,19 @@ export async function getBoards({ userId }: { userId: string }) {
 		return { e }
 	}
 }
-
 export async function createBoard({
 	authorId,
 	title,
-	description,
-	coverImage,
-	visibility
-}: BoardProps) {
+	visibility,
+	coverImage
+}: CreateBoardType & { coverImage: coverImageType }) {
 	try {
 		const board = await prisma.board.create({
 			data: {
 				authorId,
 				title,
-				description,
-				coverImage,
-				visibility
+				visibility,
+				coverImage
 			}
 		})
 
@@ -136,15 +136,18 @@ export async function updateBoard({
 }
 
 export async function createList({
+	authorId,
 	boardId,
 	title
 }: {
+	authorId: string
 	boardId: string
 	title: string
 }) {
 	try {
 		const createList = await prisma.list.create({
 			data: {
+				authorId,
 				boardId,
 				title
 			}
@@ -186,6 +189,21 @@ export async function updateListTitle({
 			},
 			data: {
 				title
+			}
+		})
+
+		return { list }
+	} catch (e) {
+		console.error(e)
+		return { e }
+	}
+}
+
+export async function findListById({ listId }: { listId: string }) {
+	try {
+		const list = await prisma.list.findUnique({
+			where: {
+				id: listId
 			}
 		})
 

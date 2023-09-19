@@ -4,9 +4,8 @@ import { useState } from 'react'
 import BoardSheet from './board-sheet'
 import AddMemberModal from './add-member-modal'
 import Image from 'next/image'
-import { AuthorProps, BoardProps, User } from '@/app/types'
+import type { User, Board, BoardVisibility } from '@prisma/client'
 import { updateVisibilityAction } from '@/app/actions'
-import { $Enums } from '@prisma/client'
 import { Lock } from 'lucide-react'
 import { Globe, LoadingCircle } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
@@ -26,14 +25,14 @@ export default function BoardHeader({
 	members,
 	...board
 }: {
-	author: AuthorProps
+	author: Omit<User, 'email' | 'emailVerified'> | null
 	currUserId: string
 	members: User[]
-} & BoardProps) {
+} & Board) {
 	const [updateVisibility, setUpdateVisibility] = useState(board.visibility)
 
 	const { mutate, isLoading } = useMutation(
-		async (newVisibility: $Enums.BoardVisibility) => {
+		async (newVisibility: BoardVisibility) => {
 			isAuthorized(currUserId, newVisibility)
 
 			if (newVisibility !== board.visibility) {
@@ -47,10 +46,7 @@ export default function BoardHeader({
 		}
 	)
 
-	function isAuthorized(
-		currUserId: string,
-		visibility?: $Enums.BoardVisibility
-	) {
+	function isAuthorized(currUserId: string, visibility?: BoardVisibility) {
 		if (author?.id !== currUserId) {
 			throw new Error('You are not the author of this board')
 		}
@@ -156,7 +152,7 @@ export default function BoardHeader({
 			</div>
 			<BoardSheet
 				{...board}
-				author={author}
+				author={author as User}
 				members={members}
 				currUserId={currUserId}
 			/>

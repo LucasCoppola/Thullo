@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import { signOut } from 'next-auth/react'
-import { Session } from 'next-auth'
+import type { Session } from 'next-auth'
 import {
 	DropdownMenu,
 	DropdownMenuContent,

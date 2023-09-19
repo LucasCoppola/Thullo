@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
 }
 
@@ -46,7 +46,10 @@ model User {
   boards        Board[]
   accounts      Account[]
   sessions      Session[]
-  memberBoard         MembersOnBoards[]
+  comments      Comment[]
+  attachment    Attachment[]
+  cardMember    MembersOnCards[]
+  memberBoard   MembersOnBoards[]
 }
 
 model VerificationToken {
@@ -80,22 +83,76 @@ model MembersOnBoards {
   id      String @id @default(cuid())
   userId  String
   boardId String
-  user    User   @relation(fields: [userId], references: [id])
-  board   Board  @relation(fields: [boardId], references: [id])
+
+  user  User  @relation(fields: [userId], references: [id])
+  board Board @relation(fields: [boardId], references: [id])
 
   @@unique([userId, boardId])
 }
 
 model List {
-  id      String @id @default(cuid())
-  boardId String
-  title   String 
-  cards   Card[]
-  board   Board  @relation(fields: [boardId], references: [id])
+  id       String @id @default(cuid())
+  authorId String
+  boardId  String
+  title    String
+  cards    Card[]
+  board    Board  @relation(fields: [boardId], references: [id])
 }
 
-model Card{
-  id String @id @default(cuid())
-  listId String
-  list List @relation(fields: [listId], references: [id])
+model Card {
+  id          String           @id @default(cuid())
+  authorId    String
+  listId      String
+  title       String
+  description String?
+  coverImage  String?
+  labels      Label[]
+  comments    Comment[]
+  attachment  Attachment[]
+  members     MembersOnCards[]
+  list        List             @relation(fields: [listId], references: [id])
 }
+
+model MembersOnCards {
+  userId String
+  cardId String
+
+  user User @relation(fields: [userId], references: [id])
+  card Card @relation(fields: [cardId], references: [id])
+
+  @@unique([userId, cardId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  text      String
+  authorId  String
+  cardId    String
+
+  author User @relation(fields: [authorId], references: [id])
+  card   Card @relation(fields: [cardId], references: [id])
+}
+
+model Attachment {
+  id         String   @id @default(cuid())
+  filename   String
+  url        String
+  size       Int
+  uploadedAt DateTime @default(now())
+  userId     String
+  cardId     String
+
+  user User @relation(fields: [userId], references: [id])
+  card Card @relation(fields: [cardId], references: [id])
+}
+
+model Label {
+  id      String @id @default(cuid())
+  name    String
+  color   Json
+  cardId  String
+  card    Card   @relation(fields: [cardId], references: [id])
+}
+
