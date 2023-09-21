@@ -5,6 +5,7 @@ import Link from 'next/link'
 import type { Board } from '@prisma/client'
 import { getBoardMembers } from '@/app/server/membersOperations'
 import { findUserById } from '@/app/server/usersOperations'
+import type { CoverImageType } from '@/app/types'
 
 export default async function BoardCard({
 	id,
@@ -16,10 +17,7 @@ export default async function BoardCard({
 	const { author } = await findUserById({ id: authorId })
 	const { members } = await getBoardMembers({ boardId: id || '' })
 	const remainingAvatars = members?.length! - 2
-	const typedCoverImage = coverImage as {
-		type: 'color' | 'image'
-		bg: string
-	}
+	const typedCoverImage = coverImage as CoverImageType
 
 	return (
 		<Link href={`/boards/${id}`}>
