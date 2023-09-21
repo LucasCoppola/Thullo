@@ -1,20 +1,22 @@
 import Image from 'next/image'
 import { MessageSquare, Paperclip } from 'lucide-react'
 import type { Card, Label } from '@prisma/client'
-import type { ColorProps } from '@/app/types'
+import type { ColorProps, CoverImageType } from '@/app/types'
 
 export default function CardView({
 	setOpen,
 	card,
 	attachmentsLength,
 	commentsLength,
-	labels
+	labels,
+	coverImage
 }: {
 	setOpen: (val: boolean) => void
 	card: Card
 	attachmentsLength: number
 	commentsLength: number
 	labels: Label[]
+	coverImage: CoverImageType | undefined
 }) {
 	return (
 		<div
@@ -22,19 +24,24 @@ export default function CardView({
 			style={{ width: '243px' }}
 			onClick={() => setOpen(true)}
 		>
-			{/*
-				 Json object {type: color | image, bg: string} 
-				 I have to update the prisma schema
-				*/}
-			{card.coverImage && (
-				<Image
-					className="w-full h-[138px] rounded-xl object-cover"
-					src={card.coverImage}
-					alt="card cover image"
-					width={200}
-					height={50}
-				/>
-			)}
+			{coverImage ? (
+				coverImage.type === 'image' ? (
+					<Image
+						className="w-full h-[138px] rounded-xl object-cover"
+						src={coverImage.bg}
+						alt="card cover image"
+						width={200}
+						height={50}
+					/>
+				) : (
+					<div
+						className="w-full h-28 rounded-lg"
+						style={{
+							backgroundColor: coverImage?.bg
+						}}
+					></div>
+				)
+			) : null}
 
 			<h3 className="font-medium">{card.title}</h3>
 			<div className="flex flex-row gap-2 flex-wrap">

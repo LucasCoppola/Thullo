@@ -105,7 +105,7 @@ model Card {
   listId      String
   title       String
   description String?
-  coverImage  String?
+  coverImage  Json?
   labels      Label[]
   comments    Comment[]
   attachment  Attachment[]

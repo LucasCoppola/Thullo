@@ -21,10 +21,12 @@ import Tooltip from '../ui/tooltip'
 import CardView from './card-view'
 import UploadFile from '../upload-file'
 
-import type { Card, List, User } from '@prisma/client'
 import { getAttachments } from '@/app/server/card-operations/attachments'
 import { getComments } from '@/app/server/card-operations/comments'
 import { getLabels } from '@/app/server/card-operations/labels'
+import { getCoverImage } from '@/app/server/card-operations/coverImage'
+import type { Card, List, User } from '@prisma/client'
+import type { CoverImageType } from '@/app/types'
 
 export default function CardModal({
 	card,
@@ -37,6 +39,12 @@ export default function CardModal({
 }) {
 	const [open, setOpen] = useState(false)
 	const remainingAvatars = boardMembers?.length! - 2
+
+	const { data: coverImageDB } = useQuery(
+		['cover-image', card.id],
+		async () => (await getCoverImage(card.id)) as CoverImageType
+	)
+	const [coverImage, setCoverImage] = useState(coverImageDB)
 
 	const { data: comments, refetch: refetchComments } = useQuery(
 		['comments', card.id],
@@ -71,18 +79,30 @@ export default function CardModal({
 					attachmentsLength={attachments?.length || 0}
 					commentsLength={comments?.length || 0}
 					labels={labels || []}
+					coverImage={coverImageDB}
 				/>
 			</DialogTrigger>
-			<DialogContent className="overflow-y-auto max-h-[80vh] max-w-2xl">
+			<DialogContent className="overflow-y-auto max-h-[80vh] max-w-2xl pt-9">
 				<DialogDescription asChild>
 					<>
-						<Image
-							src="https://images.unsplash.com/photo-1693856757774-e749742aefe4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80"
-							alt="unsplash random image"
-							width={400}
-							height={400}
-							className="w-full h-32 object-cover rounded-lg"
-						/>
+						{coverImageDB ? (
+							coverImageDB.type === 'image' ? (
+								<Image
+									src={coverImageDB?.bg}
+									alt="unsplash random image"
+									width={400}
+									height={400}
+									className="w-full h-32 object-cover rounded-lg"
+								/>
+							) : (
+								<div
+									className="w-full h-32 rounded-lg"
+									style={{
+										backgroundColor: coverImageDB?.bg
+									}}
+								></div>
+							)
+						) : null}
 						<div className="flex flex-row">
 							<div className="w-4/6">
 								<h1 className="font-medium">{card.title}</h1>
@@ -150,7 +170,11 @@ export default function CardModal({
 									labels={labels || []}
 									refetchLabels={refetchLabels}
 								/>
-								<CoverImage />
+								<CoverImage
+									coverImage={coverImage || null}
+									setCoverImage={setCoverImage}
+									card={card}
+								/>
 							</div>
 						</div>
 					</>
