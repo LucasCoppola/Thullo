@@ -96,3 +96,23 @@ export async function updateLabel({
 		throw (e as Error).message
 	}
 }
+
+export async function deleteLabel({
+	cardId,
+	labelId
+}: {
+	cardId: string
+	labelId: string
+}) {
+	try {
+		await prisma.label.delete({
+			where: {
+				cardId,
+				id: labelId
+			}
+		})
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
+	}
+}

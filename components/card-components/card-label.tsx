@@ -3,20 +3,15 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import {
 	DropdownMenu,
 	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { MoreHorizontal, Tags, Trash2 } from 'lucide-react'
+import { MoreHorizontal, Tags } from 'lucide-react'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import {
-	createLabel,
-	getLabels,
-	updateLabel
-} from '@/app/server/card-operations/labels'
+import { createLabel, getLabels } from '@/app/server/card-operations/labels'
+import MutateLable from './mutate-label'
 import type { ColorProps } from '@/app/types'
 
-const colors: ColorProps[] = [
+export const colors: ColorProps[] = [
 	{ color: { text: '#4b5563', bg: '#f3f4f6' }, colorName: 'Gray' },
 	{ color: { text: '#dc2626', bg: '#fee2e2' }, colorName: 'Red' },
 	{ color: { text: '#2563eb', bg: '#dbeafe' }, colorName: 'Blue' },
@@ -31,6 +26,7 @@ export default function AddLabel({ cardId }: { cardId: string }) {
 	const [label, setLabel] = useState('')
 	const [previewColor, setPreviewColor] = useState<ColorProps | null>(null)
 	const [hoveredLabelId, setHoveredLabelId] = useState<string | null>(null)
+	const [openDropdown, setOpenDropdown] = useState(false)
 
 	useEffect(() => {
 		setPreviewColor(
@@ -108,7 +104,10 @@ export default function AddLabel({ cardId }: { cardId: string }) {
 								>
 									{name}
 								</span>
-								<DropdownMenu>
+								<DropdownMenu
+									open={openDropdown}
+									onOpenChange={setOpenDropdown}
+								>
 									<DropdownMenuTrigger asChild>
 										{hoveredLabelId === id && (
 											<MoreHorizontal
@@ -118,45 +117,14 @@ export default function AddLabel({ cardId }: { cardId: string }) {
 										)}
 									</DropdownMenuTrigger>
 									<DropdownMenuContent>
-										<UpdateLabel
+										<MutateLable
 											cardId={cardId}
 											color={parsedColor}
 											labelId={id}
 											name={name}
 											refetchLabels={refetchLabels}
-											hoveredLabelId={hoveredLabelId}
+											setOpenDropdown={setOpenDropdown}
 										/>
-										{/* <DropdownMenuItem>
-											<div
-												role="button"
-												className="flex flex-row items-center text-gray-700"
-											>
-												<Trash2 className="h-4 w-4 mr-2" />
-												Delete
-											</div>
-										</DropdownMenuItem>
-										<DropdownMenuSeparator />
-										<span className="text-gray-500 uppercase text-xs font-medium pl-2">
-											Colors
-										</span>
-										{colors.map(({ color, colorName }) => (
-											<DropdownMenuItem
-												key={colorName}
-												className="flex flex-row items-center py-1"
-											>
-												<div
-													className="h-4 w-4 rounded-sm border"
-													style={{
-														backgroundColor:
-															color.bg,
-														color: color.text
-													}}
-												/>
-												<span className="text-xs rounded-sm ml-2 py-[1px] text-gray-700">
-													{colorName}
-												</span>
-											</DropdownMenuItem>
-										))} */}
 									</DropdownMenuContent>
 								</DropdownMenu>
 							</li>
@@ -184,98 +152,5 @@ export default function AddLabel({ cardId }: { cardId: string }) {
 				</ul>
 			</PopoverContent>
 		</Popover>
-	)
-}
-
-function UpdateLabel({
-	name,
-	labelId,
-	color,
-	cardId,
-	hoveredLabelId,
-	refetchLabels
-}: {
-	name: string
-	labelId: string
-	color: ColorProps
-	cardId: string
-	hoveredLabelId: string | null
-	refetchLabels: () => void
-}) {
-	const [editLabelName, setEditLabelName] = useState(name)
-	const [editColor, setEditColor] = useState(color)
-
-	const mutateLabel = useMutation(
-		async () => {
-			if (editLabelName === name && editColor === color) return
-
-			await updateLabel({
-				cardId,
-				color: editColor,
-				labelId,
-				name: editLabelName
-			})
-		},
-		{
-			onSettled: () => refetchLabels()
-		}
-	)
-
-	useEffect(() => {
-		if (editLabelName !== name || editColor !== color) {
-			mutateLabel.mutate()
-		}
-	}, [editLabelName, editColor])
-
-	return (
-		<>
-			<DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-				<input
-					type="text"
-					className="w-32 p-1 border border-gray-300 text-xs rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-					value={editLabelName}
-					onChange={(e) => {
-						setEditLabelName(e.target.value)
-						mutateLabel.mutate()
-					}}
-					autoFocus
-				/>
-			</DropdownMenuItem>
-			<DropdownMenuItem>
-				<div
-					role="button"
-					className="flex flex-row items-center text-gray-700 text-xs"
-				>
-					<Trash2 className="h-4 w-4 mr-2" />
-					Delete
-				</div>
-			</DropdownMenuItem>
-			<DropdownMenuSeparator />
-			<span className="text-gray-500 uppercase text-xs font-medium ">
-				Colors
-			</span>
-			{colors.map(({ color, colorName }) => (
-				<DropdownMenuItem
-					key={colorName}
-					role="button"
-					className="flex flex-row items-center py-1"
-					onClick={() => {
-						setEditColor({ color, colorName })
-						mutateLabel.mutate()
-					}}
-				>
-					<div
-						className="h-4 w-4 rounded-sm border"
-						style={{
-							backgroundColor: color.bg,
-							color: color.text
-						}}
-					/>
-					<span className="text-xs rounded-sm ml-2 py-[1px] text-gray-700">
-						{colorName}
-					</span>
-				</DropdownMenuItem>
-			))}
-		</>
 	)
 }
