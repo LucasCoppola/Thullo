@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query'
 import { LoadingCircle, Search } from '@/components/ui/icons'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import type { ImageData } from '@/app/types'
+import type { CoverImageType, ImageData } from '@/app/types'
 
 export default function CoverImageModal({
 	coverImage,
