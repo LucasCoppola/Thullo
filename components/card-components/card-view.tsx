@@ -16,7 +16,7 @@ export default function CardView({
 	attachmentsLength: number
 	commentsLength: number
 	labels: Label[]
-	coverImage: CoverImageType | undefined
+	coverImage: CoverImageType | null
 }) {
 	return (
 		<div

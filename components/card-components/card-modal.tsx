@@ -11,16 +11,15 @@ import { Activity, Paperclip } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 
 import SendComment from './send-comment'
-import Image from 'next/image'
 import AttachmentComponent from './attachment'
 import CardDescription from './card-description'
 import CardMembers from './card-members'
-import CoverImage from './card-cover-image'
 import AddLabel from './card-label'
 import Tooltip from '../ui/tooltip'
 import CardView from './card-view'
 import UploadFile from '../upload-file'
 
+import { CoverImageSelector, CardCoverImage } from './card-cover-image'
 import { getAttachments } from '@/app/server/card-operations/attachments'
 import { getComments } from '@/app/server/card-operations/comments'
 import { getLabels } from '@/app/server/card-operations/labels'
@@ -40,11 +39,16 @@ export default function CardModal({
 	const [open, setOpen] = useState(false)
 	const remainingAvatars = boardMembers?.length! - 2
 
-	const { data: coverImageDB } = useQuery(
+	const { data } = useQuery(
 		['cover-image', card.id],
-		async () => (await getCoverImage(card.id)) as CoverImageType
+		async () => (await getCoverImage(card.id)) as CoverImageType,
+		{
+			onSuccess: (data) => {
+				setCoverImage(data)
+			}
+		}
 	)
-	const [coverImage, setCoverImage] = useState(coverImageDB)
+	const [coverImage, setCoverImage] = useState<CoverImageType | null>(null)
 
 	const { data: comments, refetch: refetchComments } = useQuery(
 		['comments', card.id],
@@ -79,30 +83,18 @@ export default function CardModal({
 					attachmentsLength={attachments?.length || 0}
 					commentsLength={comments?.length || 0}
 					labels={labels || []}
-					coverImage={coverImageDB}
+					coverImage={coverImage}
 				/>
 			</DialogTrigger>
 			<DialogContent className="overflow-y-auto max-h-[80vh] max-w-2xl pt-9">
 				<DialogDescription asChild>
 					<>
-						{coverImageDB ? (
-							coverImageDB.type === 'image' ? (
-								<Image
-									src={coverImageDB?.bg}
-									alt="unsplash random image"
-									width={400}
-									height={400}
-									className="w-full h-32 object-cover rounded-lg"
-								/>
-							) : (
-								<div
-									className="w-full h-32 rounded-lg"
-									style={{
-										backgroundColor: coverImageDB?.bg
-									}}
-								></div>
-							)
-						) : null}
+						<CardCoverImage
+							coverImage={coverImage || null}
+							setCoverImage={setCoverImage}
+							card={card}
+						/>
+
 						<div className="flex flex-row">
 							<div className="w-4/6">
 								<h1 className="font-medium">{card.title}</h1>
@@ -115,6 +107,7 @@ export default function CardModal({
 									authorId={card.authorId}
 								/>
 
+								{/* Attachments */}
 								<div className="text-xs font-medium text-gray-600 flex flex-row items-center mb-4">
 									<Paperclip className="h-3.5 w-3.5 mr-1" />
 									Attachments
@@ -150,6 +143,7 @@ export default function CardModal({
 									)}
 								</div>
 
+								{/* Comments */}
 								<span className="text-xs font-medium text-gray-600 flex flex-row items-center mt-4 mb-2">
 									<Activity className="h-3.5 w-3.5 mr-1" />
 									Activity
@@ -170,7 +164,7 @@ export default function CardModal({
 									labels={labels || []}
 									refetchLabels={refetchLabels}
 								/>
-								<CoverImage
+								<CoverImageSelector
 									coverImage={coverImage || null}
 									setCoverImage={setCoverImage}
 									card={card}

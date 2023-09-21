@@ -2,6 +2,7 @@
 
 import type { CoverImageType } from '@/app/types'
 import prisma from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 
 export async function getCoverImage(cardId: string) {
 	try {
@@ -54,6 +55,34 @@ export async function updateCoverImage({
 		})
 
 		return updatedCard
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
+	}
+}
+
+export async function removeCoverImage({
+	cardId,
+	authorId,
+	userId
+}: {
+	cardId: string
+	authorId: string
+	userId: string
+}) {
+	try {
+		if (userId !== authorId) {
+			throw new Error('Unauthorized')
+		}
+
+		await prisma.card.update({
+			where: {
+				id: cardId
+			},
+			data: {
+				coverImage: Prisma.JsonNull
+			}
+		})
 	} catch (e) {
 		console.error(e)
 		throw (e as Error).message
