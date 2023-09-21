@@ -6,10 +6,12 @@ import {
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, Tags } from 'lucide-react'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { createLabel, getLabels } from '@/app/server/card-operations/labels'
+import { useMutation } from '@tanstack/react-query'
+import { createLabel } from '@/app/server/card-operations/labels'
 import MutateLable from './mutate-label'
+
 import type { ColorProps } from '@/app/types'
+import type { Label } from '@prisma/client'
 
 export const colors: ColorProps[] = [
 	{ color: { text: '#4b5563', bg: '#f3f4f6' }, colorName: 'Gray' },
@@ -22,7 +24,15 @@ export const colors: ColorProps[] = [
 	{ color: { text: '#9333ea', bg: '#f3e8ff' }, colorName: 'Purple' }
 ]
 
-export default function AddLabel({ cardId }: { cardId: string }) {
+export default function AddLabel({
+	cardId,
+	labels,
+	refetchLabels
+}: {
+	cardId: string
+	labels: Label[]
+	refetchLabels: () => void
+}) {
 	const [label, setLabel] = useState('')
 	const [previewColor, setPreviewColor] = useState<ColorProps | null>(null)
 	const [hoveredLabelId, setHoveredLabelId] = useState<string | null>(null)
@@ -33,14 +43,6 @@ export default function AddLabel({ cardId }: { cardId: string }) {
 			colors[Math.floor(Math.random() * colors.length)] || null
 		)
 	}, [])
-
-	const { data: labels, refetch: refetchLabels } = useQuery(
-		['labels', cardId],
-		async () => {
-			const { labels } = await getLabels({ cardId })
-			return labels
-		}
-	)
 
 	const createLabelMutation = useMutation(
 		async () => {
@@ -81,55 +83,61 @@ export default function AddLabel({ cardId }: { cardId: string }) {
 					Select a label or create one
 				</span>
 				<ul className="text-xs">
-					{labels?.map(({ id, name, color }) => {
-						const parsedColor = JSON.parse(
-							JSON.stringify(color)
-						) as ColorProps
+					{labels.length > 0 &&
+						labels?.map(({ id, name, color }) => {
+							const parsedColor = JSON.parse(
+								JSON.stringify(color)
+							) as ColorProps
 
-						return (
-							<li
-								key={id}
-								className={`hover:bg-gray-100 rounded-sm py-1 px-2 cursor-pointer flex flex-row justify-between ${
-									hoveredLabelId === id ? 'bg-gray-100' : ''
-								}`}
-								onMouseEnter={() => setHoveredLabelId(id)}
-								onMouseLeave={() => setHoveredLabelId(null)}
-							>
-								<span
-									className="text-[10px] rounded-sm px-2 py-[1px]"
-									style={{
-										backgroundColor: parsedColor.color.bg,
-										color: parsedColor.color.text
-									}}
+							return (
+								<li
+									key={id}
+									className={`hover:bg-gray-100 rounded-sm py-1 px-2 cursor-pointer flex flex-row justify-between ${
+										hoveredLabelId === id
+											? 'bg-gray-100'
+											: ''
+									}`}
+									onMouseEnter={() => setHoveredLabelId(id)}
+									onMouseLeave={() => setHoveredLabelId(null)}
 								>
-									{name}
-								</span>
-								<DropdownMenu
-									open={openDropdown}
-									onOpenChange={setOpenDropdown}
-								>
-									<DropdownMenuTrigger asChild>
-										{hoveredLabelId === id && (
-											<MoreHorizontal
-												className="h-4 w-4 text-gray-500 hover:bg-gray-200 rounded-sm"
-												strokeWidth={2.5}
+									<span
+										className="text-[10px] rounded-sm px-2 py-[1px]"
+										style={{
+											backgroundColor:
+												parsedColor.color.bg,
+											color: parsedColor.color.text
+										}}
+									>
+										{name}
+									</span>
+									<DropdownMenu
+										open={openDropdown}
+										onOpenChange={setOpenDropdown}
+									>
+										<DropdownMenuTrigger asChild>
+											{hoveredLabelId === id && (
+												<MoreHorizontal
+													className="h-4 w-4 text-gray-500 hover:bg-gray-200 rounded-sm"
+													strokeWidth={2.5}
+												/>
+											)}
+										</DropdownMenuTrigger>
+										<DropdownMenuContent>
+											<MutateLable
+												cardId={cardId}
+												color={parsedColor}
+												labelId={id}
+												name={name}
+												refetchLabels={refetchLabels}
+												setOpenDropdown={
+													setOpenDropdown
+												}
 											/>
-										)}
-									</DropdownMenuTrigger>
-									<DropdownMenuContent>
-										<MutateLable
-											cardId={cardId}
-											color={parsedColor}
-											labelId={id}
-											name={name}
-											refetchLabels={refetchLabels}
-											setOpenDropdown={setOpenDropdown}
-										/>
-									</DropdownMenuContent>
-								</DropdownMenu>
-							</li>
-						)
-					})}
+										</DropdownMenuContent>
+									</DropdownMenu>
+								</li>
+							)
+						})}
 
 					{label && (
 						<div

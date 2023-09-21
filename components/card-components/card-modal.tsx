@@ -24,6 +24,7 @@ import UploadFile from '../upload-file'
 import type { Card, List, User } from '@prisma/client'
 import { getAttachments } from '@/app/server/card-operations/attachments'
 import { getComments } from '@/app/server/card-operations/comments'
+import { getLabels } from '@/app/server/card-operations/labels'
 
 export default function CardModal({
 	card,
@@ -53,6 +54,14 @@ export default function CardModal({
 		}
 	)
 
+	const { data: labels, refetch: refetchLabels } = useQuery(
+		['labels', card.id],
+		async () => {
+			const { labels } = await getLabels({ cardId: card.id })
+			return labels
+		}
+	)
+
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
@@ -61,6 +70,7 @@ export default function CardModal({
 					card={card}
 					attachmentsLength={attachments?.length || 0}
 					commentsLength={comments?.length || 0}
+					labels={labels || []}
 				/>
 			</DialogTrigger>
 			<DialogContent className="overflow-y-auto max-h-[80vh] max-w-2xl">
@@ -135,7 +145,11 @@ export default function CardModal({
 
 							<div className="flex flex-col w-2/6 gap-3 items-end">
 								<CardMembers />
-								<AddLabel cardId={card.id} />
+								<AddLabel
+									cardId={card.id}
+									labels={labels || []}
+									refetchLabels={refetchLabels}
+								/>
 								<CoverImage />
 							</div>
 						</div>
