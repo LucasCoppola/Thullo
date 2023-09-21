@@ -3,28 +3,26 @@
 import axios from 'axios'
 import Link from 'next/link'
 import Image from 'next/image'
-import type { ImageData } from '@/app/types'
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { LoadingCircle, Search } from '@/components/ui/icons'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import type { CoverImageType, ImageData } from '@/app/types'
 
 export default function CoverImageModal({
-	isHovered,
 	coverImage,
 	setCoverImage,
 	triggerButton
 }: {
-	isHovered?: boolean
-	coverImage: { type: 'color' | 'image'; bg: string }
-	setCoverImage: (value: { type: 'color' | 'image'; bg: string }) => void
+	coverImage: CoverImageType | null
+	setCoverImage: (value: CoverImageType) => void
 	triggerButton: React.ReactNode
 }) {
 	const [open, setOpen] = useState(false)
 
 	useEffect(() => {
-		if (coverImage.bg) {
+		if (coverImage?.bg) {
 			setOpen(false)
 		}
 	}, [coverImage])
@@ -59,7 +57,7 @@ export default function CoverImageModal({
 function ColorsTabContent({
 	setCoverImage
 }: {
-	setCoverImage: (value: { type: 'color' | 'image'; bg: string }) => void
+	setCoverImage: (value: CoverImageType) => void
 }) {
 	const colors = [
 		{ color: '#0077b6', name: 'Blue' },
@@ -96,7 +94,7 @@ function ColorsTabContent({
 function UnsplashTabContent({
 	setCoverImage
 }: {
-	setCoverImage: (value: { type: 'color' | 'image'; bg: string }) => void
+	setCoverImage: (value: CoverImageType) => void
 }) {
 	const [query, setQuery] = useState('')
 
@@ -136,7 +134,7 @@ function UnsplashTabContent({
 	})
 
 	return (
-		<>
+		<div className="px-1">
 			<div className="relative mt-1">
 				<input
 					className="w-full py-2 pl-10 pr-10 text-gray-600 text-sm bg-white border rounded-lg focus:border-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300"
@@ -221,6 +219,6 @@ function UnsplashTabContent({
 					))}
 				</div>
 			)}
-		</>
+		</div>
 	)
 }

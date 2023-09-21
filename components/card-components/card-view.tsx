@@ -1,80 +1,69 @@
 import Image from 'next/image'
 import { MessageSquare, Paperclip } from 'lucide-react'
-import type { Card } from '@prisma/client'
+import type { Card, Label } from '@prisma/client'
+import type { ColorProps, CoverImageType } from '@/app/types'
 
 export default function CardView({
 	setOpen,
 	card,
 	attachmentsLength,
-	commentsLength
+	commentsLength,
+	labels,
+	coverImage
 }: {
 	setOpen: (val: boolean) => void
 	card: Card
 	attachmentsLength: number
 	commentsLength: number
+	labels: Label[]
+	coverImage: CoverImageType | null
 }) {
-	const fakeLabelJson = [
-		{
-			id: 'bveureobveybo8',
-			name: 'Technical',
-			color: { text: '#16a34a', bg: '#dcfce7' }
-		},
-		{
-			id: 'brwuvbrwu9br',
-			name: 'Fast',
-			color: { text: '#dc2626', bg: '#fee2e2' }
-		},
-		{
-			id: 'verget',
-			name: 'Do it now',
-			color: { text: '#2563eb', bg: '#dbeafe' }
-		},
-		{
-			id: 'obveybo8',
-			name: 'Critical',
-			color: { text: '#ea580c', bg: '#ffedd5' }
-		},
-
-		{
-			id: 'viwrno',
-			name: 'Technical',
-			color: { text: '#16a34a', bg: '#dcfce7' }
-		}
-	]
 	return (
 		<div
 			className="bg-white rounded-xl shadow-md hover:shadow-lg p-3 space-y-2"
 			style={{ width: '243px' }}
 			onClick={() => setOpen(true)}
 		>
-			{/*
-				 Json object {type: color | image, bg: string} 
-				 I have to update the prisma schema
-				*/}
-			{card.coverImage && (
-				<Image
-					className="w-full h-[138px] rounded-xl object-cover"
-					src={card.coverImage}
-					alt="card cover image"
-					width={200}
-					height={50}
-				/>
-			)}
+			{coverImage ? (
+				coverImage.type === 'image' ? (
+					<Image
+						className="w-full h-[138px] rounded-xl object-cover"
+						src={coverImage.bg}
+						alt="card cover image"
+						width={200}
+						height={50}
+					/>
+				) : (
+					<div
+						className="w-full h-28 rounded-lg"
+						style={{
+							backgroundColor: coverImage?.bg
+						}}
+					></div>
+				)
+			) : null}
 
 			<h3 className="font-medium">{card.title}</h3>
 			<div className="flex flex-row gap-2 flex-wrap">
-				{fakeLabelJson.map(({ color, id, name }) => (
-					<span
-						key={id}
-						className="text-[10px] rounded-sm px-2 py-[1px]"
-						style={{
-							backgroundColor: color.bg,
-							color: color.text
-						}}
-					>
-						{name}
-					</span>
-				))}
+				{labels.length > 0 &&
+					labels.map(({ color, id, name }) => {
+						const parsedColor = JSON.parse(
+							JSON.stringify(color)
+						) as ColorProps
+
+						return (
+							<span
+								key={id}
+								className="text-[10px] rounded-sm px-2 py-[1px]"
+								style={{
+									backgroundColor: parsedColor.color.bg,
+									color: parsedColor.color.text
+								}}
+							>
+								{name}
+							</span>
+						)
+					})}
 			</div>
 			<div className="flex flex-row justify-between items-center pt-2">
 				<div className="flex -space-x-1 overflow-hidden items-center">

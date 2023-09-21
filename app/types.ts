@@ -7,6 +7,11 @@ export type ImageData = {
 	user: { id: string; username: string; links: { html: string } }
 }
 
+export type CoverImageType = {
+	type: 'image' | 'color'
+	bg: string
+}
+
 export type VisibilityMutation = {
 	visibility: BoardVisibility
 	boardId: string

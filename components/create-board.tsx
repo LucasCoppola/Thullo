@@ -18,10 +18,11 @@ import {
 import { Button } from '@/components/ui/button'
 import { Add, LoadingCircle } from '@/components/ui/icons'
 import CoverImageModal from '@/components/cover-image-modal'
+import type { CoverImageType } from '@/app/types'
 
 type FormDataType = {
 	title: string
-	coverImage: { type: 'color' | 'image'; bg: string }
+	coverImage: CoverImageType
 	visibility: BoardVisibility
 }
 
@@ -119,7 +120,6 @@ export default function CreateBoard() {
 									/>
 								)}
 								<CoverImageModal
-									isHovered={isHovered}
 									setCoverImage={(newCoverImage) => {
 										setFormData({
 											...formData,
