@@ -11,7 +11,7 @@ export async function getLabels({ cardId }: { cardId: string }) {
 				cardId
 			}
 		})
-		labels.sort((a, b) => a.id.localeCompare(b.id))
+		labels.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
 
 		return { labels }
 	} catch (e) {
