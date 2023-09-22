@@ -107,3 +107,29 @@ export async function removeMember({
 		return { e }
 	}
 }
+
+export async function getCardMembers({ cardId }: { cardId: string }) {
+	try {
+		const cardMemberRelations = await prisma.membersOnCards.findMany({
+			where: { cardId }
+		})
+
+		const userIds = cardMemberRelations.map((relation) => relation.userId)
+
+		const members = await prisma.user.findMany({
+			where: {
+				id: { in: userIds }
+			},
+			select: {
+				id: true,
+				name: true,
+				image: true
+			}
+		})
+
+		return members
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
+	}
+}

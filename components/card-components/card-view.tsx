@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { MessageSquare, Paperclip } from 'lucide-react'
-import type { Card, Label } from '@prisma/client'
+import type { Card, Label, User } from '@prisma/client'
 import type { ColorProps, CoverImageType } from '@/app/types'
 
 export default function CardView({
@@ -9,7 +9,8 @@ export default function CardView({
 	attachmentsLength,
 	commentsLength,
 	labels,
-	coverImage
+	coverImage,
+	cardMembers
 }: {
 	setOpen: (val: boolean) => void
 	card: Card
@@ -17,7 +18,9 @@ export default function CardView({
 	commentsLength: number
 	labels: Label[]
 	coverImage: CoverImageType | null
+	cardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 }) {
+	const remainingAvatars = cardMembers?.length! - 2
 	return (
 		<div
 			className="bg-white rounded-xl shadow-md hover:shadow-lg p-3 space-y-2"
@@ -67,26 +70,27 @@ export default function CardView({
 			</div>
 			<div className="flex flex-row justify-between items-center pt-2">
 				<div className="flex -space-x-1 overflow-hidden items-center">
-					{/* {members.map(({ image, name, id }) => (
-						<Image
-							key={id}
-							src={
-								image ||
-								`https://avatars.dicebear.com/api/micah/${name}.svg`
-							}
-							alt={`${name} avatar`}
-							title={name!}
-							className="w-6 h-6 inline-block rounded-full ring-2 ring-white"
-							width={400}
-							height={400}
-						/>
-					))} */}
-					{/* {remainingAvatars > 0 && (
+					{cardMembers &&
+						cardMembers.map(({ image, name, id }) => (
+							<Image
+								key={id}
+								src={
+									image ||
+									`https://avatars.dicebear.com/api/micah/${name}.svg`
+								}
+								alt={`${name} avatar`}
+								title={name!}
+								className="w-6 h-6 inline-block rounded-full ring-2 ring-white"
+								width={400}
+								height={400}
+							/>
+						))}
+					{remainingAvatars > 0 && (
 						<span className="text-gray-500 text-xs tracking-tight pl-2">
 							+{remainingAvatars}{' '}
 							{remainingAvatars === 1 ? 'other' : 'others'}
 						</span>
-					)} */}
+					)}
 				</div>
 				<div className="flex flex-row text-gray-500 items-center">
 					{commentsLength > 0 && (

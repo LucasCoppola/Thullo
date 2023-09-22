@@ -8,29 +8,15 @@ import {
 import { Info, Users2, X } from 'lucide-react'
 import type { User } from '@prisma/client'
 
-export default function CardMembers() {
+export default function CardMembers({
+	boardMembers
+}: {
+	boardMembers: User[]
+}) {
 	const [selectedUser, setSelectedUser] = useState<Omit<
 		User,
 		'email' | 'emailVerified'
 	> | null>(null)
-
-	const users = [
-		{
-			id: 'viornetin0ent',
-			name: 'User 1',
-			image: 'https://avatars.dicebear.com/api/micah/lucas.svg'
-		},
-		{
-			id: 'vtin0ent',
-			name: 'User 2',
-			image: 'https://avatars.dicebear.com/api/micah/lucas.svg'
-		},
-		{
-			id: 'vnt',
-			name: 'User 3',
-			image: 'https://avatars.dicebear.com/api/micah/lucas.svg'
-		}
-	]
 
 	return (
 		<Popover>
@@ -55,7 +41,7 @@ export default function CardMembers() {
 				</div>
 
 				<ul>
-					{users.map(({ id, name, image }) => (
+					{boardMembers.map(({ id, name, image }) => (
 						<div
 							key={id}
 							className="relative first:mt-2 last:pb-2 mb-1"

@@ -26,6 +26,7 @@ import { getLabels } from '@/app/server/card-operations/labels'
 import { getCoverImage } from '@/app/server/card-operations/coverImage'
 import type { Card, List, User } from '@prisma/client'
 import type { CoverImageType } from '@/app/types'
+import { getCardMembers } from '@/app/server/membersOperations'
 
 export default function CardModal({
 	card,
@@ -37,7 +38,6 @@ export default function CardModal({
 	list: List
 }) {
 	const [open, setOpen] = useState(false)
-	const remainingAvatars = boardMembers?.length! - 2
 
 	const { data } = useQuery(
 		['cover-image', card.id],
@@ -74,6 +74,11 @@ export default function CardModal({
 		}
 	)
 
+	const { data: cardMembers } = useQuery(
+		['card-members', card.id],
+		async () => await getCardMembers({ cardId: card.id })
+	)
+
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
@@ -84,6 +89,7 @@ export default function CardModal({
 					commentsLength={comments?.length || 0}
 					labels={labels || []}
 					coverImage={coverImage}
+					cardMembers={cardMembers}
 				/>
 			</DialogTrigger>
 			<DialogContent className="overflow-y-auto max-h-[80vh] max-w-2xl pt-9">
@@ -158,7 +164,7 @@ export default function CardModal({
 							</div>
 
 							<div className="flex flex-col w-2/6 gap-3 items-end">
-								<CardMembers />
+								<CardMembers boardMembers={boardMembers} />
 								<AddLabel
 									cardId={card.id}
 									labels={labels || []}
