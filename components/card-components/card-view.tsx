@@ -74,10 +74,7 @@ export default function CardView({
 						cardMembers.map(({ image, name, id }) => (
 							<Image
 								key={id}
-								src={
-									image ||
-									`https://avatars.dicebear.com/api/micah/${name}.svg`
-								}
+								src={image || ''}
 								alt={`${name} avatar`}
 								title={name!}
 								className="w-6 h-6 inline-block rounded-full ring-2 ring-white"

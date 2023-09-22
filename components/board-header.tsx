@@ -136,10 +136,7 @@ export default function BoardHeader({
 					{members.map(({ image, name, id }) => (
 						<Image
 							key={id}
-							src={
-								image ||
-								`https://avatars.dicebear.com/api/micah/${name}.svg`
-							}
+							src={image || ''}
 							alt={`${name} avatar`}
 							title={name!}
 							className="w-8 h-8 inline-block rounded-full ring-2 ring-white"

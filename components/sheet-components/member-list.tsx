@@ -47,10 +47,7 @@ export default function MemberList({
 				<li key={id} className="flex items-center gap-3 mb-3">
 					<div>
 						<Image
-							src={
-								image ||
-								`https://avatars.dicebear.com/api/micah/${name}.svg`
-							}
+							src={image || ''}
 							alt={`${name} avatar`}
 							className="rounded-lg"
 							width={32}

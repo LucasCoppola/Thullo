@@ -84,10 +84,7 @@ export default function CardMembers({
 								}
 							>
 								<Image
-									src={
-										image ||
-										`https://avatars.dicebear.com/api/micah/${name}.svg`
-									}
+									src={image || ''}
 									width={20}
 									height={20}
 									className="rounded-full mr-2"
