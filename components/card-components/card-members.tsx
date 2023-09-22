@@ -6,17 +6,40 @@ import {
 	PopoverTrigger
 } from '@/components/ui/popover'
 import { Info, Users2, X } from 'lucide-react'
+import { useMutation } from '@tanstack/react-query'
+import { addCardMember } from '@/app/server/membersOperations'
 import type { User } from '@prisma/client'
+import { useSession } from 'next-auth/react'
 
 export default function CardMembers({
-	boardMembers
+	availableMembers,
+	cardId,
+	cardAuthorId
 }: {
-	boardMembers: User[]
+	availableMembers: User[]
+	cardId: string
+	cardAuthorId: string
 }) {
+	const { data: session } = useSession()
 	const [selectedUser, setSelectedUser] = useState<Omit<
 		User,
 		'email' | 'emailVerified'
 	> | null>(null)
+
+	const { mutate } = useMutation(
+		async () => {
+			await addCardMember({
+				authorId: cardAuthorId,
+				cardId,
+				currUserId: session?.userId!,
+				userId: selectedUser?.id!
+			})
+		},
+		{
+			onSuccess: () => console.log('member added to the card!'),
+			onError: (error) => console.error((error as Error).message)
+		}
+	)
 
 	return (
 		<Popover>
@@ -35,13 +58,16 @@ export default function CardMembers({
 						placeholder="Search by name or email"
 						className="bg-gray-50 border mr-2 border-gray-300 text-gray-800 rounded-md w-full p-2 focus:outline-none focus:ring-1 hover:ring-1 hover:ring-gray-200 focus:ring-gray-200"
 					/>
-					<button className="bg-blue-500 hover:bg-blue-600 px-3 py-0.5 text-white rounded-md focus:ring-2">
+					<button
+						onClick={() => mutate()}
+						className="bg-blue-500 hover:bg-blue-600 px-3 py-0.5 text-white rounded-md focus:ring-2"
+					>
 						Invite
 					</button>
 				</div>
 
 				<ul>
-					{boardMembers.map(({ id, name, image }) => (
+					{availableMembers.map(({ id, name, image }) => (
 						<div
 							key={id}
 							className="relative first:mt-2 last:pb-2 mb-1"

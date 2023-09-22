@@ -79,6 +79,10 @@ export default function CardModal({
 		async () => await getCardMembers({ cardId: card.id })
 	)
 
+	const availableMembers = boardMembers.filter((member) => {
+		return !cardMembers?.find((cardMember) => cardMember.id === member.id)
+	})
+
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
@@ -164,7 +168,11 @@ export default function CardModal({
 							</div>
 
 							<div className="flex flex-col w-2/6 gap-3 items-end">
-								<CardMembers boardMembers={boardMembers} />
+								<CardMembers
+									availableMembers={availableMembers}
+									cardId={card.id}
+									cardAuthorId={card.authorId}
+								/>
 								<AddLabel
 									cardId={card.id}
 									labels={labels || []}

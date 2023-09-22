@@ -133,3 +133,45 @@ export async function getCardMembers({ cardId }: { cardId: string }) {
 		throw (e as Error).message
 	}
 }
+
+export async function addCardMember({
+	cardId,
+	authorId,
+	userId,
+	currUserId
+}: {
+	cardId: string
+	authorId: string
+	userId: string
+	currUserId: string
+}) {
+	try {
+		if (authorId !== currUserId) {
+			throw new Error('Unauthorized')
+		}
+		if (userId === authorId) {
+			throw new Error("You can't add yourself")
+		}
+		const cardMembers = await getCardMembers({ cardId })
+
+		const isMemberOnCard = cardMembers.find(
+			(relation) => relation.id === userId
+		)
+
+		if (isMemberOnCard) {
+			throw new Error('User already added')
+		}
+
+		const addCardMember = await prisma.membersOnCards.create({
+			data: {
+				cardId,
+				userId
+			}
+		})
+
+		return addCardMember
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
+	}
+}

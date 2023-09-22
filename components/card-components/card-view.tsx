@@ -20,7 +20,7 @@ export default function CardView({
 	coverImage: CoverImageType | null
 	cardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 }) {
-	const remainingAvatars = cardMembers?.length! - 2
+	const remainingAvatars = cardMembers?.length! - 3
 	return (
 		<div
 			className="bg-white rounded-xl shadow-md hover:shadow-lg p-3 space-y-2"
