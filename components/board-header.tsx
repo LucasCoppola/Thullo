@@ -123,10 +123,7 @@ export default function BoardHeader({
 				</DropdownMenu>
 				<div className="flex -space-x-1 overflow-hidden">
 					<Image
-						src={
-							author?.image ||
-							`https://avatars.dicebear.com/api/micah/${author?.name}.svg`
-						}
+						src={author?.image || ''}
 						alt={`${author?.name} avatar`}
 						title={author?.name!}
 						className="w-8 h-8 inline-block rounded-full ring-2 ring-white"

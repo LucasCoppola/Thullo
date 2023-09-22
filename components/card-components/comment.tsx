@@ -91,10 +91,7 @@ export default function Comment({
 		<div className="w-full">
 			<div className="flex flex-row items-center">
 				<Image
-					src={
-						user?.image ||
-						`https://avatars.dicebear.com/api/micah/${user?.name}.svg`
-					}
+					src={user?.image || ''}
 					alt="user avatar"
 					className="h-8 w-8 rounded-full object-cover mr-2"
 					width={400}
