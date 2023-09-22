@@ -35,7 +35,7 @@ export default function CardMembers() {
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
-				<button className="flex flex-row items-center justify-start text-gray-700 text-sm ml-auto bg-gray-200 px-4 py-1.5 rounded-md w-4/5">
+				<button className="flex flex-row items-center justify-start text-gray-700 text-sm ml-auto bg-gray-200 hover:bg-gray-300 px-4 py-1.5 rounded-md w-4/5">
 					<Users2 className="h-4 w-4 mr-2" /> Members
 				</button>
 			</PopoverTrigger>
