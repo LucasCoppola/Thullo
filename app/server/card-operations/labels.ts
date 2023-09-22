@@ -24,7 +24,7 @@ export async function createLabel({
 	cardId,
 	color,
 	name
-}: Omit<Label, 'id'> & { color: ColorProps }) {
+}: Omit<Label, 'id' | 'createdAt'> & { color: ColorProps }) {
 	try {
 		const label = await prisma.label.create({
 			data: {
