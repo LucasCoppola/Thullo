@@ -34,20 +34,18 @@ export default function CardModal({ card, boardMembers, list }: { card: Card; bo
 	const { data: comments, refetch: refetchComments } = useQuery(commentsQueryKey, () => fetchComments(card.id))
 	const { data: labels, refetch: refetchLabels } = useQuery(labelsQueryKey, () => fetchLabels(card.id))
 	const { data: cardAuthor } = useQuery(cardAuthorQueryKey, () => fetchUser(card.authorId))
+	const { data: attachments, refetch: refetchAttachments } = useQuery(attachmentsQueryKey, () =>
+		fetchAttachments(card.id)
+	)
+	const { data: cardMembers, refetch: refetchCardMembers } = useQuery(cardMembersQueryKey, () =>
+		fetchCardMembers(card.id)
+	)
 
-	const { data } = useQuery(coverImageQueryKey, () => fetchCoverImage(card.id), {
+	const { isLoading: isCardLoading } = useQuery(coverImageQueryKey, () => fetchCoverImage(card.id), {
 		onSuccess: (data) => {
 			setCoverImage(data)
 		}
 	})
-	const { data: attachments, refetch: refetchAttachments } = useQuery(attachmentsQueryKey, () =>
-		fetchAttachments(card.id)
-	)
-	const {
-		data: cardMembers,
-		refetch: refetchCardMembers,
-		isLoading: isCardLoading
-	} = useQuery(cardMembersQueryKey, () => fetchCardMembers(card.id))
 
 	const availableMembers = boardMembers.filter((member) => {
 		return !cardMembers?.find((cardMember) => cardMember.id === member.id)

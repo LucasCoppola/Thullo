@@ -12,8 +12,7 @@ import {
 } from '../ui/alert-dialog'
 import { X } from 'lucide-react'
 import { useState } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { findUserById } from '@/app/server/usersOperations'
+import { useMutation } from '@tanstack/react-query'
 import { removeCardMember } from '@/app/server/membersOperations'
 import type { Card, User } from '@prisma/client'
 import { useSession } from 'next-auth/react'
@@ -21,24 +20,16 @@ import { useSession } from 'next-auth/react'
 export default function CardMembersList({
 	cardMembers,
 	refetchCardMembers,
-	card
+	card,
+	cardAuthor
 }: {
 	cardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 	refetchCardMembers: () => void
-
 	card: Card
+	cardAuthor: Omit<User, 'email' | 'emailVerified'> | undefined
 }) {
 	const { data: session } = useSession()
 	const [hoverUserId, setHoverUserId] = useState<string | null>(null)
-
-	const { data: author, isLoading: loadingAuthor } = useQuery(
-		['author', card.authorId],
-		async () => {
-			if (!card.authorId) return
-			const { author } = await findUserById({ id: card.authorId })
-			return author
-		}
-	)
 
 	const removeMember = useMutation(
 		async (id: string) => {
@@ -61,22 +52,16 @@ export default function CardMembersList({
 	return (
 		<ul className="mt-2 w-4/5">
 			<li className="flex items-center gap-3 mb-2 hover:bg-gray-100 rounded-sm px-1 py-0.5">
-				{loadingAuthor ? (
-					<div className="animate-pulse h-7 w-full bg-gray-200 rounded-sm"></div>
-				) : (
-					<>
-						<Image
-							src={author?.image || ''}
-							alt={`${author?.name} avatar`}
-							className="rounded-lg"
-							width={28}
-							height={28}
-						/>
-						<span className="font-medium text-xs text-gray-700">
-							{author?.name}
-						</span>
-					</>
-				)}
+				<Image
+					src={cardAuthor?.image || ''}
+					alt={`${cardAuthor?.name} avatar`}
+					className="rounded-lg"
+					width={28}
+					height={28}
+				/>
+				<span className="font-medium text-xs text-gray-700">
+					{cardAuthor?.name}
+				</span>
 			</li>
 			{cardMembers?.map(({ name, id, image }) => (
 				<li
@@ -85,15 +70,14 @@ export default function CardMembersList({
 					onMouseEnter={() => setHoverUserId(id)}
 					onMouseLeave={() => setHoverUserId(null)}
 				>
-					<div>
-						<Image
-							src={image || ''}
-							alt={`${name} avatar`}
-							className="rounded-lg"
-							width={28}
-							height={28}
-						/>
-					</div>
+					<Image
+						src={image || ''}
+						alt={`${name} avatar`}
+						className="rounded-lg"
+						width={28}
+						height={28}
+					/>
+
 					<span className="font-medium text-xs text-gray-700">
 						{name}
 					</span>

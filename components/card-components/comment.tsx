@@ -1,18 +1,9 @@
 import Image from 'next/image'
-import {
-	ArrowUpCircle,
-	MoreHorizontal,
-	PencilLine,
-	Trash2,
-	XCircle
-} from 'lucide-react'
+import { ArrowUpCircle, MoreHorizontal, PencilLine, Trash2, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { findUserById } from '@/app/server/usersOperations'
-import {
-	removeComment,
-	updateComment
-} from '@/app/server/card-operations/comments'
+import { fetchUser } from '@/app/fetch'
+import { removeComment, updateComment } from '@/app/server/card-operations/comments'
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -21,15 +12,9 @@ import {
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger
+	AlertDialogTitle
 } from '@/components/ui/alert-dialog'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 import type { Comment } from '@prisma/client'
 
@@ -51,10 +36,7 @@ export default function Comment({
 	const [isEditing, setIsEditing] = useState(false)
 	const [comment, setComment] = useState(originalText)
 
-	const { data: user } = useQuery(['user', authorId], async () => {
-		const { author } = await findUserById({ id: authorId })
-		return author
-	})
+	const { data: user } = useQuery(['user', authorId], async () => fetchUser(authorId))
 
 	const updateCommentMutation = useMutation(
 		async () => {
@@ -101,9 +83,7 @@ export default function Comment({
 					<div className="flex flex-row justify-between items-start w-full">
 						<div className="flex flex-col w-full">
 							<div className="flex items-center justify-between h-3.5">
-								<h2 className="text-xs font-medium">
-									{user?.name}
-								</h2>
+								<h2 className="text-xs font-medium">{user?.name}</h2>
 								<DropdownMenu>
 									<DropdownMenuTrigger asChild>
 										<MoreHorizontal
@@ -117,16 +97,13 @@ export default function Comment({
 											role="button"
 											onClick={() => setIsEditing(true)}
 										>
-											<PencilLine className="h-4 w-4 mr-2 text-gray-700" />{' '}
-											Edit Comment
+											<PencilLine className="h-4 w-4 mr-2 text-gray-700" /> Edit Comment
 										</DropdownMenuItem>
 
 										<DropdownMenuItem
 											className="text-xs"
 											role="button"
-											onClick={() =>
-												setOpenAlertDialog(true)
-											}
+											onClick={() => setOpenAlertDialog(true)}
 										>
 											<Trash2 className="h-4 w-4 mr-2 text-gray-700" />
 											Delete Comment
@@ -134,30 +111,20 @@ export default function Comment({
 									</DropdownMenuContent>
 								</DropdownMenu>
 
-								<AlertDialog
-									open={openAlertDialog}
-									onOpenChange={setOpenAlertDialog}
-								>
+								<AlertDialog open={openAlertDialog} onOpenChange={setOpenAlertDialog}>
 									<AlertDialogContent>
 										<AlertDialogHeader>
-											<AlertDialogTitle>
-												Are you absolutely sure?
-											</AlertDialogTitle>
+											<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 											<AlertDialogDescription>
-												This action cannot be undone.
-												This will permanently delete
-												this comment from our servers.
+												This action cannot be undone. This will permanently delete this comment
+												from our servers.
 											</AlertDialogDescription>
 										</AlertDialogHeader>
 										<AlertDialogFooter>
-											<AlertDialogCancel>
-												Cancel
-											</AlertDialogCancel>
+											<AlertDialogCancel>Cancel</AlertDialogCancel>
 											<AlertDialogAction
 												className="bg-red-500 hover:bg-red-600"
-												onClick={() =>
-													removeCommentMutation.mutate()
-												}
+												onClick={() => removeCommentMutation.mutate()}
 											>
 												Delete
 											</AlertDialogAction>
@@ -166,16 +133,13 @@ export default function Comment({
 								</AlertDialog>
 							</div>
 							<span className="text-[8px] text-gray-500">
-								{new Date(updatedAt).toLocaleDateString(
-									'en-us',
-									{
-										month: 'short',
-										day: 'numeric',
-										hour: 'numeric',
-										minute: 'numeric',
-										hour12: true
-									}
-								)}
+								{new Date(updatedAt).toLocaleDateString('en-us', {
+									month: 'short',
+									day: 'numeric',
+									hour: 'numeric',
+									minute: 'numeric',
+									hour12: true
+								})}
 							</span>
 						</div>
 					</div>
@@ -199,11 +163,7 @@ export default function Comment({
 						/>
 						<ArrowUpCircle
 							role={`${comment.length > 0 ? 'button' : 'none'}`}
-							className={`${
-								comment.length > 0
-									? 'text-blue-600'
-									: 'text-gray-400 cursor-not-allowed'
-							}`}
+							className={`${comment.length > 0 ? 'text-blue-600' : 'text-gray-400 cursor-not-allowed'}`}
 							onClick={() => {
 								if (comment.length > 0) {
 									updateCommentMutation.mutate()

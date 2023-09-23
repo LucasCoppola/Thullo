@@ -54,7 +54,9 @@ export default function AttachmentComponent({
 		}
 	}
 
-	const { data: author } = useQuery(['user', attachment.userId], () => fetchUser(attachment.userId))
+	const { data: author, isLoading: isLoadingAuthor } = useQuery(['user', attachment.userId], () =>
+		fetchUser(attachment.userId)
+	)
 
 	const { mutate } = useMutation(
 		async () =>
@@ -138,7 +140,13 @@ export default function AttachmentComponent({
 					</div>
 				</div>
 				<h3 className="text-xs text-gray-900 font-medium my-auto">{attachment.filename}</h3>
-				<span className="text-[10px] text-gray-500 mt-auto">{author?.name ? `by ${author.name}` : null}</span>
+				{isLoadingAuthor ? (
+					<div className="h-[15px] w-28 animate-pulse bg-gray-100 rounded-md"></div>
+				) : (
+					<span className="text-[10px] text-gray-500 mt-auto">
+						{author?.name ? `by ${author.name}` : null}
+					</span>
+				)}
 			</div>
 		</div>
 	)
