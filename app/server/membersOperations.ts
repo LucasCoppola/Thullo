@@ -175,3 +175,39 @@ export async function addCardMember({
 		throw (e as Error).message
 	}
 }
+
+export async function removeCardMember({
+	cardId,
+	userId,
+	authorId,
+	currUserId
+}: {
+	cardId: string
+	userId: string
+	authorId: string
+	currUserId: string
+}) {
+	try {
+		if (authorId !== currUserId) {
+			throw new Error('Unauthorized')
+		}
+		if (authorId === userId) {
+			throw new Error("You can't delete the author")
+		}
+		if (userId === authorId) {
+			throw new Error("You can't delete yourself")
+		}
+
+		await prisma.membersOnCards.deleteMany({
+			where: {
+				cardId,
+				userId
+			}
+		})
+
+		return { success: true }
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
+	}
+}

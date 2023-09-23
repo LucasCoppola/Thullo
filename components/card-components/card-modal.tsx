@@ -13,7 +13,7 @@ import { useQuery } from '@tanstack/react-query'
 import SendComment from './send-comment'
 import AttachmentComponent from './attachment'
 import CardDescription from './card-description'
-import CardMembers from './card-members'
+import CardMembers from './card-members-dropdown'
 import AddLabel from './card-label'
 import Tooltip from '../ui/tooltip'
 import CardView from './card-view'
@@ -27,6 +27,7 @@ import { getCoverImage } from '@/app/server/card-operations/coverImage'
 import type { Card, List, User } from '@prisma/client'
 import type { CoverImageType } from '@/app/types'
 import { getCardMembers } from '@/app/server/membersOperations'
+import CardMembersList from './card-members-list'
 
 export default function CardModal({
 	card,
@@ -74,9 +75,12 @@ export default function CardModal({
 		}
 	)
 
-	const { data: cardMembers } = useQuery(
+	const { data: cardMembers, refetch: refetchCardMembers } = useQuery(
 		['card-members', card.id],
-		async () => await getCardMembers({ cardId: card.id })
+		async () =>
+			(await getCardMembers({ cardId: card.id })) as
+				| Omit<User, 'email' | 'emailVerified'>[]
+				| undefined
 	)
 
 	const availableMembers = boardMembers.filter((member) => {
@@ -111,6 +115,7 @@ export default function CardModal({
 								<h2 className="text-xs text-gray-600 mt-1 mb-4">
 									in list <strong>{list?.title}</strong>
 								</h2>
+
 								<CardDescription
 									cardDescription={card.description || ''}
 									cardId={card.id}
@@ -182,6 +187,12 @@ export default function CardModal({
 									coverImage={coverImage || null}
 									setCoverImage={setCoverImage}
 									card={card}
+								/>
+
+								<CardMembersList
+									card={card}
+									cardMembers={cardMembers}
+									refetchCardMembers={refetchCardMembers}
 								/>
 							</div>
 						</div>
