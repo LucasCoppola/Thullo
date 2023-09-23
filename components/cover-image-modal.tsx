@@ -54,11 +54,7 @@ export default function CoverImageModal({
 	)
 }
 
-function ColorsTabContent({
-	setCoverImage
-}: {
-	setCoverImage: (value: CoverImageType) => void
-}) {
+function ColorsTabContent({ setCoverImage }: { setCoverImage: (value: CoverImageType) => void }) {
 	const colors = [
 		{ color: '#0077b6', name: 'Blue' },
 		{ color: '#00b4d8', name: 'Turquoise' },
@@ -91,11 +87,7 @@ function ColorsTabContent({
 	)
 }
 
-function UnsplashTabContent({
-	setCoverImage
-}: {
-	setCoverImage: (value: CoverImageType) => void
-}) {
+function UnsplashTabContent({ setCoverImage }: { setCoverImage: (value: CoverImageType) => void }) {
 	const [query, setQuery] = useState('')
 
 	const {
@@ -110,9 +102,7 @@ function UnsplashTabContent({
 			const randomImage: ImageData[] = randomImages.data
 			return randomImage
 		} catch (e) {
-			throw new Error(
-				'Error loading random images: ' + (e as Error).message
-			)
+			throw new Error('Error loading random images: ' + (e as Error).message)
 		}
 	})
 
@@ -204,7 +194,7 @@ function UnsplashTabContent({
 									})
 								}
 							/>
-							<div className="text-xs text-muted-foreground mt-1">
+							<div className="text-xs text-muted-foreground mt-1 truncate">
 								<span>by </span>
 								<Link
 									id={user.id}
