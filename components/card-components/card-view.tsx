@@ -4,6 +4,19 @@ import type { Card, Label, User } from '@prisma/client'
 import type { ColorProps, CoverImageType } from '@/app/types'
 import SkeletonImage from '../loading/skeleton-image'
 import SkeletonCard from '../loading/skeleton-card'
+import CardOption from './card-option'
+
+type CardViewProps = {
+	setOpen: (val: boolean) => void
+	card: Card
+	attachmentsLength: number
+	commentsLength: number
+	labels: Label[]
+	coverImage: CoverImageType | null
+	cardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
+	isCoverImageLoading: boolean
+	listId: string
+}
 
 export default function CardView({
 	setOpen,
@@ -13,28 +26,16 @@ export default function CardView({
 	labels,
 	coverImage,
 	cardMembers,
-	isCoverImageLoading
-}: {
-	setOpen: (val: boolean) => void
-	card: Card
-	attachmentsLength: number
-	commentsLength: number
-	labels: Label[]
-	coverImage: CoverImageType | null
-	cardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
-	isCoverImageLoading: boolean
-}) {
+	isCoverImageLoading,
+	listId
+}: CardViewProps) {
 	const remainingAvatars = cardMembers?.length! - 3
 
 	return (
-		<div
-			className={`bg-white rounded-xl shadow-md hover:shadow-lg space-y-2 ${
-				isCoverImageLoading ? 'animate-pulse' : ''
-			}`}
-			style={{ width: '243px' }}
-			onClick={() => setOpen(true)}
-		>
-			<>
+		<div className="bg-white rounded-xl shadow-md hover:shadow-lg space-y-2" style={{ width: '243px' }}>
+			<div className="relative">
+				{!isCoverImageLoading && <CardOption cardId={card.id} cardAuthorId={card.authorId} listId={listId} />}
+
 				{isCoverImageLoading ? (
 					<SkeletonImage />
 				) : coverImage ? (
@@ -45,22 +46,24 @@ export default function CardView({
 							alt="card cover image"
 							width={200}
 							height={50}
+							onClick={() => setOpen(true)}
 						/>
 					) : (
 						<div
 							className="w-full h-28 rounded-lg"
+							onClick={() => setOpen(true)}
 							style={{
 								backgroundColor: coverImage?.bg
 							}}
 						></div>
 					)
 				) : null}
-			</>
+			</div>
 
 			{isCoverImageLoading ? (
 				<SkeletonCard />
 			) : (
-				<div className="px-3 pb-3 space-y-2">
+				<div className="px-3 pb-3 space-y-2" onClick={() => setOpen(true)}>
 					<h3 className="font-medium">{card.title}</h3>
 					<div className="flex flex-row gap-2 flex-wrap">
 						{labels.length > 0 &&

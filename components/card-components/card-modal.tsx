@@ -65,6 +65,7 @@ export default function CardModal({ card, boardMembers, list }: { card: Card; bo
 					coverImage={coverImage}
 					cardMembers={cardMembers}
 					isCoverImageLoading={isCoverImageLoading}
+					listId={list.id}
 				/>
 			</DialogTrigger>
 			<DialogContent className="overflow-y-auto max-h-[80vh] max-w-2xl pt-9">

@@ -27,12 +27,7 @@ export default async function List({
 			</div>
 			<div className="space-y-4">
 				{cards?.map((card) => (
-					<Card
-						key={card.id}
-						boardMembers={boardMembers}
-						card={card}
-						list={list as List}
-					/>
+					<Card key={card.id} boardMembers={boardMembers} card={card} list={list as List} />
 				))}
 			</div>
 
