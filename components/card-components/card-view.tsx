@@ -13,7 +13,7 @@ export default function CardView({
 	labels,
 	coverImage,
 	cardMembers,
-	isCardLoading
+	isCoverImageLoading
 }: {
 	setOpen: (val: boolean) => void
 	card: Card
@@ -22,20 +22,20 @@ export default function CardView({
 	labels: Label[]
 	coverImage: CoverImageType | null
 	cardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
-	isCardLoading: boolean
+	isCoverImageLoading: boolean
 }) {
 	const remainingAvatars = cardMembers?.length! - 3
 
 	return (
 		<div
 			className={`bg-white rounded-xl shadow-md hover:shadow-lg p-3 space-y-2 ${
-				isCardLoading ? 'animate-pulse' : ''
+				isCoverImageLoading ? 'animate-pulse' : ''
 			}`}
 			style={{ width: '243px' }}
 			onClick={() => setOpen(true)}
 		>
 			<>
-				{isCardLoading ? (
+				{isCoverImageLoading ? (
 					<SkeletonImage />
 				) : coverImage ? (
 					coverImage?.type === 'image' ? (
@@ -57,7 +57,7 @@ export default function CardView({
 				) : null}
 			</>
 
-			{isCardLoading ? (
+			{isCoverImageLoading ? (
 				<SkeletonCard />
 			) : (
 				<>
@@ -65,17 +65,14 @@ export default function CardView({
 					<div className="flex flex-row gap-2 flex-wrap">
 						{labels.length > 0 &&
 							labels.map(({ color, id, name }) => {
-								const parsedColor = JSON.parse(
-									JSON.stringify(color)
-								) as ColorProps
+								const parsedColor = JSON.parse(JSON.stringify(color)) as ColorProps
 
 								return (
 									<span
 										key={id}
 										className="text-[10px] rounded-sm px-2 py-[1px]"
 										style={{
-											backgroundColor:
-												parsedColor.color.bg,
+											backgroundColor: parsedColor.color.bg,
 											color: parsedColor.color.text
 										}}
 									>
@@ -100,28 +97,19 @@ export default function CardView({
 								))}
 							{remainingAvatars > 0 && (
 								<span className="text-gray-500 text-xs tracking-tight pl-2">
-									+{remainingAvatars}{' '}
-									{remainingAvatars === 1
-										? 'other'
-										: 'others'}
+									+{remainingAvatars} {remainingAvatars === 1 ? 'other' : 'others'}
 								</span>
 							)}
 						</div>
 						<div className="flex flex-row text-gray-500 items-center">
 							{commentsLength > 0 && (
-								<span
-									className="flex flex-row text-xs mr-2 items-center"
-									title="Comments"
-								>
+								<span className="flex flex-row text-xs mr-2 items-center" title="Comments">
 									<MessageSquare className="h-3.5 w-3.5 mr-0.5" />
 									{commentsLength}
 								</span>
 							)}
 							{attachmentsLength > 0 && (
-								<span
-									className="flex flex-row text-xs items-center"
-									title="Attachments"
-								>
+								<span className="flex flex-row text-xs items-center" title="Attachments">
 									<Paperclip className="h-3.5 w-3.5 mr-0.5" />
 									{attachmentsLength}
 								</span>

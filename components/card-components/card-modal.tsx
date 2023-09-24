@@ -31,7 +31,7 @@ export default function CardModal({ card, boardMembers, list }: { card: Card; bo
 	const cardMembersQueryKey = ['card-members', card.id]
 	const cardAuthorQueryKey = ['card-author', card.authorId]
 
-	const { isLoading: isCardLoading } = useQuery(coverImageQueryKey, () => fetchCoverImage(card.id), {
+	const { isLoading: isCoverImageLoading } = useQuery(coverImageQueryKey, () => fetchCoverImage(card.id), {
 		onSuccess: (data) => {
 			setCoverImage(data)
 		}
@@ -63,13 +63,18 @@ export default function CardModal({ card, boardMembers, list }: { card: Card; bo
 					labels={labels || []}
 					coverImage={coverImage}
 					cardMembers={cardMembers}
-					isCardLoading={isCardLoading}
+					isCoverImageLoading={isCoverImageLoading}
 				/>
 			</DialogTrigger>
 			<DialogContent className="overflow-y-auto max-h-[80vh] max-w-2xl pt-9">
 				<DialogDescription asChild>
 					<>
-						<CardCoverImage coverImage={coverImage || null} setCoverImage={setCoverImage} card={card} />
+						<CardCoverImage
+							coverImage={coverImage || null}
+							setCoverImage={setCoverImage}
+							card={card}
+							isCoverImageLoading={isCoverImageLoading}
+						/>
 
 						<div className="flex flex-row">
 							<div className="w-4/6">

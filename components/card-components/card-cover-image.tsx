@@ -4,10 +4,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { ImageIcon } from 'lucide-react'
 import { useMutation } from '@tanstack/react-query'
-import {
-	removeCoverImage,
-	updateCoverImage
-} from '@/app/server/card-operations/coverImage'
+import { removeCoverImage, updateCoverImage } from '@/app/server/card-operations/coverImage'
 import { useSession } from 'next-auth/react'
 
 import CoverImageModal from '../cover-image-modal'
@@ -63,11 +60,13 @@ export function CoverImageSelector({
 export function CardCoverImage({
 	coverImage,
 	setCoverImage,
-	card
+	card,
+	isCoverImageLoading
 }: {
 	coverImage: CoverImageType | null
 	setCoverImage: (value: CoverImageType | null) => void
 	card: Card
+	isCoverImageLoading: boolean
 }) {
 	const { data: session } = useSession()
 	const [isCoverImageHovered, setIsCoverImageHovered] = useState(false)
@@ -89,7 +88,9 @@ export function CardCoverImage({
 
 	return (
 		<>
-			{coverImage ? (
+			{isCoverImageLoading ? (
+				<div className="animate-pulse w-full h-32 bg-gray-200 rounded-lg"></div>
+			) : coverImage ? (
 				coverImage.type === 'image' ? (
 					<div
 						className="relative"
