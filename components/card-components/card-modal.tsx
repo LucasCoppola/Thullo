@@ -37,11 +37,11 @@ export default function CardModal({ card, boardMembers, list }: { card: Card; bo
 		}
 	})
 	const { data: labels, refetch: refetchLabels } = useQuery(labelsQueryKey, () => fetchLabels(card.id))
-	const { data: comments, refetch: refetchComments } = useQuery(commentsQueryKey, () => fetchComments(card.id))
-	const { data: cardAuthor } = useQuery(cardAuthorQueryKey, () => fetchUser(card.authorId))
 	const { data: attachments, refetch: refetchAttachments } = useQuery(attachmentsQueryKey, () =>
 		fetchAttachments(card.id)
 	)
+	const { data: cardAuthor } = useQuery(cardAuthorQueryKey, () => fetchUser(card.authorId))
+	const { data: comments, refetch: refetchComments } = useQuery(commentsQueryKey, () => fetchComments(card.id))
 	const { data: cardMembers, refetch: refetchCardMembers } = useQuery(cardMembersQueryKey, () =>
 		fetchCardMembers(card.id)
 	)
