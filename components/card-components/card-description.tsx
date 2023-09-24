@@ -45,17 +45,14 @@ export default function CardDescription({
 	const renderFormattedText = (text: string) => {
 		const boldRegex = /\*(.*?)\*/g
 		const lineBreaksReplaced = text.replace(/\n/g, '<br>')
-		const formattedText = lineBreaksReplaced.replace(
-			boldRegex,
-			'<strong>$1</strong>'
-		)
+		const formattedText = lineBreaksReplaced.replace(boldRegex, '<strong>$1</strong>')
 		return formattedText
 	}
 
 	return (
 		<div className="w-full">
 			<div className="flex flex-row items-center">
-				<span className="text-xs font-medium text-gray-600 flex flex-row items-center">
+				<span className="text-xs font-medium text-gray-600 flex flex-row items-center outline-none">
 					<FileText className="h-3.5 w-3.5 mr-1" />
 					Description
 				</span>
@@ -70,11 +67,7 @@ export default function CardDescription({
 				)}
 			</div>
 
-			<div
-				className={`relative text-sm text-black ${
-					!editDescription && 'mb-4'
-				}`}
-			>
+			<div className={`relative text-sm text-black ${!editDescription && 'mb-4'}`}>
 				{editDescription ? (
 					<>
 						<Tooltip
@@ -109,9 +102,8 @@ export default function CardDescription({
 								ref={paragraphRef}
 							/>
 						) : (
-							<p className="mt-3 text-gray-500 text-center text-xs">
-								Add a description to let your teammates know
-								what this board is used for.
+							<p className="mt-5 text-gray-400 text-center text-xs">
+								Add a description to let your teammates know what this board is used for.
 							</p>
 						)}
 					</>
@@ -128,10 +120,7 @@ export default function CardDescription({
 					>
 						Save
 					</button>
-					<button
-						className="text-xs font-medium"
-						onClick={() => setEditDescription(false)}
-					>
+					<button className="text-xs font-medium" onClick={() => setEditDescription(false)}>
 						Cancel
 					</button>
 				</div>
