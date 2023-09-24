@@ -19,6 +19,7 @@ import { CoverImageSelector, CardCoverImage } from './card-cover-image'
 import { fetchAttachments, fetchCardMembers, fetchComments, fetchCoverImage, fetchLabels, fetchUser } from '@/app/fetch'
 import type { Card, List, User } from '@prisma/client'
 import type { CoverImageType } from '@/app/types'
+import CardTitle from './card-title'
 
 export default function CardModal({ card, boardMembers, list }: { card: Card; boardMembers: User[]; list: List }) {
 	const [coverImage, setCoverImage] = useState<CoverImageType | null>(null)
@@ -78,7 +79,8 @@ export default function CardModal({ card, boardMembers, list }: { card: Card; bo
 
 						<div className="flex flex-row">
 							<div className="w-4/6">
-								<h1 className="font-medium">{card.title}</h1>
+								<CardTitle cardTitle={card.title} cardId={card.id} authorId={card.authorId} />
+
 								<h2 className="text-xs text-gray-600 mt-1 mb-4">
 									in list <strong>{list?.title}</strong>
 								</h2>

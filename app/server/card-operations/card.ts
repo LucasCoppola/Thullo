@@ -12,20 +12,12 @@ export async function getCards({ listId }: { listId: string }) {
 
 		return { cards }
 	} catch (e) {
-		console.error((e as Error).message)
-		throw e
+		console.error(e)
+		throw (e as Error).message
 	}
 }
 
-export async function createCard({
-	listId,
-	title,
-	authorId
-}: {
-	listId: string
-	title: string
-	authorId: string
-}) {
+export async function createCard({ listId, title, authorId }: { listId: string; title: string; authorId: string }) {
 	try {
 		const createCard = await prisma.card.create({
 			data: {
@@ -37,8 +29,8 @@ export async function createCard({
 
 		return { createCard }
 	} catch (e) {
-		console.error((e as Error).message)
-		throw e
+		console.error(e)
+		throw (e as Error).message
 	}
 }
 
@@ -67,7 +59,37 @@ export async function updateCardDescription({
 
 		return { updateDescription }
 	} catch (e) {
-		console.error((e as Error).message)
-		throw e
+		console.error(e)
+		throw (e as Error).message
+	}
+}
+
+export async function updateCardTitle({
+	userId,
+	authorId,
+	cardId,
+	title
+}: {
+	userId: string
+	authorId: string
+	cardId: string
+	title: string
+}) {
+	try {
+		if (userId !== authorId) throw new Error('Unauthorized')
+
+		const updateTitle = await prisma.card.update({
+			where: {
+				id: cardId
+			},
+			data: {
+				title
+			}
+		})
+
+		return updateTitle
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
 	}
 }
