@@ -42,9 +42,11 @@ export default function CardModal({ card, boardMembers, list }: { card: Card; bo
 	)
 	const { data: cardAuthor } = useQuery(cardAuthorQueryKey, () => fetchUser(card.authorId))
 	const { data: comments, refetch: refetchComments } = useQuery(commentsQueryKey, () => fetchComments(card.id))
-	const { data: cardMembers, refetch: refetchCardMembers } = useQuery(cardMembersQueryKey, () =>
-		fetchCardMembers(card.id)
-	)
+	const {
+		data: cardMembers,
+		refetch: refetchCardMembers,
+		isLoading: isCardMembersLoading
+	} = useQuery(cardMembersQueryKey, () => fetchCardMembers(card.id))
 
 	const availableMembers = boardMembers.filter((member) => {
 		return !cardMembers?.find((cardMember) => cardMember.id === member.id)
@@ -141,6 +143,7 @@ export default function CardModal({ card, boardMembers, list }: { card: Card; bo
 									cardMembers={cardMembers}
 									refetchCardMembers={refetchCardMembers}
 									cardAuthor={cardAuthor}
+									isCardMembersLoading={isCardMembersLoading}
 								/>
 							</div>
 						</div>
