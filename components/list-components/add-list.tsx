@@ -35,10 +35,7 @@ export default function AddList({
 		}
 	)
 	return (
-		<form
-			className="mt-4 bg-blue-50 items-center px-2.5 py-2 rounded-md h-20"
-			style={{ minWidth: '243px' }}
-		>
+		<form className="mt-4 bg-blue-50 items-center px-2.5 py-2 rounded-md h-20" style={{ minWidth: '243px' }}>
 			<input
 				type="text"
 				placeholder="Enter list title..."
@@ -58,10 +55,7 @@ export default function AddList({
 				>
 					Add List
 				</button>
-				<button
-					className="text-sm text-gray-600"
-					onClick={() => setCreateMode(false)}
-				>
+				<button className="text-sm text-gray-600" onClick={() => setCreateMode(false)}>
 					Cancel
 				</button>
 			</div>
@@ -69,31 +63,21 @@ export default function AddList({
 	)
 }
 
-export function EditableListTitle({
-	title: listTitle,
-	listId
-}: {
-	title: string
-	listId: string
-}) {
+export function EditableListTitle({ title: listTitle, listId }: { title: string; listId: string }) {
 	const [title, setTitle] = useState(listTitle)
 
-	const { mutate: mutateListTitle, error } = useMutation(
-		async () => await updateListTitle({ listId, title }),
-		{
-			onSuccess: () => {
-				console.log('List title updated')
-			},
-			onError: () => {
-				console.error(error)
-			}
+	const { mutate: mutateListTitle, error } = useMutation(async () => await updateListTitle({ listId, title }), {
+		onSuccess: () => {
+			console.log('List title updated')
+		},
+		onError: () => {
+			console.error(error)
 		}
-	)
+	})
 	return (
 		<EditableTitle
 			initialValue={title}
 			onSave={(editedTitle) => {
-				console.log('is this running??')
 				if (editedTitle.trim().length === 0) return
 				setTitle(editedTitle)
 				mutateListTitle()
