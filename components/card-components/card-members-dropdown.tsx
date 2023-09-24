@@ -6,36 +6,45 @@ import {
 	PopoverTrigger
 } from '@/components/ui/popover'
 import { Info, Users2, X } from 'lucide-react'
+import { useMutation } from '@tanstack/react-query'
+import { addCardMember } from '@/app/server/membersOperations'
 import type { User } from '@prisma/client'
+import { useSession } from 'next-auth/react'
 
-export default function CardMembers() {
+export default function CardMembers({
+	availableMembers,
+	cardId,
+	cardAuthorId
+}: {
+	availableMembers: User[]
+	cardId: string
+	cardAuthorId: string
+}) {
+	const { data: session } = useSession()
 	const [selectedUser, setSelectedUser] = useState<Omit<
 		User,
 		'email' | 'emailVerified'
 	> | null>(null)
 
-	const users = [
-		{
-			id: 'viornetin0ent',
-			name: 'User 1',
-			image: 'https://avatars.dicebear.com/api/micah/lucas.svg'
+	const { mutate } = useMutation(
+		async () => {
+			await addCardMember({
+				authorId: cardAuthorId,
+				cardId,
+				currUserId: session?.userId!,
+				userId: selectedUser?.id!
+			})
 		},
 		{
-			id: 'vtin0ent',
-			name: 'User 2',
-			image: 'https://avatars.dicebear.com/api/micah/lucas.svg'
-		},
-		{
-			id: 'vnt',
-			name: 'User 3',
-			image: 'https://avatars.dicebear.com/api/micah/lucas.svg'
+			onSuccess: () => console.log('member added to the card!'),
+			onError: (error) => console.error((error as Error).message)
 		}
-	]
+	)
 
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
-				<button className="flex flex-row items-center justify-start text-gray-700 text-sm ml-auto bg-gray-200 px-4 py-1.5 rounded-md w-4/5">
+				<button className="flex flex-row items-center justify-start text-gray-700 text-sm ml-auto bg-gray-200 hover:bg-gray-300 px-4 py-1.5 rounded-md w-4/5">
 					<Users2 className="h-4 w-4 mr-2" /> Members
 				</button>
 			</PopoverTrigger>
@@ -49,13 +58,16 @@ export default function CardMembers() {
 						placeholder="Search by name or email"
 						className="bg-gray-50 border mr-2 border-gray-300 text-gray-800 rounded-md w-full p-2 focus:outline-none focus:ring-1 hover:ring-1 hover:ring-gray-200 focus:ring-gray-200"
 					/>
-					<button className="bg-blue-500 hover:bg-blue-600 px-3 py-0.5 text-white rounded-md focus:ring-2">
+					<button
+						onClick={() => mutate()}
+						className="bg-blue-500 hover:bg-blue-600 px-3 py-0.5 text-white rounded-md focus:ring-2"
+					>
 						Invite
 					</button>
 				</div>
 
 				<ul>
-					{users.map(({ id, name, image }) => (
+					{availableMembers.map(({ id, name, image }) => (
 						<div
 							key={id}
 							className="relative first:mt-2 last:pb-2 mb-1"
@@ -72,10 +84,7 @@ export default function CardMembers() {
 								}
 							>
 								<Image
-									src={
-										image ||
-										`https://avatars.dicebear.com/api/micah/${name}.svg`
-									}
+									src={image || ''}
 									width={20}
 									height={20}
 									className="rounded-full mr-2"

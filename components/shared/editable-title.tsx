@@ -30,10 +30,7 @@ export default function EditableTitle({
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				titleRef.current &&
-				!titleRef.current.contains(event.target as Node)
-			) {
+			if (titleRef.current && !titleRef.current.contains(event.target as Node)) {
 				handleSave()
 			}
 		}
@@ -82,7 +79,7 @@ export default function EditableTitle({
 						autoFocus
 						ref={inputRef}
 						className={`border-2 border-blue-200 focus:outline-none rounded-sm ${inputClassName}`}
-						style={{ width: `${inputWidth}px`, maxWidth: '240px' }}
+						style={{ width: `${inputWidth}px` }}
 					/>
 				</div>
 			) : (
@@ -90,6 +87,7 @@ export default function EditableTitle({
 					role="button"
 					className="flex items-center"
 					onClick={() => setIsEditingTitle(true)}
+					style={{ minWidth: `${inputWidth + 10}px` }}
 				>
 					<h2 ref={titleRef} className={titleClassName}>
 						{editedTitle}

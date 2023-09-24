@@ -168,10 +168,7 @@ export default function AddMemberModal({ authorId, id }: Board) {
 													}
 												>
 													<Image
-														src={
-															image ||
-															`https://avatars.dicebear.com/api/micah/${name}.svg`
-														}
+														src={image || ''}
 														width={20}
 														height={20}
 														className="rounded-full mr-2"

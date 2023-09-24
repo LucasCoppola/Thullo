@@ -24,10 +24,7 @@ export default function UserDropdown({ session }: { session: Session }) {
 					onClick={() => setIsOpen(!isOpen)}
 				>
 					<Image
-						src={
-							session.user.image ||
-							`https://avatars.dicebear.com/api/micah/${session.user.email}.svg`
-						}
+						src={session.user.image || ''}
 						className="mr-3 object-cover h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-gray-300 transition-all duration-75 focus:outline-none active:scale-95 sm:h-9 sm:w-9"
 						alt="avatar"
 						width={400}

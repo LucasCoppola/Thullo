@@ -54,10 +54,7 @@ export default function SendComment({
 			<div className="border-b border-gray-300 pb-3 w-full mt-3">
 				<div className="flex flex-row items-center h-10">
 					<Image
-						src={
-							session?.user?.image ||
-							`https://avatars.dicebear.com/api/micah/${session?.user?.name}.svg`
-						}
+						src={session?.user?.image || ''}
 						alt="user avatar"
 						className="h-8 w-8 rounded-full object-cover mr-2"
 						width={400}

@@ -149,10 +149,10 @@ model Attachment {
 }
 
 model Label {
-  id      String @id @default(cuid())
-  name    String
-  color   Json
-  cardId  String
-  card    Card   @relation(fields: [cardId], references: [id])
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  name      String
+  color     Json
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id])
 }
-

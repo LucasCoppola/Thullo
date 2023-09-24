@@ -58,10 +58,7 @@ export default async function BoardCard({
 					</div>
 					<div className="flex space-x-3 flex-row items-center">
 						<Image
-							src={
-								author?.image ||
-								`https://avatars.dicebear.com/api/micah/${author?.name}.svg`
-							}
+							src={author?.image || ''}
 							alt={`${author?.name} avatar`}
 							title={author?.name!}
 							className="w-8 h-8 rounded-lg"
@@ -71,10 +68,7 @@ export default async function BoardCard({
 						{members?.slice(0, 2).map(({ image, name, id }) => (
 							<Image
 								key={id}
-								src={
-									image ||
-									`https://avatars.dicebear.com/api/micah/${name}.svg`
-								}
+								src={image || ''}
 								alt={`${name} avatar`}
 								title={name!}
 								className="w-8 h-8 rounded-lg"
