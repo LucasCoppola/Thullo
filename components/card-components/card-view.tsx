@@ -28,7 +28,7 @@ export default function CardView({
 
 	return (
 		<div
-			className={`bg-white rounded-xl shadow-md hover:shadow-lg p-3 space-y-2 ${
+			className={`bg-white rounded-xl shadow-md hover:shadow-lg space-y-2 ${
 				isCoverImageLoading ? 'animate-pulse' : ''
 			}`}
 			style={{ width: '243px' }}
@@ -40,7 +40,7 @@ export default function CardView({
 				) : coverImage ? (
 					coverImage?.type === 'image' ? (
 						<Image
-							className="w-full h-[138px] rounded-xl object-cover"
+							className="w-full h-[138px] rounded-t-xl object-cover"
 							src={coverImage?.bg || ''}
 							alt="card cover image"
 							width={200}
@@ -60,7 +60,7 @@ export default function CardView({
 			{isCoverImageLoading ? (
 				<SkeletonCard />
 			) : (
-				<>
+				<div className="px-3 pb-3 space-y-2">
 					<h3 className="font-medium">{card.title}</h3>
 					<div className="flex flex-row gap-2 flex-wrap">
 						{labels.length > 0 &&
@@ -116,7 +116,7 @@ export default function CardView({
 							)}
 						</div>
 					</div>
-				</>
+				</div>
 			)}
 		</div>
 	)

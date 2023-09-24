@@ -1,7 +1,7 @@
 export default function SkeletonImage() {
 	return (
 		<div role="status" className="w-full">
-			<div className="flex items-center justify-center h-[138px] bg-gray-200 rounded-md">
+			<div className="flex items-center justify-center h-[138px] bg-gray-200 rounded-t-xl">
 				<svg
 					className="w-10 h-10 text-gray-100"
 					aria-hidden="true"
