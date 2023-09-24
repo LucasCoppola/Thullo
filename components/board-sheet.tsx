@@ -1,13 +1,6 @@
 import Image from 'next/image'
 import type { User, Board } from '@prisma/client'
-import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetHeader,
-	SheetTitle,
-	SheetTrigger
-} from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { MoreHorizontal, User2, Users2 } from 'lucide-react'
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
@@ -98,7 +91,7 @@ export default function BoardSheet({
 								setTitle(editedTitle)
 								updateBoardMutation.mutate()
 							}}
-							titleClassName="text-xl font-semibold px-2.5 py-1 hover:bg-gray-200 mb-1 rounded-sm"
+							titleClassName="text-xl font-semibold p-1 hover:bg-gray-200 mb-1 rounded-sm"
 							inputClassName="px-2 py-0.5 text-xl font-semibold mb-1"
 						/>
 					</SheetTitle>
@@ -106,10 +99,7 @@ export default function BoardSheet({
 						<div className="overflow-y-auto max-h-[calc(100vh-6rem)]">
 							<hr className="mb-2" />
 							<span className="text-xs font-medium text-gray-500 flex flex-row items-center">
-								<User2
-									className="h-3 w-3 mr-1"
-									strokeWidth={2.5}
-								/>
+								<User2 className="h-3 w-3 mr-1" strokeWidth={2.5} />
 								Made by
 							</span>
 							<div className="flex flex-row items-center mt-3">
@@ -121,9 +111,7 @@ export default function BoardSheet({
 									className="rounded-lg mr-3"
 								/>
 								<div className="flex flex-col">
-									<h1 className="font-semibold text-sm text-gray-900">
-										{author?.name}
-									</h1>
+									<h1 className="font-semibold text-sm text-gray-900">{author?.name}</h1>
 									<span className="text-xs font-medium text-gray-500">
 										on {createdAt?.toDateString().slice(4)}
 									</span>
@@ -139,11 +127,7 @@ export default function BoardSheet({
 							<span className="text-xs font-medium text-gray-500 flex flex-row items-center">
 								<Users2 className="h-3.5 w-3.5 mr-1" /> Team
 							</span>
-							<MemberList
-								author={author}
-								members={members}
-								removeMember={removeMember}
-							/>
+							<MemberList author={author} members={members} removeMember={removeMember} />
 						</div>
 					</SheetDescription>
 				</SheetHeader>
