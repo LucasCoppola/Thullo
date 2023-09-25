@@ -34,18 +34,12 @@ export default function AddMemberModal({ authorId, id }: Board) {
 	const currUserId = session?.userId || ''
 	const [keyword, setKeyword] = useState('')
 	const [open, setOpen] = useState(false)
-	const [selectedUser, setSelectedUser] = useState<Omit<
-		User,
-		'email' | 'emailVerified'
-	> | null>(null)
+	const [selectedUser, setSelectedUser] = useState<Omit<User, 'email' | 'emailVerified'> | null>(null)
 
-	const { data: users, isLoading: isLoadingUsers } = useQuery(
-		['searchUsers', keyword],
-		async () => {
-			const { users } = await findUsers({ keyword, currUserId })
-			return users
-		}
-	)
+	const { data: users, isLoading: isLoadingUsers } = useQuery(['searchUsers', keyword], async () => {
+		const { users } = await findUsers({ keyword, currUserId })
+		return users
+	})
 
 	async function addMemberClient(selectedUser: User | null) {
 		if (authorId !== currUserId) {
@@ -63,10 +57,7 @@ export default function AddMemberModal({ authorId, id }: Board) {
 				userId: selectedUser?.id || '' // desired member id
 			})
 
-			if (
-				(e && (e as Error).message === 'User already added') ||
-				!addMemberToBoard
-			) {
+			if ((e && (e as Error).message === 'User already added') || !addMemberToBoard) {
 				throw new Error('User already added to the board')
 			}
 			return { addMemberToBoard }
@@ -111,29 +102,18 @@ export default function AddMemberModal({ authorId, id }: Board) {
 			</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle className="text-gray-800 mb-2">
-						Add a Member
-					</DialogTitle>
+					<DialogTitle className="text-gray-800 mb-2">Add a Member</DialogTitle>
 					<DialogDescription asChild>
 						<div className="relative">
 							<div className="h-44 overflow-y-auto">
-								<form
-									onSubmit={handleSubmit}
-									className="flex flex-row"
-								>
+								<form onSubmit={handleSubmit} className="flex flex-row">
 									<input
 										placeholder="Search by name or email"
 										className="bg-gray-50 border mr-3 border-gray-300 text-gray-800 text-sm rounded-lg w-full p-2.5 focus:outline-none focus:ring-1 hover:ring-1 hover:ring-gray-200 focus:ring-gray-200"
 										value={keyword}
-										onChange={(e) =>
-											setKeyword(e.target.value)
-										}
+										onChange={(e) => setKeyword(e.target.value)}
 									/>
-									<Button
-										variant="blue"
-										type="submit"
-										disabled={isLoading}
-									>
+									<Button variant="blue" type="submit" disabled={isLoading}>
 										{isLoading ? (
 											<LoadingCircle className="fill-white mx-3 text-blue-200" />
 										) : (
@@ -149,15 +129,10 @@ export default function AddMemberModal({ authorId, id }: Board) {
 								) : keyword && users && users.length > 0 ? (
 									<ul>
 										{users.map(({ id, name, image }) => (
-											<div
-												key={id}
-												className="relative first:mt-2 last:pb-6 mb-1"
-											>
+											<div key={id} className="relative first:mt-2 last:pb-6 mb-1">
 												<div
 													className={`flex flex-row py-1 px-2 rounded-md items-center cursor-pointer ${
-														selectedUser?.id === id
-															? 'bg-blue-100'
-															: 'hover:bg-gray-200'
+														selectedUser?.id === id ? 'bg-blue-100' : 'hover:bg-gray-200'
 													}`}
 													onClick={() =>
 														setSelectedUser({
@@ -176,10 +151,7 @@ export default function AddMemberModal({ authorId, id }: Board) {
 													/>
 													<li
 														className={`${
-															selectedUser?.id ===
-															id
-																? 'text-blue-500'
-																: 'text-gray-800'
+															selectedUser?.id === id ? 'text-blue-500' : 'text-gray-800'
 														}`}
 													>
 														{name}
@@ -188,27 +160,18 @@ export default function AddMemberModal({ authorId, id }: Board) {
 												{selectedUser?.id === id && (
 													<X
 														className="h-4 w-4 absolute right-1 top-[6px] text-blue-500 rounded-full hover:bg-blue-200"
-														onClick={() =>
-															setSelectedUser(
-																null
-															)
-														}
+														onClick={() => setSelectedUser(null)}
 													/>
 												)}
 											</div>
 										))}
 									</ul>
 								) : (
-									<p className="flex justify-center mt-10">
-										No results found.
-									</p>
+									<p className="flex justify-center mt-10">No results found.</p>
 								)}
 
 								<p className="text-gray-500 bg-white justify-center text-xs absolute -bottom-3 border-t w-full pt-2 border-gray-300 flex flex-row items-center">
-									<Info
-										strokeWidth={1.25}
-										className="mr-2 text-gray-500"
-									/>
+									<Info strokeWidth={1.25} className="mr-2 text-gray-500" />
 									Make sure the member is signed up.
 								</p>
 							</div>

@@ -10,7 +10,7 @@ export async function getCards({ listId }: { listId: string }) {
 			}
 		})
 
-		return { cards }
+		return cards
 	} catch (e) {
 		console.error(e)
 		throw (e as Error).message

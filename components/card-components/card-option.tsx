@@ -11,8 +11,8 @@ import {
 	AlertDialogTrigger
 } from '../ui/alert-dialog'
 import { MoreHorizontal } from 'lucide-react'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { getCards, removeCard } from '@/app/server/card-operations/card'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { removeCard } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
 
 export default function CardOption({
@@ -25,6 +25,7 @@ export default function CardOption({
 	listId: string
 }) {
 	const { data: session } = useSession()
+	const queryClient = useQueryClient()
 
 	const { mutate } = useMutation(
 		async () => {
@@ -32,7 +33,10 @@ export default function CardOption({
 			return await removeCard({ authorId: cardAuthorId, cardId, userId: session.userId })
 		},
 		{
-			onSuccess: () => console.log('card removed')
+			onSuccess: () => {
+				console.log('card removed')
+				queryClient.invalidateQueries(['cards'])
+			}
 		}
 	)
 
