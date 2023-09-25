@@ -4,7 +4,7 @@ import type { Card, Label, User } from '@prisma/client'
 import type { ColorProps, CoverImageType } from '@/app/types'
 import SkeletonImage from '../loading/skeleton-image'
 import SkeletonCard from '../loading/skeleton-card'
-import CardOption from './card-option'
+import DeleteCard from './delete-card'
 
 type CardViewProps = {
 	setOpen: (val: boolean) => void
@@ -34,7 +34,7 @@ export default function CardView({
 	return (
 		<div className="bg-white rounded-xl shadow-md hover:shadow-lg space-y-2" style={{ width: '243px' }}>
 			<div className="relative">
-				{!isCoverImageLoading && <CardOption cardId={card.id} cardAuthorId={card.authorId} listId={listId} />}
+				{!isCoverImageLoading && <DeleteCard cardId={card.id} cardAuthorId={card.authorId} listId={listId} />}
 
 				{isCoverImageLoading ? (
 					<SkeletonImage />

@@ -15,7 +15,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { removeCard } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
 
-export default function CardOption({
+export default function DeleteCard({
 	cardId,
 	cardAuthorId,
 	listId
