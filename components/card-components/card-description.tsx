@@ -88,7 +88,12 @@ export default function CardDescription({
 								minHeight: '100px'
 							}}
 							value={description || ''}
-							onChange={(e) => setDescription(e.target.value)}
+							onChange={(e) => {
+								const textarea = e.currentTarget
+								textarea.style.height = 'auto'
+								textarea.style.height = `${textarea.scrollHeight}px`
+								setDescription(e.target.value)
+							}}
 						/>
 					</>
 				) : (

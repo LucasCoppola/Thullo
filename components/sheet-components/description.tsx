@@ -1,7 +1,7 @@
 import Tooltip from '@/components/ui/tooltip'
 import type { UseMutationResult } from '@tanstack/react-query'
 import { FileText, Pencil } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function Description({
 	description,
@@ -13,14 +13,20 @@ export default function Description({
 	updateBoardMutation: UseMutationResult<void, unknown, void, unknown>
 }) {
 	const [editDescription, setEditDescription] = useState(false)
+	const [textareaHeight, setTextareaHeight] = useState(0)
+	const paragraphRef = useRef<HTMLParagraphElement>(null)
+
+	useEffect(() => {
+		if (paragraphRef.current) {
+			const paragraphHeight = paragraphRef.current.scrollHeight
+			setTextareaHeight(paragraphHeight)
+		}
+	}, [editDescription])
 
 	const renderFormattedText = (text: string) => {
 		const boldRegex = /\*(.*?)\*/g
 		const lineBreaksReplaced = text.replace(/\n/g, '<br>')
-		const formattedText = lineBreaksReplaced.replace(
-			boldRegex,
-			'<strong>$1</strong>'
-		)
+		const formattedText = lineBreaksReplaced.replace(boldRegex, '<strong>$1</strong>')
 		return formattedText
 	}
 
@@ -42,11 +48,7 @@ export default function Description({
 				)}
 			</div>
 
-			<div
-				className={`relative mt-3 text-sm text-black ${
-					!editDescription && 'mb-8'
-				}`}
-			>
+			<div className={`relative mt-3 text-sm text-black ${!editDescription && 'mb-8'}`}>
 				{editDescription ? (
 					<>
 						<Tooltip
@@ -62,9 +64,17 @@ export default function Description({
 
 						<textarea
 							className="w-full p-2 border border-gray-300 rounded-lg focus:outline-gray-300"
-							rows={12}
+							style={{
+								height: textareaHeight,
+								minHeight: '100px'
+							}}
 							value={description || ''}
-							onChange={(e) => setDescription(e.target.value)}
+							onChange={(e) => {
+								const textarea = e.currentTarget
+								textarea.style.height = 'auto'
+								textarea.style.height = `${textarea.scrollHeight}px`
+								setDescription(e.target.value)
+							}}
 						/>
 					</>
 				) : (
@@ -72,14 +82,14 @@ export default function Description({
 						{description ? (
 							<p
 								className="break-words"
+								ref={paragraphRef}
 								dangerouslySetInnerHTML={{
 									__html: renderFormattedText(description)
 								}}
 							/>
 						) : (
 							<p className="mt-8 font-medium text-gray-600 text-center">
-								Add a description to let your teammates know
-								what this board is used for.
+								Add a description to let your teammates know what this board is used for.
 							</p>
 						)}
 					</>
@@ -97,10 +107,7 @@ export default function Description({
 					>
 						Save
 					</button>
-					<button
-						className="text-xs font-medium"
-						onClick={() => setEditDescription(false)}
-					>
+					<button className="text-xs font-medium" onClick={() => setEditDescription(false)}>
 						Cancel
 					</button>
 				</div>
