@@ -47,7 +47,7 @@ export default function CardModal({
 			setCoverImage(data)
 		}
 	})
-	const { data: labels, refetch: refetchLabels } = useQuery(labelsQueryKey, () => fetchLabels(card.id))
+	const { data: labels } = useQuery(labelsQueryKey, () => fetchLabels(card.id))
 	const { data: attachments, refetch: refetchAttachments } = useQuery(attachmentsQueryKey, () =>
 		fetchAttachments(card.id)
 	)
@@ -150,7 +150,7 @@ export default function CardModal({
 									cardId={card.id}
 									cardAuthorId={card.authorId}
 								/>
-								<AddLabel cardId={card.id} labels={labels || []} refetchLabels={refetchLabels} />
+								<AddLabel cardId={card.id} labels={labels || []} />
 								<CoverImageSelector
 									coverImage={coverImage || null}
 									setCoverImage={setCoverImage}
