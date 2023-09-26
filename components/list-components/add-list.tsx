@@ -43,6 +43,7 @@ export default function AddList({
 				value={listTitle}
 				onChange={(e) => setListTitle(e.target.value)}
 				disabled={isLoading}
+				autoFocus
 				required
 			/>
 			<div className="flex flex-row gap-2 mt-0.5">

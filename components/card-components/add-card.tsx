@@ -3,13 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { createCard } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
 
-export default function AddCard({
-	setCreateMode,
-	listId
-}: {
-	setCreateMode: (val: boolean) => void
-	listId: string
-}) {
+export default function AddCard({ setCreateMode, listId }: { setCreateMode: (val: boolean) => void; listId: string }) {
 	const [cardTitle, setCardTitle] = useState('')
 	const isCardTitleValid = cardTitle.trim().length >= 1
 	const { data: session } = useSession()
@@ -32,10 +26,7 @@ export default function AddCard({
 		}
 	)
 	return (
-		<form
-			className="mt-4 bg-blue-50 items-center px-2.5 py-2 rounded-md h-20"
-			style={{ minWidth: '243px' }}
-		>
+		<form className="mt-4 bg-blue-50 items-center px-2.5 py-2 rounded-md h-20" style={{ minWidth: '243px' }}>
 			<input
 				type="text"
 				placeholder="Enter card title..."
@@ -44,6 +35,7 @@ export default function AddCard({
 				onChange={(e) => setCardTitle(e.target.value)}
 				disabled={isLoading}
 				required
+				autoFocus
 			/>
 			<div className="flex flex-row gap-2 mt-0.5">
 				<button
@@ -55,10 +47,7 @@ export default function AddCard({
 				>
 					Add Card
 				</button>
-				<button
-					className="text-sm text-gray-600"
-					onClick={() => setCreateMode(false)}
-				>
+				<button className="text-sm text-gray-600" onClick={() => setCreateMode(false)}>
 					Cancel
 				</button>
 			</div>
