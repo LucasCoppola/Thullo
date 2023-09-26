@@ -1,12 +1,8 @@
 import Image from 'next/image'
 import { useState } from 'react'
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger
-} from '@/components/ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Info, Users2, X } from 'lucide-react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addCardMember } from '@/app/server/membersOperations'
 import type { User } from '@prisma/client'
 import { useSession } from 'next-auth/react'
@@ -21,10 +17,9 @@ export default function CardMembers({
 	cardAuthorId: string
 }) {
 	const { data: session } = useSession()
-	const [selectedUser, setSelectedUser] = useState<Omit<
-		User,
-		'email' | 'emailVerified'
-	> | null>(null)
+	const queryClient = useQueryClient()
+	const [selectedUser, setSelectedUser] = useState<Omit<User, 'email' | 'emailVerified'> | null>(null)
+	const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
 	const { mutate } = useMutation(
 		async () => {
@@ -36,22 +31,24 @@ export default function CardMembers({
 			})
 		},
 		{
-			onSuccess: () => console.log('member added to the card!'),
-			onError: (error) => console.error((error as Error).message)
+			onSuccess: () => {
+				console.log('member added to the card!')
+				queryClient.invalidateQueries(['card-members', cardId])
+			},
+			onError: (error) => console.error((error as Error).message),
+			onSettled: () => setIsPopoverOpen(false)
 		}
 	)
 
 	return (
-		<Popover>
+		<Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
 			<PopoverTrigger asChild>
 				<button className="flex flex-row items-center justify-start text-gray-700 text-sm ml-auto bg-gray-200 hover:bg-gray-300 px-4 py-1.5 rounded-md w-4/5">
 					<Users2 className="h-4 w-4 mr-2" /> Members
 				</button>
 			</PopoverTrigger>
 			<PopoverContent>
-				<h1 className="text-sm font-medium text-gray-800 mb-3">
-					Assign a member to this card
-				</h1>
+				<h1 className="text-sm font-medium text-gray-800 mb-3">Assign a member to this card</h1>
 				<div className="flex flex-row text-xs mb-2">
 					<input
 						type="text"
@@ -68,10 +65,7 @@ export default function CardMembers({
 
 				<ul>
 					{availableMembers.map(({ id, name, image }) => (
-						<div
-							key={id}
-							className="relative first:mt-2 last:pb-2 mb-1"
-						>
+						<div key={id} className="relative first:mt-2 last:pb-2 mb-1">
 							<div
 								className={`flex flex-row py-1 px-2 rounded-md items-center cursor-pointer 
 								${selectedUser?.id === id ? 'bg-blue-100' : 'hover:bg-gray-200'}`}
@@ -91,11 +85,7 @@ export default function CardMembers({
 									alt="avatar"
 								/>
 								<li
-									className={`text-xs ${
-										selectedUser?.id === id
-											? 'text-blue-500'
-											: 'text-gray-800'
-									}`}
+									className={`text-xs ${selectedUser?.id === id ? 'text-blue-500' : 'text-gray-800'}`}
 								>
 									{name}
 								</li>
@@ -111,10 +101,7 @@ export default function CardMembers({
 				</ul>
 
 				<p className="text-gray-600 bg-white justify-center text-[10px] border-t w-full pt-2 border-gray-300 flex flex-row items-center">
-					<Info
-						strokeWidth={1.25}
-						className="h-4 w-4 mr-2 text-gray-600"
-					/>
+					<Info strokeWidth={1.25} className="h-4 w-4 mr-2 text-gray-600" />
 					Make sure the member is on the board.
 				</p>
 			</PopoverContent>

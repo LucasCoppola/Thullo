@@ -12,7 +12,7 @@ import {
 } from '../ui/alert-dialog'
 import { X } from 'lucide-react'
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { removeCardMember } from '@/app/server/membersOperations'
 import type { Card, User } from '@prisma/client'
 import { useSession } from 'next-auth/react'
@@ -20,18 +20,18 @@ import SkeletonMember from '../loading/skeleton-member'
 
 export default function CardMembersList({
 	cardMembers,
-	refetchCardMembers,
 	isCardMembersLoading,
 	card,
 	cardAuthor
 }: {
 	cardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
-	refetchCardMembers: () => void
 	isCardMembersLoading: boolean
 	card: Card
 	cardAuthor: Omit<User, 'email' | 'emailVerified'> | undefined
 }) {
 	const { data: session } = useSession()
+	const queryClient = useQueryClient()
+
 	const [hoverUserId, setHoverUserId] = useState<string | null>(null)
 
 	const removeMember = useMutation(
@@ -48,7 +48,7 @@ export default function CardMembersList({
 		},
 		{
 			onSuccess: () => console.log('member removed!'),
-			onSettled: () => refetchCardMembers()
+			onSettled: () => queryClient.invalidateQueries(['card-members', card.id])
 		}
 	)
 
