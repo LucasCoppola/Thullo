@@ -27,11 +27,11 @@ export default function Comment({
 	cardId,
 	updatedAt,
 	text: originalText,
-	refetchComments
+	setQueryInvalidation
 }: Comment & {
 	userId: string
 	cardAuthorId: string
-	refetchComments: () => void
+	setQueryInvalidation: (cardId: string) => void
 }) {
 	const [openAlertDialog, setOpenAlertDialog] = useState(false)
 	const [isEditing, setIsEditing] = useState(false)
@@ -51,7 +51,7 @@ export default function Comment({
 			setIsEditing(false)
 		},
 		{
-			onSettled: () => refetchComments()
+			onSettled: () => setQueryInvalidation(cardId)
 		}
 	)
 
@@ -66,7 +66,7 @@ export default function Comment({
 			})
 		},
 		{
-			onSettled: () => refetchComments()
+			onSettled: () => setQueryInvalidation(cardId)
 		}
 	)
 

@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addComment } from '@/app/server/card-operations/comments'
 import { ArrowUpCircle } from 'lucide-react'
 import CommentComponent from './comment'
@@ -11,17 +11,20 @@ import type { Comment } from '@prisma/client'
 export default function SendComment({
 	cardId,
 	cardAuthorId,
-	comments,
-	refetchComments
+	comments
 }: {
 	cardId: string
 	cardAuthorId: string
 	comments: Comment[] | undefined
-	refetchComments: () => void
 }) {
 	const { data: session } = useSession()
 	const [comment, setComment] = useState('')
 	const [isEditing, setIsEditing] = useState(false)
+	const queryClient = useQueryClient()
+
+	const handleQueryInvalidation = (cardId: string) => {
+		queryClient.invalidateQueries(['comments', cardId])
+	}
 
 	const addCommentMutation = useMutation(
 		async () => {
@@ -34,7 +37,7 @@ export default function SendComment({
 				setComment('')
 			},
 			onError: (e) => console.error((e as Error).message),
-			onSettled: () => refetchComments()
+			onSettled: () => handleQueryInvalidation(cardId)
 		}
 	)
 
@@ -46,7 +49,7 @@ export default function SendComment({
 						key={comment.id}
 						userId={session?.userId!}
 						cardAuthorId={cardAuthorId}
-						refetchComments={refetchComments}
+						setQueryInvalidation={handleQueryInvalidation}
 						{...comment}
 					/>
 				))}
@@ -73,13 +76,9 @@ export default function SendComment({
 									required
 								/>
 								<ArrowUpCircle
-									role={`${
-										comment.length > 0 ? 'button' : 'none'
-									}`}
+									role={`${comment.length > 0 ? 'button' : 'none'}`}
 									className={`h-6 w-6 relative top-1 right-0 ${
-										comment.length > 0
-											? 'text-blue-600'
-											: 'text-gray-400 cursor-not-allowed'
+										comment.length > 0 ? 'text-blue-600' : 'text-gray-400 cursor-not-allowed'
 									}`}
 									onClick={() => addCommentMutation.mutate()}
 								/>
