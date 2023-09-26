@@ -50,7 +50,7 @@ export default function CardView({
 						/>
 					) : (
 						<div
-							className="w-full h-28 rounded-lg"
+							className="w-full  h-[138px] rounded-t-xl"
 							onClick={() => setOpen(true)}
 							style={{
 								backgroundColor: coverImage?.bg

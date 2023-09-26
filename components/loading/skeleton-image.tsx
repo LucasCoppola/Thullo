@@ -1,9 +1,9 @@
 export default function SkeletonImage() {
 	return (
 		<div role="status" className="w-full">
-			<div className="flex items-center justify-center h-[138px] bg-gray-200 rounded-t-xl">
+			<div className="flex items-center justify-center h-[110px] bg-gray-200 rounded-t-xl">
 				<svg
-					className="w-10 h-10 text-gray-100"
+					className="w-9 h-9 text-gray-50"
 					aria-hidden="true"
 					xmlns="http://www.w3.org/2000/svg"
 					fill="currentColor"
