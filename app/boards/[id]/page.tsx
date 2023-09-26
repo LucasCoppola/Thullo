@@ -1,4 +1,4 @@
-import { findBoardById, getLists } from '@/app/server/boardsOperations'
+import { findBoardById } from '@/app/server/boardsOperations'
 import { getBoardMembers } from '@/app/server/membersOperations'
 import { findUserById } from '@/app/server/usersOperations'
 import { getServerSession } from 'next-auth'
@@ -6,14 +6,10 @@ import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
 import type { Board, User } from '@prisma/client'
 import BoardHeader from '@/components/board-header'
-import List from '@/components/list-components/list'
 import AddButtonComponent from '@/components/add-list-btn'
+import Lists from '@/components/list-components/lists'
 
-export default async function BoardPage({
-	params
-}: {
-	params: { id: string }
-}) {
+export default async function BoardPage({ params }: { params: { id: string } }) {
 	const { id } = params
 	const { board } = await findBoardById({ id })
 
@@ -22,7 +18,6 @@ export default async function BoardPage({
 	const session = await getServerSession(authOptions)
 	const { author } = await findUserById({ id: board.authorId })
 	const { members } = await getBoardMembers({ boardId: id })
-	const { lists } = await getLists({ boardId: id })
 
 	if (!session) {
 		redirect('/')
@@ -38,21 +33,9 @@ export default async function BoardPage({
 			/>
 			<div className="w-full overflow-x-auto bg-[#fafbfe] px-2 rounded-lg mt-4">
 				<div className="flex flex-row gap-8">
-					{lists?.map(({ id, title }) => (
-						<List
-							key={id}
-							listId={id}
-							title={title}
-							boardMembers={members as User[]}
-							boardId={board.id}
-						/>
-					))}
+					<Lists boardId={board.id} boardMembers={members as User[]} boardAuthorId={author?.id} />
 
-					<AddButtonComponent
-						name="list"
-						boardId={board.id}
-						listId={id}
-					/>
+					<AddButtonComponent name="list" boardId={board.id} listId={id} />
 				</div>
 			</div>
 		</div>

@@ -21,7 +21,17 @@ import type { Card, List, User } from '@prisma/client'
 import type { CoverImageType } from '@/app/types'
 import CardTitle from './card-title'
 
-export default function CardModal({ card, boardMembers, list }: { card: Card; boardMembers: User[]; list: List }) {
+export default function CardModal({
+	card,
+	boardMembers,
+	listId,
+	listTitle
+}: {
+	card: Card
+	boardMembers: User[]
+	listId: string
+	listTitle: string
+}) {
 	const [coverImage, setCoverImage] = useState<CoverImageType | null>(null)
 	const [open, setOpen] = useState(false)
 
@@ -65,7 +75,7 @@ export default function CardModal({ card, boardMembers, list }: { card: Card; bo
 					coverImage={coverImage}
 					cardMembers={cardMembers}
 					isCoverImageLoading={isCoverImageLoading}
-					listId={list.id}
+					listId={listId}
 				/>
 			</DialogTrigger>
 			<DialogContent className="overflow-y-auto max-h-[80vh] max-w-2xl pt-9">
@@ -83,7 +93,7 @@ export default function CardModal({ card, boardMembers, list }: { card: Card; bo
 								<CardTitle cardTitle={card.title} cardId={card.id} authorId={card.authorId} />
 
 								<h2 className="text-xs text-gray-600 mt-1 mb-4">
-									in list <strong>{list?.title}</strong>
+									in list <strong>{listTitle}</strong>
 								</h2>
 
 								<CardDescription

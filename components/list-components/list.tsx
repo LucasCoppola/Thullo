@@ -1,30 +1,41 @@
-import { MoreHorizontal } from 'lucide-react'
+'use client'
+
 import { EditableListTitle } from './add-list'
 import AddButtonComponent from '../add-list-btn'
 import type { List, User } from '@prisma/client'
 import { findListById } from '@/app/server/boardsOperations'
 import Cards from '../card-components/cards'
+import { useQuery } from '@tanstack/react-query'
+import DeleteList from './delete-list'
 
-export default async function List({
+export default function List({
 	listId,
 	boardMembers,
 	boardId,
-	title
+	title,
+	boardAuthorId
 }: {
 	listId: string
 	boardMembers: User[]
 	boardId: string
 	title: string
+	boardAuthorId: string | undefined
 }) {
-	const { list } = await findListById({ listId })
+	const { data: list } = useQuery(['list', listId], async () => await findListById({ listId }))
 
 	return (
 		<div className="mt-4" style={{ minWidth: '243px' }}>
-			<div className="flex flex-row justify-between pb-4">
+			<div className="flex flex-row items-center justify-between pb-4">
 				<EditableListTitle title={title} listId={listId} />
+				<DeleteList
+					listId={listId}
+					boardAuthorId={boardAuthorId}
+					listAuthorId={list?.authorId}
+					boardId={boardId}
+				/>
 			</div>
 			<div className="space-y-4">
-				<Cards list={list as List} boardMembers={boardMembers} />
+				<Cards listId={listId} listTitle={list?.title || undefined} boardMembers={boardMembers} />
 			</div>
 
 			<AddButtonComponent name="card" boardId={boardId} listId={listId} />

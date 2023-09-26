@@ -110,7 +110,7 @@ model Card {
   comments    Comment[]
   attachment  Attachment[]
   members     MembersOnCards[]
-  list        List             @relation(fields: [listId], references: [id])
+  list        List             @relation(fields: [listId], references: [id], onDelete: Cascade)
 }
 
 model MembersOnCards {
@@ -118,7 +118,7 @@ model MembersOnCards {
   cardId String
 
   user User @relation(fields: [userId], references: [id])
-  card Card @relation(fields: [cardId], references: [id])
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
 
   @@unique([userId, cardId])
 }
@@ -132,7 +132,7 @@ model Comment {
   cardId    String
 
   author User @relation(fields: [authorId], references: [id])
-  card   Card @relation(fields: [cardId], references: [id])
+  card   Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
 }
 
 model Attachment {
@@ -145,7 +145,7 @@ model Attachment {
   cardId     String
 
   user User @relation(fields: [userId], references: [id])
-  card Card @relation(fields: [cardId], references: [id])
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
 }
 
 model Label {
@@ -154,5 +154,5 @@ model Label {
   name      String
   color     Json
   cardId    String
-  card      Card     @relation(fields: [cardId], references: [id])
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
 }

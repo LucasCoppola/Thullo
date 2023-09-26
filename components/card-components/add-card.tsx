@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createCard } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
 
@@ -7,6 +7,7 @@ export default function AddCard({ setCreateMode, listId }: { setCreateMode: (val
 	const [cardTitle, setCardTitle] = useState('')
 	const isCardTitleValid = cardTitle.trim().length >= 1
 	const { data: session } = useSession()
+	const queryClient = useQueryClient()
 
 	const { mutate: mutateCardTitle, isLoading } = useMutation(
 		async () =>
@@ -18,6 +19,7 @@ export default function AddCard({ setCreateMode, listId }: { setCreateMode: (val
 		{
 			onSuccess: () => {
 				console.log('Card created')
+				queryClient.invalidateQueries(['cards', listId])
 				setCreateMode(false)
 			},
 			onError: (e) => {
@@ -26,7 +28,11 @@ export default function AddCard({ setCreateMode, listId }: { setCreateMode: (val
 		}
 	)
 	return (
-		<form className="mt-4 bg-blue-50 items-center px-2.5 py-2 rounded-md h-20" style={{ minWidth: '243px' }}>
+		<form
+			onSubmit={(e) => e.preventDefault()}
+			className="mt-4 bg-blue-50 items-center px-2.5 py-2 rounded-md h-20"
+			style={{ minWidth: '243px' }}
+		>
 			<input
 				type="text"
 				placeholder="Enter card title..."

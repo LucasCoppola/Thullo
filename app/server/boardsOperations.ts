@@ -18,7 +18,7 @@ export async function getBoards({ userId }: { userId: string }) {
 		return boards
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
 	}
 }
 export async function createBoard({
@@ -40,7 +40,7 @@ export async function createBoard({
 		return { board }
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
 	}
 }
 
@@ -61,16 +61,11 @@ export async function findBoardById({ id }: { id: string }) {
 		return { board: modifiedBoard }
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
 	}
 }
 
-export async function updateVisibility({
-	boardId,
-	visibility,
-	authorId,
-	currUserId
-}: VisibilityMutation) {
+export async function updateVisibility({ boardId, visibility, authorId, currUserId }: VisibilityMutation) {
 	try {
 		if (authorId !== currUserId) {
 			throw new Error('Unauthorized')
@@ -87,7 +82,7 @@ export async function updateVisibility({
 		return { updatedBoard }
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
 	}
 }
 
@@ -131,19 +126,11 @@ export async function updateBoard({
 		return { updatedBoard }
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
 	}
 }
 
-export async function createList({
-	authorId,
-	boardId,
-	title
-}: {
-	authorId: string
-	boardId: string
-	title: string
-}) {
+export async function createList({ authorId, boardId, title }: { authorId: string; boardId: string; title: string }) {
 	try {
 		const createList = await prisma.list.create({
 			data: {
@@ -156,7 +143,7 @@ export async function createList({
 		return { createList }
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
 	}
 }
 
@@ -168,20 +155,14 @@ export async function getLists({ boardId }: { boardId: string }) {
 			}
 		})
 
-		return { lists }
+		return lists
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
 	}
 }
 
-export async function updateListTitle({
-	listId,
-	title
-}: {
-	listId: string
-	title: string
-}) {
+export async function updateListTitle({ listId, title }: { listId: string; title: string }) {
 	try {
 		const list = await prisma.list.update({
 			where: {
@@ -195,7 +176,7 @@ export async function updateListTitle({
 		return { list }
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
 	}
 }
 
@@ -207,9 +188,40 @@ export async function findListById({ listId }: { listId: string }) {
 			}
 		})
 
-		return { list }
+		return list
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
+	}
+}
+
+export async function removeList({
+	listId,
+	boardAuthorId,
+	listAuthorId,
+	userId
+}: {
+	listId: string
+	boardAuthorId: string
+	listAuthorId: string
+	userId: string
+}) {
+	try {
+		if (listAuthorId !== userId) {
+			throw new Error('Unauthorized')
+		}
+
+		if (boardAuthorId !== userId) {
+			throw new Error('Unauthorized')
+		}
+
+		await prisma.list.delete({
+			where: {
+				id: listId
+			}
+		})
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
 	}
 }

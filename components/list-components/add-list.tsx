@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createList, updateListTitle } from '@/app/server/boardsOperations'
 import EditableTitle from '../shared/editable-title'
 import { useSession } from 'next-auth/react'
@@ -16,6 +16,7 @@ export default function AddList({
 	const [listTitle, setListTitle] = useState('')
 	const isListTitleValid = listTitle.trim().length >= 1
 	const { data: session } = useSession()
+	const queryClient = useQueryClient()
 
 	const { mutate: mutateList, isLoading } = useMutation(
 		async () =>
@@ -27,6 +28,8 @@ export default function AddList({
 		{
 			onSuccess: () => {
 				console.log('List created')
+				queryClient.invalidateQueries(['lists'])
+
 				setCreateMode(false)
 			},
 			onError: (e) => {
@@ -35,7 +38,11 @@ export default function AddList({
 		}
 	)
 	return (
-		<form className="mt-4 bg-blue-50 items-center px-2.5 py-2 rounded-md h-20" style={{ minWidth: '243px' }}>
+		<form
+			onSubmit={(e) => e.preventDefault()}
+			className="mt-4 bg-blue-50 items-center px-2.5 py-2 rounded-md h-20"
+			style={{ minWidth: '243px' }}
+		>
 			<input
 				type="text"
 				placeholder="Enter list title..."
