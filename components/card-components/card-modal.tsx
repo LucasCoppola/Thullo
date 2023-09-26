@@ -47,17 +47,13 @@ export default function CardModal({
 			setCoverImage(data)
 		}
 	})
-	const { data: labels, refetch: refetchLabels } = useQuery(labelsQueryKey, () => fetchLabels(card.id))
-	const { data: attachments, refetch: refetchAttachments } = useQuery(attachmentsQueryKey, () =>
-		fetchAttachments(card.id)
-	)
+	const { data: labels } = useQuery(labelsQueryKey, () => fetchLabels(card.id))
+	const { data: attachments } = useQuery(attachmentsQueryKey, () => fetchAttachments(card.id))
 	const { data: cardAuthor } = useQuery(cardAuthorQueryKey, () => fetchUser(card.authorId))
-	const { data: comments, refetch: refetchComments } = useQuery(commentsQueryKey, () => fetchComments(card.id))
-	const {
-		data: cardMembers,
-		refetch: refetchCardMembers,
-		isLoading: isCardMembersLoading
-	} = useQuery(cardMembersQueryKey, () => fetchCardMembers(card.id))
+	const { data: comments } = useQuery(commentsQueryKey, () => fetchComments(card.id))
+	const { data: cardMembers, isLoading: isCardMembersLoading } = useQuery(cardMembersQueryKey, () =>
+		fetchCardMembers(card.id)
+	)
 
 	const availableMembers = boardMembers.filter((member) => {
 		return !cardMembers?.find((cardMember) => cardMember.id === member.id)
@@ -106,7 +102,7 @@ export default function CardModal({
 								<div className="text-xs font-medium text-gray-600 flex flex-row items-center mb-4">
 									<Paperclip className="h-3.5 w-3.5 mr-1" />
 									Attachments
-									<UploadFile refetchAttachments={refetchAttachments} cardId={card.id} />
+									<UploadFile cardId={card.id} />
 									<Tooltip iconClassName="ml-2 text-gray-500" contentClassName="text-[10px] p-1">
 										Only supports Images and pdf files.
 									</Tooltip>
@@ -120,7 +116,6 @@ export default function CardModal({
 												cardId={card.id}
 												cardAuthorId={card.authorId}
 												attachment={attachment}
-												refetchAttachments={refetchAttachments}
 											/>
 										))
 									) : (
@@ -136,12 +131,7 @@ export default function CardModal({
 									Activity
 								</span>
 
-								<SendComment
-									cardId={card.id}
-									cardAuthorId={card.authorId}
-									comments={comments}
-									refetchComments={refetchComments}
-								/>
+								<SendComment cardId={card.id} cardAuthorId={card.authorId} comments={comments} />
 							</div>
 
 							<div className="flex flex-col w-2/6 gap-3 items-end">
@@ -150,7 +140,7 @@ export default function CardModal({
 									cardId={card.id}
 									cardAuthorId={card.authorId}
 								/>
-								<AddLabel cardId={card.id} labels={labels || []} refetchLabels={refetchLabels} />
+								<AddLabel cardId={card.id} labels={labels || []} />
 								<CoverImageSelector
 									coverImage={coverImage || null}
 									setCoverImage={setCoverImage}
@@ -159,7 +149,6 @@ export default function CardModal({
 								<CardMembersList
 									card={card}
 									cardMembers={cardMembers}
-									refetchCardMembers={refetchCardMembers}
 									cardAuthor={cardAuthor}
 									isCardMembersLoading={isCardMembersLoading}
 								/>
