@@ -3,7 +3,7 @@ import { Download, Trash } from 'lucide-react'
 
 import type { Attachment } from '@prisma/client'
 import Link from 'next/link'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { removeAttachment } from '@/app/server/card-operations/attachments'
 import {
 	AlertDialog,
@@ -23,15 +23,14 @@ import SkeletonAttachment from '../loading/skeleton-attachment'
 export default function AttachmentComponent({
 	cardId,
 	cardAuthorId,
-	attachment,
-	refetchAttachments
+	attachment
 }: {
 	cardId: string
 	cardAuthorId: string
 	attachment: Attachment
-	refetchAttachments: () => void
 }) {
 	const { data: session } = useSession()
+	const queryClient = useQueryClient()
 	const isPDF = attachment.filename.toLowerCase().endsWith('.pdf')
 
 	async function downloadFile() {
@@ -68,7 +67,7 @@ export default function AttachmentComponent({
 				userId: session?.userId!
 			}),
 		{
-			onSettled: () => refetchAttachments()
+			onSettled: () => queryClient.invalidateQueries(['attachments', cardId])
 		}
 	)
 
