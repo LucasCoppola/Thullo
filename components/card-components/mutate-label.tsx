@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react'
-import {
-	DropdownMenuItem,
-	DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu'
+import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -16,7 +13,7 @@ import {
 } from '@/components/ui/alert-dialog'
 
 import { Trash2 } from 'lucide-react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { deleteLabel, updateLabel } from '@/app/server/card-operations/labels'
 import { colors } from './card-label'
 import type { ColorProps } from '@/app/types'
@@ -26,28 +23,26 @@ export default function MutateLabel({
 	labelId,
 	color,
 	cardId,
-	refetchLabels,
-	setOpenDropdown
+	setOpenDropdown,
+	setQueryInvalidation
 }: {
 	name: string
 	labelId: string
 	color: ColorProps
 	cardId: string
-	refetchLabels: () => void
 	setOpenDropdown: (open: boolean) => void
+	setQueryInvalidation: (cardId: string) => void
 }) {
 	const [editLabelName, setEditLabelName] = useState(name)
 	const [editColor, setEditColor] = useState(color)
+	const queryClient = useQueryClient()
 
-	const deleteLabelMutation = useMutation(
-		async () => await deleteLabel({ cardId, labelId }),
-		{
-			onSuccess: () => {
-				refetchLabels()
-				console.log('label deleted! (check the db just in case)')
-			}
+	const deleteLabelMutation = useMutation(async () => await deleteLabel({ cardId, labelId }), {
+		onSuccess: () => {
+			setQueryInvalidation(cardId)
+			console.log('label deleted! (check the db just in case)')
 		}
-	)
+	})
 
 	const updateLabelMutation = useMutation(
 		async () => {
@@ -61,7 +56,7 @@ export default function MutateLabel({
 			})
 		},
 		{
-			onSettled: () => refetchLabels()
+			onSuccess: () => setQueryInvalidation(cardId)
 		}
 	)
 
@@ -94,22 +89,16 @@ export default function MutateLabel({
 			<DropdownMenuItem onSelect={(e) => e.preventDefault()}>
 				<AlertDialog>
 					<AlertDialogTrigger asChild>
-						<div
-							role="button"
-							className="flex flex-row items-center text-gray-700 text-xs"
-						>
+						<div role="button" className="flex flex-row items-center text-gray-700 text-xs">
 							<Trash2 className="h-4 w-4 mr-2" />
 							Delete
 						</div>
 					</AlertDialogTrigger>
 					<AlertDialogContent>
 						<AlertDialogHeader>
-							<AlertDialogTitle>
-								Are you absolutely sure?
-							</AlertDialogTitle>
+							<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 							<AlertDialogDescription>
-								This action cannot be undone. This will
-								permanently delete this label from our servers.
+								This action cannot be undone. This will permanently delete this label from our servers.
 							</AlertDialogDescription>
 						</AlertDialogHeader>
 						<AlertDialogFooter>
@@ -125,9 +114,7 @@ export default function MutateLabel({
 				</AlertDialog>
 			</DropdownMenuItem>
 			<DropdownMenuSeparator />
-			<span className="text-gray-500 uppercase text-xs font-medium pl-2">
-				Colors
-			</span>
+			<span className="text-gray-500 uppercase text-xs font-medium pl-2">Colors</span>
 			{colors.map(({ color, colorName }) => (
 				<DropdownMenuItem
 					key={colorName}
@@ -145,9 +132,7 @@ export default function MutateLabel({
 							color: color.text
 						}}
 					/>
-					<span className="text-xs rounded-sm ml-2 py-[1px] text-gray-700">
-						{colorName}
-					</span>
+					<span className="text-xs rounded-sm ml-2 py-[1px] text-gray-700">{colorName}</span>
 				</DropdownMenuItem>
 			))}
 		</>

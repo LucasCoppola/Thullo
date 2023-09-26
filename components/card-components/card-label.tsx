@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, Tags } from 'lucide-react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createLabel } from '@/app/server/card-operations/labels'
 import MutateLable from './mutate-label'
 
@@ -24,24 +20,19 @@ export const colors: ColorProps[] = [
 	{ color: { text: '#9333ea', bg: '#f3e8ff' }, colorName: 'Purple' }
 ]
 
-export default function AddLabel({
-	cardId,
-	labels,
-	refetchLabels
-}: {
-	cardId: string
-	labels: Label[]
-	refetchLabels: () => void
-}) {
+export default function AddLabel({ cardId, labels }: { cardId: string; labels: Label[] }) {
 	const [label, setLabel] = useState('')
 	const [previewColor, setPreviewColor] = useState<ColorProps | null>(null)
 	const [hoveredLabelId, setHoveredLabelId] = useState<string | null>(null)
 	const [openDropdown, setOpenDropdown] = useState(false)
+	const queryClient = useQueryClient()
+
+	const handleQueryInvalidation = (cardId: string) => {
+		queryClient.invalidateQueries(['labels', cardId])
+	}
 
 	useEffect(() => {
-		setPreviewColor(
-			colors[Math.floor(Math.random() * colors.length)] || null
-		)
+		setPreviewColor(colors[Math.floor(Math.random() * colors.length)] || null)
 	}, [])
 
 	const createLabelMutation = useMutation(
@@ -53,12 +44,13 @@ export default function AddLabel({
 			await createLabel({ cardId, color, name: label })
 		},
 		{
-			onSuccess: () => console.log('label created!'),
-			onError: (e) =>
-				console.error('Error Client:', (e as Error).message),
+			onSuccess: () => {
+				console.log('label created!')
+				handleQueryInvalidation(cardId)
+			},
+			onError: (e) => console.error('Error Client:', (e as Error).message),
 			onSettled: () => {
 				setLabel('')
-				refetchLabels()
 			}
 		}
 	)
@@ -79,23 +71,17 @@ export default function AddLabel({
 					value={label}
 					onChange={(e) => setLabel(e.target.value)}
 				/>
-				<span className="text-xs text-gray-700 font-medium">
-					Select a label or create one
-				</span>
+				<span className="text-xs text-gray-700 font-medium">Select a label or create one</span>
 				<ul className="text-xs">
 					{labels.length > 0 &&
 						labels?.map(({ id, name, color }) => {
-							const parsedColor = JSON.parse(
-								JSON.stringify(color)
-							) as ColorProps
+							const parsedColor = JSON.parse(JSON.stringify(color)) as ColorProps
 
 							return (
 								<li
 									key={id}
 									className={`hover:bg-gray-100 rounded-sm py-1 px-2 cursor-pointer flex flex-row justify-between ${
-										hoveredLabelId === id
-											? 'bg-gray-100'
-											: ''
+										hoveredLabelId === id ? 'bg-gray-100' : ''
 									}`}
 									onMouseEnter={() => setHoveredLabelId(id)}
 									onMouseLeave={() => setHoveredLabelId(null)}
@@ -103,17 +89,13 @@ export default function AddLabel({
 									<span
 										className="text-[10px] rounded-sm px-2 py-[1px]"
 										style={{
-											backgroundColor:
-												parsedColor.color.bg,
+											backgroundColor: parsedColor.color.bg,
 											color: parsedColor.color.text
 										}}
 									>
 										{name}
 									</span>
-									<DropdownMenu
-										open={openDropdown}
-										onOpenChange={setOpenDropdown}
-									>
+									<DropdownMenu open={openDropdown} onOpenChange={setOpenDropdown}>
 										<DropdownMenuTrigger asChild>
 											{hoveredLabelId === id && (
 												<MoreHorizontal
@@ -128,10 +110,8 @@ export default function AddLabel({
 												color={parsedColor}
 												labelId={id}
 												name={name}
-												refetchLabels={refetchLabels}
-												setOpenDropdown={
-													setOpenDropdown
-												}
+												setOpenDropdown={setOpenDropdown}
+												setQueryInvalidation={handleQueryInvalidation}
 											/>
 										</DropdownMenuContent>
 									</DropdownMenu>
