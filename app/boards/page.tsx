@@ -12,15 +12,13 @@ export default async function Boards() {
 	const boards = await getBoards({ userId })
 
 	if (!session) {
-		redirect('/')
+		redirect('/login')
 	}
 
 	return (
 		<div className="mx-24">
 			<div className="flex justify-between w-full mt-14 mb-6">
-				<h1 className="text-lg font-medium text-gray-800">
-					All Boards
-				</h1>
+				<h1 className="text-lg font-medium text-gray-800">All Boards</h1>
 				<CreateBoard />
 			</div>
 			<div className="flex flex-wrap gap-9">

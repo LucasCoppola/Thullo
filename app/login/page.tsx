@@ -13,8 +13,7 @@ export default function LoginPage() {
 				<div className="flex flex-col items-center justify-center space-y-3 border-b border-gray-200 bg-white px-4 py-6 pt-8 text-center sm:px-16">
 					<h3 className="text-xl font-semibold">Sign in</h3>
 					<p className="text-sm text-gray-500">
-						This is strictly for demo purposes - only your email and
-						profile picture will be stored.
+						This is strictly for demo purposes - only your email and profile picture will be stored.
 					</p>
 				</div>
 				<div className="flex flex-col space-y-3 bg-gray-50 px-4 py-8 sm:px-16">

@@ -14,31 +14,20 @@ export default function Navbar({ session }: { session: Session | null }) {
 	const pathname = usePathname()
 	const boardId = pathname.split('/').pop() as string
 
-	const { data } = useQuery(
-		['board', boardId],
-		async () => await findBoardById({ id: boardId })
-	)
+	const { data } = useQuery(['board', boardId], async () => await findBoardById({ id: boardId }))
 
 	return (
-		<nav className="relative bg-transparent mt-1 px-10 shadow-sm">
+		<nav className="z-10 relative bg-transparent mt-1 px-10 shadow-sm">
 			<div className="w-full py-2 md:flex md:justify-between items-center">
 				<div className="flex items-center">
 					<Link href="/">
-						<Image
-							className="w-auto h-6 sm:h-7"
-							src="./Logo.svg"
-							alt="Logo"
-							width={400}
-							height={400}
-						/>
+						<Image className="w-auto h-6 sm:h-7" src="./Logo.svg" alt="Logo" width={400} height={400} />
 					</Link>
 				</div>
 
 				{data?.board && (
 					<div className="flex flex-row items-center">
-						<div className="ml-4 font-medium text-lg text-gray-800">
-							{data.board?.title}
-						</div>
+						<div className="ml-4 font-medium text-lg text-gray-800">{data.board?.title}</div>
 						<div className="mx-6 border-r border-gray-200 h-9" />
 						<Link href="/boards">
 							<Button variant="gray">All Boards</Button>
@@ -49,16 +38,18 @@ export default function Navbar({ session }: { session: Session | null }) {
 				<div className="flex">
 					{session ? (
 						<>
-							<div className="relative mr-20">
-								<input
-									type="text"
-									className="w-full py-2 pl-10 pr-10 text-gray-600 text-sm bg-white border rounded-lg focus:border-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300"
-									placeholder="Search..."
-								/>
-								<span className="absolute inset-y-0 left-0 flex items-center pl-3">
-									<Search />
-								</span>
-							</div>
+							{pathname !== '/' && (
+								<div className="relative mr-20">
+									<input
+										type="text"
+										className="w-full py-2 pl-10 pr-10 text-gray-600 text-sm bg-white border rounded-lg focus:border-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300"
+										placeholder="Search..."
+									/>
+									<span className="absolute inset-y-0 left-0 flex items-center pl-3">
+										<Search />
+									</span>
+								</div>
+							)}
 							<UserDropdown session={session} />
 						</>
 					) : (

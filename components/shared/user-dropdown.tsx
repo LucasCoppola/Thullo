@@ -32,9 +32,7 @@ export default function UserDropdown({ session }: { session: Session }) {
 					/>
 					{session.user.name}
 					<svg
-						className={`w-2.5 h-2.5 ml-3 transition-transform ${
-							isOpen ? 'rotate-180' : 'rotate-0'
-						}`}
+						className={`w-2.5 h-2.5 ml-3 transition-transform ${isOpen ? 'rotate-180' : 'rotate-0'}`}
 						aria-hidden="true"
 						xmlns="http://www.w3.org/2000/svg"
 						fill="none"
@@ -58,11 +56,7 @@ export default function UserDropdown({ session }: { session: Session }) {
 				<DropdownMenuItem>Profile</DropdownMenuItem>
 				<DropdownMenuItem>Billing</DropdownMenuItem>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem
-					onClick={() =>
-						signOut({ redirect: true, callbackUrl: '/' })
-					}
-				>
+				<DropdownMenuItem onClick={() => signOut({ redirect: true, callbackUrl: '/' })}>
 					Sign Out
 				</DropdownMenuItem>
 			</DropdownMenuContent>
