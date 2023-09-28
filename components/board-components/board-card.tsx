@@ -14,6 +14,7 @@ import { fetchUser } from '@/app/fetch'
 export default function BoardCard({ id, title, coverImage, visibility, authorId }: Board) {
 	const { data: author } = useQuery(['board-author', authorId], async () => await fetchUser(authorId))
 	const { data: members } = useQuery(['board-members', id], async () => await getBoardMembers({ boardId: id }))
+
 	const remainingAvatars = members?.length! - 2
 	const typedCoverImage = coverImage as CoverImageType
 

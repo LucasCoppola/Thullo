@@ -10,6 +10,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { toast } from 'sonner'
 
 export default function UserDropdown({ session }: { session: Session }) {
 	const [isOpen, setIsOpen] = useState(false)
@@ -56,7 +57,12 @@ export default function UserDropdown({ session }: { session: Session }) {
 				<DropdownMenuItem>Profile</DropdownMenuItem>
 				<DropdownMenuItem>Billing</DropdownMenuItem>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem onClick={() => signOut({ redirect: true, callbackUrl: '/' })}>
+				<DropdownMenuItem
+					onClick={() => {
+						signOut({ redirect: true, callbackUrl: '/' })
+						toast('You have been successfully logged out.')
+					}}
+				>
 					Sign Out
 				</DropdownMenuItem>
 			</DropdownMenuContent>
