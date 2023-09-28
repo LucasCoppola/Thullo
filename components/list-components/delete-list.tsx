@@ -1,19 +1,7 @@
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../ui/dropdown-menu'
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger
-} from '../ui/alert-dialog'
-import { MoreHorizontal } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
 import { removeList } from '@/app/server/boardsOperations'
+import DeleteItem from '../shared/delete-item'
 
 export default function DeleteList({
 	listId,
@@ -43,34 +31,11 @@ export default function DeleteList({
 	)
 
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<MoreHorizontal role="button" />
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="start">
-				<AlertDialog>
-					<AlertDialogTrigger>
-						<DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-xs">
-							Remove List
-						</DropdownMenuItem>
-					</AlertDialogTrigger>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-							<AlertDialogDescription>
-								This action cannot be undone. This will permanently delete this list and all of its
-								cards and content.
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction className="bg-red-500 hover:bg-red-600" onClick={() => mutate()}>
-								Remove
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
-			</DropdownMenuContent>
-		</DropdownMenu>
+		<DeleteItem
+			name="List"
+			dialogDescription="This action cannot be undone. This will permanently delete this list and all of its cards and content."
+			deleteFn={mutate}
+			align="start"
+		/>
 	)
 }

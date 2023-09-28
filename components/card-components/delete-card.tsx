@@ -1,19 +1,7 @@
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../ui/dropdown-menu'
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger
-} from '../ui/alert-dialog'
-import { ListStart, MoreHorizontal } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { removeCard } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
+import DeleteItem from '../shared/delete-item'
 
 export default function DeleteCard({
 	cardId,
@@ -41,36 +29,12 @@ export default function DeleteCard({
 	)
 
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<button className="absolute right-2 text-gray-700 rounded-md">
-					<MoreHorizontal />
-				</button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="start">
-				<AlertDialog>
-					<AlertDialogTrigger>
-						<DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-xs">
-							Remove Card
-						</DropdownMenuItem>
-					</AlertDialogTrigger>
-					<AlertDialogContent>
-						<AlertDialogHeader>
-							<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-							<AlertDialogDescription>
-								This action cannot be undone. This will permanently delete this card and all of its
-								content from our servers.
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel>Cancel</AlertDialogCancel>
-							<AlertDialogAction className="bg-red-500 hover:bg-red-600" onClick={() => mutate()}>
-								Remove
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
-			</DropdownMenuContent>
-		</DropdownMenu>
+		<DeleteItem
+			name="Card"
+			deleteFn={() => mutate()}
+			dialogDescription="This action cannot be undone. This will permanently delete this card and all of its content from our servers."
+			align="start"
+			className="absolute right-2 text-gray-700"
+		/>
 	)
 }
