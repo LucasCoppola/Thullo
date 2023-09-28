@@ -5,7 +5,6 @@ import BoardSheet from './board-sheet'
 import AddMemberModal from '../add-member-modal'
 import Image from 'next/image'
 import type { User, Board, BoardVisibility } from '@prisma/client'
-import { updateVisibilityAction } from '@/app/actions'
 import { Lock } from 'lucide-react'
 import { Globe, LoadingCircle } from '@/components/ui/icons'
 import { Button } from '@/components/ui/button'
@@ -19,6 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { getBoardMembers } from '@/app/server/membersOperations'
+import { updateVisibility } from '@/app/server/boardsOperations'
 
 export default function BoardHeader({
 	author,
@@ -28,7 +28,7 @@ export default function BoardHeader({
 	author: Omit<User, 'email' | 'emailVerified'> | null
 	currUserId: string
 } & Board) {
-	const [updateVisibility, setUpdateVisibility] = useState(board.visibility)
+	const [visibility, setVisibility] = useState(board.visibility)
 
 	const { data: members } = useQuery(
 		['board-members', board.id],
@@ -39,7 +39,7 @@ export default function BoardHeader({
 		isAuthorized(currUserId, newVisibility)
 
 		if (newVisibility !== board.visibility) {
-			return updateVisibilityAction({
+			return updateVisibility({
 				boardId: board.id || '',
 				visibility: newVisibility,
 				authorId: author!.id,
@@ -52,7 +52,7 @@ export default function BoardHeader({
 		if (author?.id !== currUserId) {
 			throw new Error('You are not the author of this board')
 		}
-		setUpdateVisibility(visibility || board.visibility)
+		setVisibility(visibility || board.visibility)
 	}
 
 	return (
@@ -65,12 +65,12 @@ export default function BoardHeader({
 								<LoadingCircle className="fill-white mx-6 text-gray-400" />
 							) : (
 								<>
-									{updateVisibility === 'PUBLIC' ? (
+									{visibility === 'PUBLIC' ? (
 										<Globe className="h-3 w-3.5 mr-1" color="#6b7280" />
 									) : (
 										<Lock className="h-3 w-3.5 text-gray-500 mr-1" strokeWidth={2.5} />
 									)}
-									{updateVisibility[0]?.concat(updateVisibility.slice(1).toLowerCase())}
+									{visibility[0]?.concat(visibility.slice(1).toLowerCase())}
 								</>
 							)}
 						</Button>
