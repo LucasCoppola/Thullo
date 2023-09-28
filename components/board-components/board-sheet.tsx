@@ -7,9 +7,9 @@ import { useMutation } from '@tanstack/react-query'
 import { updateBoard } from '@/app/server/boardsOperations'
 import { removeMemberAction } from '@/app/actions'
 
-import MemberList from './sheet-components/member-list'
-import Description from './sheet-components/description'
-import EditableTitle from './shared/editable-title'
+import MemberList from '../sheet-components/member-list'
+import Description from '../sheet-components/description'
+import EditableTitle from '../shared/editable-title'
 
 export default function BoardSheet({
 	id,

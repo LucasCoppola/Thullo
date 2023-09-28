@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
 import type { Board, User } from '@prisma/client'
-import BoardHeader from '@/components/board-header'
+import BoardHeader from '@/components/board-components/board-header'
 import AddButtonComponent from '@/components/add-list-btn'
 import Lists from '@/components/list-components/lists'
 

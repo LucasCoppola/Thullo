@@ -1,19 +1,14 @@
-import BoardCard from '@/components/board-card'
-import CreateBoard from '@/components/create-board'
-import { getBoards } from '@/app/server/boardsOperations'
+import CreateBoard from '@/components/board-components/create-board'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
 import { redirect } from 'next/navigation'
-import type { Board } from '@prisma/client'
+import Boards from '@/components/board-components/boards'
 
-export default async function Boards() {
+export default async function BoardsPage() {
 	const session = await getServerSession(authOptions)
-	const userId = session?.userId || ''
-	const boards = await getBoards({ userId })
 
-	if (!session) {
-		redirect('/login')
-	}
+	if (!session) redirect('/login')
+	const userId = session.userId
 
 	return (
 		<div className="mx-24">
@@ -21,11 +16,8 @@ export default async function Boards() {
 				<h1 className="text-lg font-medium text-gray-800">All Boards</h1>
 				<CreateBoard />
 			</div>
-			<div className="flex flex-wrap gap-9">
-				{JSON.parse(JSON.stringify(boards)).map((board: Board) => (
-					<BoardCard key={board.id} {...board} />
-				))}
-			</div>
+
+			<Boards userId={userId} />
 		</div>
 	)
 }

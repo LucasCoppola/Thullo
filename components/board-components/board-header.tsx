@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import BoardSheet from './board-sheet'
-import AddMemberModal from './add-member-modal'
+import AddMemberModal from '../add-member-modal'
 import Image from 'next/image'
 import type { User, Board, BoardVisibility } from '@prisma/client'
 import { updateVisibilityAction } from '@/app/actions'
@@ -31,20 +31,18 @@ export default function BoardHeader({
 } & Board) {
 	const [updateVisibility, setUpdateVisibility] = useState(board.visibility)
 
-	const { mutate, isLoading } = useMutation(
-		async (newVisibility: BoardVisibility) => {
-			isAuthorized(currUserId, newVisibility)
+	const { mutate, isLoading } = useMutation(async (newVisibility: BoardVisibility) => {
+		isAuthorized(currUserId, newVisibility)
 
-			if (newVisibility !== board.visibility) {
-				return updateVisibilityAction({
-					boardId: board.id || '',
-					visibility: newVisibility,
-					authorId: author!.id,
-					currUserId
-				})
-			}
+		if (newVisibility !== board.visibility) {
+			return updateVisibilityAction({
+				boardId: board.id || '',
+				visibility: newVisibility,
+				authorId: author!.id,
+				currUserId
+			})
 		}
-	)
+	})
 
 	function isAuthorized(currUserId: string, visibility?: BoardVisibility) {
 		if (author?.id !== currUserId) {
@@ -64,19 +62,11 @@ export default function BoardHeader({
 							) : (
 								<>
 									{updateVisibility === 'PUBLIC' ? (
-										<Globe
-											className="h-3 w-3.5 mr-1"
-											color="#6b7280"
-										/>
+										<Globe className="h-3 w-3.5 mr-1" color="#6b7280" />
 									) : (
-										<Lock
-											className="h-3 w-3.5 text-gray-500 mr-1"
-											strokeWidth={2.5}
-										/>
+										<Lock className="h-3 w-3.5 text-gray-500 mr-1" strokeWidth={2.5} />
 									)}
-									{updateVisibility[0]?.concat(
-										updateVisibility.slice(1).toLowerCase()
-									)}
+									{updateVisibility[0]?.concat(updateVisibility.slice(1).toLowerCase())}
 								</>
 							)}
 						</Button>
@@ -84,9 +74,7 @@ export default function BoardHeader({
 					<DropdownMenuContent align="start">
 						<DropdownMenuLabel>
 							<h2>Visibility</h2>
-							<span className="text-gray-500 text-xs">
-								Choose who can see this board.
-							</span>
+							<span className="text-gray-500 text-xs">Choose who can see this board.</span>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem
@@ -100,9 +88,7 @@ export default function BoardHeader({
 								<Globe className="h-4 w-4 mr-2" />
 								Public
 							</div>
-							<span className="text-gray-500 text-xs">
-								Anyone can see this board
-							</span>
+							<span className="text-gray-500 text-xs">Anyone can see this board</span>
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							className="cursor-pointer flex-col items-start"
@@ -115,9 +101,7 @@ export default function BoardHeader({
 								<Lock className="h-4 w-4 text-gray-500 mr-2" />
 								Private
 							</div>
-							<span className="text-gray-500 text-xs">
-								Only members can see this board
-							</span>
+							<span className="text-gray-500 text-xs">Only members can see this board</span>
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
@@ -144,12 +128,7 @@ export default function BoardHeader({
 				</div>
 				<AddMemberModal {...board} />
 			</div>
-			<BoardSheet
-				{...board}
-				author={author as User}
-				members={members}
-				currUserId={currUserId}
-			/>
+			<BoardSheet {...board} author={author as User} members={members} currUserId={currUserId} />
 		</div>
 	)
 }
