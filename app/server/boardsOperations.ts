@@ -1,7 +1,7 @@
 'use server'
 
 import prisma from '@/lib/prisma'
-import { Prisma } from '@prisma/client'
+import { Prisma, type Board } from '@prisma/client'
 import type { CreateBoardType, VisibilityMutation } from '../types'
 import { revalidatePath } from 'next/cache'
 
@@ -9,18 +9,29 @@ type coverImageType = Prisma.NullTypes.JsonNull | Prisma.InputJsonValue
 
 export async function getBoards({ userId }: { userId: string }) {
 	try {
-		const boards = await prisma.board.findMany({
+		const ownedBoards = await prisma.board.findMany({
 			where: {
 				authorId: userId
 			}
 		})
 
-		return boards
+		const notOwnedBoardsIds = await prisma.membersOnBoards.findMany({
+			where: {
+				userId
+			}
+		})
+
+		const notOwnedBoards = (await Promise.all(
+			notOwnedBoardsIds.map(({ boardId }) => findBoardById({ id: boardId }))
+		)) as Board[]
+
+		return ownedBoards.concat(notOwnedBoards)
 	} catch (e) {
 		console.error(e)
 		throw (e as Error).message
 	}
 }
+
 export async function createBoard({
 	authorId,
 	title,
@@ -58,7 +69,7 @@ export async function findBoardById({ id }: { id: string }) {
 			  }
 			: null
 
-		return { board: modifiedBoard }
+		return modifiedBoard
 	} catch (e) {
 		console.error(e)
 		throw (e as Error).message

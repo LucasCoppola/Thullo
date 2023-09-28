@@ -1,5 +1,4 @@
 import { findBoardById } from '@/app/server/boardsOperations'
-import { getBoardMembers } from '@/app/server/membersOperations'
 import { findUserById } from '@/app/server/usersOperations'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/authOptions'
@@ -11,7 +10,7 @@ import Lists from '@/components/list-components/lists'
 
 export default async function BoardPage({ params }: { params: { id: string } }) {
 	const { id } = params
-	const { board } = await findBoardById({ id })
+	const board = await findBoardById({ id })
 
 	if (!board) return <div>No board found</div>
 
