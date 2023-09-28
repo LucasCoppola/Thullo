@@ -19,6 +19,7 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { getBoardMembers } from '@/app/server/membersOperations'
 import { updateVisibility } from '@/app/server/boardsOperations'
+import { toast } from 'sonner'
 
 export default function BoardHeader({
 	author,
@@ -36,24 +37,21 @@ export default function BoardHeader({
 	)
 
 	const { mutate, isLoading } = useMutation(async (newVisibility: BoardVisibility) => {
-		isAuthorized(currUserId, newVisibility)
-
-		if (newVisibility !== board.visibility) {
-			return updateVisibility({
+		try {
+			await updateVisibility({
 				boardId: board.id || '',
 				visibility: newVisibility,
 				authorId: author!.id,
 				currUserId
 			})
+			toast.success('Visibility updated successfully!')
+			setVisibility(visibility)
+		} catch (e) {
+			console.error(e)
+			toast.error((e as Error).message)
+			setVisibility(board.visibility)
 		}
 	})
-
-	function isAuthorized(currUserId: string, visibility?: BoardVisibility) {
-		if (author?.id !== currUserId) {
-			throw new Error('You are not the author of this board')
-		}
-		setVisibility(visibility || board.visibility)
-	}
 
 	return (
 		<div className="mt-4 flex justify-between items-center">
@@ -84,7 +82,7 @@ export default function BoardHeader({
 						<DropdownMenuItem
 							className="cursor-pointer flex-col items-start"
 							onClick={() => {
-								isAuthorized(currUserId, 'PUBLIC')
+								setVisibility('PUBLIC')
 								mutate('PUBLIC')
 							}}
 						>
@@ -97,7 +95,7 @@ export default function BoardHeader({
 						<DropdownMenuItem
 							className="cursor-pointer flex-col items-start"
 							onClick={() => {
-								isAuthorized(currUserId, 'PRIVATE')
+								setVisibility('PRIVATE')
 								mutate('PRIVATE')
 							}}
 						>
