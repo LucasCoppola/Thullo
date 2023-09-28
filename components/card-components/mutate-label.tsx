@@ -35,7 +35,6 @@ export default function MutateLabel({
 }) {
 	const [editLabelName, setEditLabelName] = useState(name)
 	const [editColor, setEditColor] = useState(color)
-	const queryClient = useQueryClient()
 
 	const deleteLabelMutation = useMutation(async () => await deleteLabel({ cardId, labelId }), {
 		onSuccess: () => {

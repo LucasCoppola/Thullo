@@ -60,7 +60,7 @@ export default function UserDropdown({ session }: { session: Session }) {
 				<DropdownMenuItem
 					onClick={() => {
 						signOut({ redirect: true, callbackUrl: '/' })
-						toast('You have been successfully logged out.')
+						toast('You have been logged out.')
 					}}
 				>
 					Sign Out
