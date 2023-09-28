@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
 import { findUsers } from '@/app/server/usersOperations'
-import { addMemberAction } from '@/app/actions'
 import type { User, Board } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +17,7 @@ import {
 } from '@/components/ui/dialog'
 import { Add, LoadingCircle } from '@/components/ui/icons'
 import { Info, X } from 'lucide-react'
+import { addMember } from '@/app/server/membersOperations'
 /*
 	- User enters email or name of the desired member of the board
 		- Loading users
@@ -41,51 +41,30 @@ export default function AddMemberModal({ authorId, id }: Board) {
 		return users
 	})
 
-	async function addMemberClient(selectedUser: User | null) {
-		if (authorId !== currUserId) {
-			throw new Error('Unauthorized')
-		}
-		if (selectedUser?.id === currUserId) {
-			throw new Error('You cannot add yourself')
-		}
-
-		try {
-			const { addMemberToBoard, e } = await addMemberAction({
+	const { isLoading, mutate } = useMutation(
+		async () =>
+			await addMember({
 				authorId,
 				boardId: id!,
 				currUserId,
 				userId: selectedUser?.id || '' // desired member id
-			})
-
-			if ((e && (e as Error).message === 'User already added') || !addMemberToBoard) {
-				throw new Error('User already added to the board')
+			}),
+		{
+			onSuccess: () => {
+				setOpen(false)
+				// add a toast
+				console.log('Success!')
+			},
+			onError: (error) => {
+				// add a toast
+				console.error('onError by react-query', error)
+			},
+			onSettled: () => {
+				setSelectedUser(null)
+				setKeyword('')
 			}
-			return { addMemberToBoard }
-		} catch (error) {
-			console.error('Error:', error)
-			throw error
 		}
-	}
-	const { isLoading, mutate } = useMutation(addMemberClient, {
-		onSuccess: () => {
-			setOpen(false)
-			// add a toast
-			console.log('Success!')
-		},
-		onError: (error) => {
-			// add a toast
-			console.error('onError by react-query', error)
-		},
-		onSettled: () => {
-			setSelectedUser(null)
-			setKeyword('')
-		}
-	})
-
-	function handleSubmit(e: React.FormEvent) {
-		e.preventDefault()
-		mutate(selectedUser as User)
-	}
+	)
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -106,7 +85,13 @@ export default function AddMemberModal({ authorId, id }: Board) {
 					<DialogDescription asChild>
 						<div className="relative">
 							<div className="h-44 overflow-y-auto">
-								<form onSubmit={handleSubmit} className="flex flex-row">
+								<form
+									onSubmit={(e) => {
+										e.preventDefault()
+										mutate()
+									}}
+									className="flex flex-row"
+								>
 									<input
 										placeholder="Search by name or email"
 										className="bg-gray-50 border mr-3 border-gray-300 text-gray-800 text-sm rounded-lg w-full p-2.5 focus:outline-none focus:ring-1 hover:ring-1 hover:ring-gray-200 focus:ring-gray-200"

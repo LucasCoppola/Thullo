@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
-import { createBoardAction } from '@/app/actions'
 
 import {
 	Dialog,
@@ -20,6 +19,7 @@ import { toast } from 'sonner'
 import CoverImageModal from '@/components/cover-image-modal'
 import type { BoardVisibility } from '@prisma/client'
 import type { CoverImageType } from '@/app/types'
+import { createBoard } from '@/app/server/boardsOperations'
 
 type FormDataType = {
 	title: string
@@ -44,7 +44,7 @@ export default function CreateBoard() {
 		async (formData: FormDataType) => {
 			if (!session) return
 			const { title, visibility, coverImage } = formData
-			await createBoardAction({
+			await createBoard({
 				authorId: session.userId,
 				title,
 				coverImage,

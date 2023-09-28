@@ -5,11 +5,11 @@ import { MoreHorizontal, User2, Users2 } from 'lucide-react'
 import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { updateBoard } from '@/app/server/boardsOperations'
-import { removeMemberAction } from '@/app/actions'
 
 import MemberList from '../sheet-components/member-list'
 import Description from '../sheet-components/description'
 import EditableTitle from '../shared/editable-title'
+import { removeMember } from '@/app/server/membersOperations'
 
 export default function BoardSheet({
 	id,
@@ -61,7 +61,7 @@ export default function BoardSheet({
 			throw new Error("You can't delete the author")
 		}
 
-		await removeMemberAction({
+		await removeMember({
 			authorId: author?.id || '',
 			boardId: id!,
 			currUserId,
@@ -69,8 +69,10 @@ export default function BoardSheet({
 		})
 	}
 
-	const removeMember = useMutation(removeMemberClient, {
-		onSuccess: () => console.log('success, member removed'),
+	const removeMemberMutation = useMutation(removeMemberClient, {
+		onSuccess: () => {
+			console.log('success, member removed')
+		},
 		onError: () => console.error('error, member removed(?)')
 	})
 
@@ -127,7 +129,7 @@ export default function BoardSheet({
 							<span className="text-xs font-medium text-gray-500 flex flex-row items-center">
 								<Users2 className="h-3.5 w-3.5 mr-1" /> Team
 							</span>
-							<MemberList author={author} members={members} removeMember={removeMember} />
+							<MemberList author={author} members={members} removeMember={removeMemberMutation} />
 						</div>
 					</SheetDescription>
 				</SheetHeader>
