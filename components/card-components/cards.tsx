@@ -12,7 +12,7 @@ export default function Cards({
 }: {
 	listId: string
 	listTitle: string | undefined
-	boardMembers: User[]
+	boardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 }) {
 	const { data: cards } = useQuery(['cards', listId], async () => await getCards({ listId }))
 

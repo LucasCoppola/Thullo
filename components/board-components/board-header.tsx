@@ -17,19 +17,23 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { getBoardMembers } from '@/app/server/membersOperations'
 
 export default function BoardHeader({
 	author,
 	currUserId,
-	members,
 	...board
 }: {
 	author: Omit<User, 'email' | 'emailVerified'> | null
 	currUserId: string
-	members: User[]
 } & Board) {
 	const [updateVisibility, setUpdateVisibility] = useState(board.visibility)
+
+	const { data: members } = useQuery(
+		['board-members', board.id],
+		async () => await getBoardMembers({ boardId: board.id })
+	)
 
 	const { mutate, isLoading } = useMutation(async (newVisibility: BoardVisibility) => {
 		isAuthorized(currUserId, newVisibility)
@@ -114,7 +118,7 @@ export default function BoardHeader({
 						width={400}
 						height={400}
 					/>
-					{members.map(({ image, name, id }) => (
+					{members?.map(({ image, name, id }) => (
 						<Image
 							key={id}
 							src={image || ''}

@@ -19,7 +19,7 @@ export default function BoardSheet({
 	title: boardTitle,
 	description: boardDescription,
 	currUserId
-}: { author: User; members: User[]; currUserId: string } & Board) {
+}: { author: User; members: Omit<User, 'email' | 'emailVerified'>[] | undefined; currUserId: string } & Board) {
 	const [description, setDescription] = useState(boardDescription)
 	const [title, setTitle] = useState(boardTitle)
 

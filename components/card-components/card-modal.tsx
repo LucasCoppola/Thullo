@@ -17,7 +17,7 @@ import CardMembersList from './card-members-list'
 
 import { CoverImageSelector, CardCoverImage } from './card-cover-image'
 import { fetchAttachments, fetchCardMembers, fetchComments, fetchCoverImage, fetchLabels, fetchUser } from '@/app/fetch'
-import type { Card, List, User } from '@prisma/client'
+import type { Card, User } from '@prisma/client'
 import type { CoverImageType } from '@/app/types'
 import CardTitle from './card-title'
 
@@ -28,7 +28,7 @@ export default function CardModal({
 	listTitle
 }: {
 	card: Card
-	boardMembers: User[]
+	boardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 	listId: string
 	listTitle: string
 }) {
@@ -55,7 +55,7 @@ export default function CardModal({
 		fetchCardMembers(card.id)
 	)
 
-	const availableMembers = boardMembers.filter((member) => {
+	const availableMembers = boardMembers?.filter((member) => {
 		return !cardMembers?.find((cardMember) => cardMember.id === member.id)
 	})
 

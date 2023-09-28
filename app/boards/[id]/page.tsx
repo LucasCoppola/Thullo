@@ -17,7 +17,6 @@ export default async function BoardPage({ params }: { params: { id: string } }) 
 
 	const session = await getServerSession(authOptions)
 	const { author } = await findUserById({ id: board.authorId })
-	const { members } = await getBoardMembers({ boardId: id })
 
 	if (!session) {
 		redirect('/')
@@ -25,15 +24,10 @@ export default async function BoardPage({ params }: { params: { id: string } }) 
 
 	return (
 		<div className="mx-8">
-			<BoardHeader
-				{...(board as Board)}
-				author={author as User}
-				currUserId={session.userId}
-				members={members as User[]}
-			/>
+			<BoardHeader {...(board as Board)} author={author as User} currUserId={session.userId} />
 			<div className="w-full overflow-x-auto bg-[#fafbfe] px-2 rounded-lg mt-4">
 				<div className="flex flex-row gap-8">
-					<Lists boardId={board.id} boardMembers={members as User[]} boardAuthorId={author?.id} />
+					<Lists boardId={board.id} boardAuthorId={author?.id} />
 
 					<AddButtonComponent name="list" boardId={board.id} listId={id} />
 				</div>

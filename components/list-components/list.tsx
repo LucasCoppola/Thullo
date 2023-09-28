@@ -16,7 +16,7 @@ export default function List({
 	boardAuthorId
 }: {
 	listId: string
-	boardMembers: User[]
+	boardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 	boardId: string
 	title: string
 	boardAuthorId: string | undefined
