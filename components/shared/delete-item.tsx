@@ -32,7 +32,7 @@ export default function DeleteItem({
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align={align}>
 				<AlertDialog>
-					<AlertDialogTrigger>
+					<AlertDialogTrigger className="w-full">
 						<DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-xs">
 							Remove {name}
 						</DropdownMenuItem>
