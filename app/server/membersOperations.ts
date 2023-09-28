@@ -25,9 +25,7 @@ export async function addMember({
 			}
 		})
 
-		const isMemberOnBoard = membersOnBoardId.find(
-			(relation) => relation.userId === userId
-		)
+		const isMemberOnBoard = membersOnBoardId.find((relation) => relation.userId === userId)
 
 		if (isMemberOnBoard) {
 			throw new Error('User already added')
@@ -43,7 +41,7 @@ export async function addMember({
 		return { addMemberToBoard }
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
 	}
 }
 
@@ -66,10 +64,10 @@ export async function getBoardMembers({ boardId }: { boardId: string }) {
 			}
 		})
 
-		return { members }
-	} catch (error) {
-		console.error(error)
-		return { error }
+		return members
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
 	}
 }
 
@@ -104,7 +102,7 @@ export async function removeMember({
 		return { success: true }
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
 	}
 }
 
@@ -154,9 +152,7 @@ export async function addCardMember({
 		}
 		const cardMembers = await getCardMembers({ cardId })
 
-		const isMemberOnCard = cardMembers.find(
-			(relation) => relation.id === userId
-		)
+		const isMemberOnCard = cardMembers.find((relation) => relation.id === userId)
 
 		if (isMemberOnCard) {
 			throw new Error('User already added')

@@ -65,6 +65,31 @@ export async function findBoardById({ id }: { id: string }) {
 	}
 }
 
+export async function deleteBoard({
+	boardId,
+	authorId,
+	currUserId
+}: {
+	boardId: string
+	authorId: string
+	currUserId: string
+}) {
+	try {
+		if (currUserId !== authorId) {
+			throw new Error('Unauthorized')
+		}
+
+		await prisma.board.delete({
+			where: {
+				id: boardId
+			}
+		})
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
+	}
+}
+
 export async function updateVisibility({ boardId, visibility, authorId, currUserId }: VisibilityMutation) {
 	try {
 		if (authorId !== currUserId) {
