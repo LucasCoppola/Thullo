@@ -1,9 +1,8 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { useMutation } from '@tanstack/react-query'
-import type { BoardVisibility } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import { createBoardAction } from '@/app/actions'
 
@@ -17,7 +16,9 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Add, LoadingCircle } from '@/components/ui/icons'
+import { toast } from 'sonner'
 import CoverImageModal from '@/components/cover-image-modal'
+import type { BoardVisibility } from '@prisma/client'
 import type { CoverImageType } from '@/app/types'
 
 type FormDataType = {
@@ -29,48 +30,51 @@ type FormDataType = {
 const defaultGrayColor = '#adb5bd'
 
 export default function CreateBoard() {
-	const { data } = useSession()
+	const { data: session } = useSession()
 	const [isHovered, setIsHovered] = useState(false)
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
-	const [error, setError] = useState('')
 	const [formData, setFormData] = useState<FormDataType>({
 		coverImage: { type: 'color', bg: defaultGrayColor },
 		title: '',
 		visibility: 'PUBLIC'
 	})
 
-	async function createBoardClient(formData: FormDataType) {
-		const { title, visibility } = formData
-		const coverImage = formData.coverImage || defaultGrayColor
-		const authorId = data?.userId || ''
-
-		await createBoardAction({
-			authorId,
-			title,
-			coverImage,
-			visibility
-		})
-	}
-
-	const { mutate, isLoading } = useMutation(createBoardClient, {
-		onSuccess: () => {
-			setIsDialogOpen(false)
-			setFormData({
-				coverImage: { type: 'color', bg: defaultGrayColor },
-				title: '',
-				visibility: 'PUBLIC'
+	const { mutate, isLoading } = useMutation(
+		async (formData: FormDataType) => {
+			if (!session) return
+			const { title, visibility, coverImage } = formData
+			await createBoardAction({
+				authorId: session.userId,
+				title,
+				coverImage,
+				visibility
 			})
 		},
-		onError: (error) => {
-			console.error('Mutation error:', error)
-			setError('Something went wrong')
+		{
+			onSuccess: () => {
+				setIsDialogOpen(false)
+				toast.success('Board created successfully!')
+				setFormData({
+					coverImage: { type: 'color', bg: defaultGrayColor },
+					title: '',
+					visibility: 'PUBLIC'
+				})
+			},
+			onError: (e) => {
+				toast.error('Error creating board!')
+				setIsDialogOpen(false)
+				setFormData({
+					coverImage: { type: 'color', bg: defaultGrayColor },
+					title: '',
+					visibility: 'PUBLIC'
+				})
+			}
 		}
-	})
+	)
 
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault()
 		if (formData.title.trim() === '') {
-			setError('Title cannot be empty')
 			return
 		}
 		mutate(formData)
@@ -105,9 +109,7 @@ export default function CreateBoard() {
 									<div
 										className="w-full h-40 rounded-xl"
 										style={{
-											backgroundColor:
-												formData.coverImage.bg ||
-												defaultGrayColor
+											backgroundColor: formData.coverImage.bg || defaultGrayColor
 										}}
 									></div>
 								) : (
@@ -156,9 +158,6 @@ export default function CreateBoard() {
 									maxLength={50}
 									required
 								/>
-								{error && (
-									<p className="mt-1 text-red-500">{error}</p>
-								)}
 							</div>
 
 							<div className="flex flex-col space-y-2">
@@ -169,14 +168,11 @@ export default function CreateBoard() {
 										value="PUBLIC"
 										name="visibility"
 										className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-										checked={
-											formData.visibility === 'PUBLIC'
-										}
+										checked={formData.visibility === 'PUBLIC'}
 										onChange={(e) =>
 											setFormData({
 												...formData,
-												visibility: e.target
-													.value as BoardVisibility
+												visibility: e.target.value as BoardVisibility
 											})
 										}
 									/>
@@ -195,14 +191,11 @@ export default function CreateBoard() {
 										value="PRIVATE"
 										name="visibility"
 										className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
-										checked={
-											formData.visibility === 'PRIVATE'
-										}
+										checked={formData.visibility === 'PRIVATE'}
 										onChange={(e) =>
 											setFormData({
 												...formData,
-												visibility: e.target
-													.value as BoardVisibility
+												visibility: e.target.value as BoardVisibility
 											})
 										}
 									/>
@@ -215,17 +208,8 @@ export default function CreateBoard() {
 								</div>
 							</div>
 
-							<Button
-								type="submit"
-								disabled={isLoading}
-								variant="blue"
-								className="ml-96"
-							>
-								{isLoading ? (
-									<LoadingCircle className="fill-white mx-4 text-blue-200" />
-								) : (
-									'Create'
-								)}
+							<Button type="submit" disabled={isLoading} variant="blue" className="ml-96">
+								{isLoading ? <LoadingCircle className="fill-white mx-4 text-blue-200" /> : 'Create'}
 							</Button>
 						</DialogDescription>
 					</form>
