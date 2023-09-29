@@ -34,9 +34,21 @@ export async function createCard({ listId, title, authorId }: { listId: string; 
 	}
 }
 
-export async function removeCard({ userId, authorId, cardId }: { userId: string; authorId: string; cardId: string }) {
+export async function removeCard({
+	userId,
+	cardAuthorId,
+	boardAuthorId,
+	cardId
+}: {
+	userId: string
+	cardAuthorId: string
+	boardAuthorId: string
+	cardId: string
+}) {
 	try {
-		if (userId !== authorId) throw new Error('Unauthorized')
+		if (cardAuthorId !== userId && boardAuthorId !== userId) {
+			throw new Error('Unauthorized')
+		}
 
 		await prisma.card.delete({
 			where: {
