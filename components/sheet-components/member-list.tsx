@@ -21,7 +21,7 @@ export default function MemberList({
 }: {
 	author: User
 	members: Omit<User, 'email' | 'emailVerified'>[] | undefined
-	removeMember: UseMutationResult<void, unknown, string, unknown>
+	removeMember: UseMutationResult<{ success: boolean }, Error, string>
 }) {
 	return (
 		<ul className="mt-4">

@@ -122,44 +122,67 @@ export async function updateVisibility({ boardId, visibility, authorId, currUser
 	}
 }
 
-export async function updateBoard({
+export async function updateBoardTitle({
 	boardId,
-	description,
 	title,
 	authorId,
 	currUserId
 }: {
 	boardId: string
-	description?: string
-	title?: string
+	title: string
 	authorId: string
 	currUserId: string
 }) {
 	try {
-		if (!description && !title) {
-			throw new Error('Either description or title is required.')
+		if (!title) {
+			throw new Error('Title is required.')
 		}
 		if (authorId !== currUserId) {
 			throw new Error('Unauthorized')
-		}
-
-		const updatedData = {} as { title: string; description: string }
-
-		if (title) {
-			updatedData.title = title
-		}
-		if (description) {
-			updatedData.description = description
 		}
 
 		const updatedBoard = await prisma.board.update({
 			where: {
 				id: boardId
 			},
-			data: updatedData
+			data: {
+				title: title
+			}
 		})
 
-		return { updatedBoard }
+		return updatedBoard
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
+	}
+}
+
+export async function updateBoardDescription({
+	boardId,
+	description,
+	authorId,
+	currUserId
+}: {
+	boardId: string
+	description: string
+	authorId: string
+	currUserId: string
+}) {
+	try {
+		if (authorId !== currUserId) {
+			throw new Error('Unauthorized')
+		}
+
+		const updatedBoard = await prisma.board.update({
+			where: {
+				id: boardId
+			},
+			data: {
+				description: description
+			}
+		})
+
+		return updatedBoard
 	} catch (e) {
 		console.error(e)
 		throw (e as Error).message
