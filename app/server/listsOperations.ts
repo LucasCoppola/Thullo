@@ -79,11 +79,7 @@ export async function removeList({
 	userId: string
 }) {
 	try {
-		if (listAuthorId !== userId) {
-			throw new Error('Unauthorized')
-		}
-
-		if (boardAuthorId !== userId) {
+		if (listAuthorId !== userId && boardAuthorId !== userId) {
 			throw new Error('Unauthorized')
 		}
 

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
 import { removeList } from '@/app/server/listsOperations'
 import DeleteItem from '../shared/delete-item'
+import { toast } from 'sonner'
 
 export default function DeleteList({
 	listId,
@@ -24,9 +25,10 @@ export default function DeleteList({
 		},
 		{
 			onSuccess: () => {
-				console.log('list removed')
+				toast.success('List deleted')
 				queryClient.invalidateQueries(['lists', boardId])
-			}
+			},
+			onError: (e: Error) => toast.error(e.message)
 		}
 	)
 
