@@ -85,6 +85,7 @@ export default function CardModal({
 							setCoverImage={setCoverImage}
 							card={card}
 							isCoverImageLoading={isCoverImageLoading}
+							boardAuthorId={boardAuthorId}
 						/>
 
 						<div className="flex flex-row">
@@ -148,6 +149,7 @@ export default function CardModal({
 									coverImage={coverImage || null}
 									setCoverImage={setCoverImage}
 									card={card}
+									boardAuthorId={boardAuthorId}
 								/>
 								<CardMembersList
 									card={card}
