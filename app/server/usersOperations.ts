@@ -14,17 +14,11 @@ export async function findUserById({ id }: { id: string }) {
 		return { author }
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
 	}
 }
 
-export async function findUsers({
-	keyword,
-	currUserId
-}: {
-	keyword: string
-	currUserId: string
-}) {
+export async function findUsers({ keyword, currUserId }: { keyword: string; currUserId: string }) {
 	try {
 		const users = await prisma.user.findMany({
 			where: {
@@ -35,9 +29,9 @@ export async function findUsers({
 			select: { id: true, name: true, image: true }
 		})
 
-		return { users }
+		return users
 	} catch (e) {
 		console.error(e)
-		return { e }
+		throw (e as Error).message
 	}
 }
