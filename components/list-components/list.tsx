@@ -3,7 +3,7 @@
 import { EditableListTitle } from './add-list'
 import AddButtonComponent from '../add-list-btn'
 import type { List, User } from '@prisma/client'
-import { findListById } from '@/app/server/boardsOperations'
+import { findListById } from '@/app/server/listsOperations'
 import Cards from '../card-components/cards'
 import { useQuery } from '@tanstack/react-query'
 import DeleteList from './delete-list'

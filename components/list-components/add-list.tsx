@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createList, updateListTitle } from '@/app/server/boardsOperations'
+import { createList, updateListTitle } from '@/app/server/listsOperations'
 import EditableTitle from '../shared/editable-title'
 import { useSession } from 'next-auth/react'
 

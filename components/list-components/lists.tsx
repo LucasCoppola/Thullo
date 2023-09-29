@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { getLists } from '@/app/server/boardsOperations'
+import { getLists } from '@/app/server/listsOperations'
 import List from './list'
 import { getBoardMembers } from '@/app/server/membersOperations'
 

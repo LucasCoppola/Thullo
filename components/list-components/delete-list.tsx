@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
-import { removeList } from '@/app/server/boardsOperations'
+import { removeList } from '@/app/server/listsOperations'
 import DeleteItem from '../shared/delete-item'
 
 export default function DeleteList({
