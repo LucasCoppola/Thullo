@@ -29,7 +29,7 @@ export default function UploadFile({ cardId }: { cardId: string }) {
 				}
 			}}
 			appearance={{
-				button: 'text-gray-500 ut-uploading:cursor-not-allowed ut-uploading:text-gray-500 h-5 ut-button:bg-gray-100 text-[10px] ml-3 p-0.5 rounded-sm text-gray-500 cursor-pointer hover:bg-gray-100 flex flex-row items-center px-2',
+				button: 'text-gray-500 ut-uploading:cursor-not-allowed ut-uploading:text-gray-500 h-5 ut-button:bg-gray-100 bg-white text-[10px] ml-3 p-0.5 rounded-sm text-gray-500 cursor-pointer hover:bg-gray-100 flex flex-row items-center px-2',
 				allowedContent: 'flex h-8 flex-col items-center justify-center px-2 hidden'
 			}}
 			endpoint="imageUploader"
