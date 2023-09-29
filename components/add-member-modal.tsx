@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
 import { findUsers } from '@/app/server/usersOperations'
 import type { User, Board } from '@prisma/client'
@@ -18,46 +18,40 @@ import {
 import { Add, LoadingCircle } from '@/components/ui/icons'
 import { Info, X } from 'lucide-react'
 import { addMember } from '@/app/server/membersOperations'
-/*
-	- User enters email or name of the desired member of the board
-		- Loading users
-		- Users with name and image
-		- Not found
-	- Selected ui with an x if you don't want to unselect that member
+import { toast } from 'sonner'
 
-	Idk yet:
-	- Once selected, click invite and the send the invitation
-	- This should appear in a box with notifications where you can accept or decline
-*/
 export default function AddMemberModal({ authorId, id }: Board) {
 	const { data: session } = useSession()
-	const currUserId = session?.userId || ''
 	const [keyword, setKeyword] = useState('')
 	const [open, setOpen] = useState(false)
 	const [selectedUser, setSelectedUser] = useState<Omit<User, 'email' | 'emailVerified'> | null>(null)
+	const queryClient = useQueryClient()
 
 	const { data: users, isLoading: isLoadingUsers } = useQuery(['searchUsers', keyword], async () => {
-		const { users } = await findUsers({ keyword, currUserId })
-		return users
+		if (!session) return
+		return (await findUsers({ keyword, currUserId: session.userId })) as Omit<User, 'email' | 'emailVerified'>[]
 	})
 
 	const { isLoading, mutate } = useMutation(
-		async () =>
-			await addMember({
+		async () => {
+			if (!session || !selectedUser) return
+
+			return await addMember({
 				authorId,
-				boardId: id!,
-				currUserId,
-				userId: selectedUser?.id || '' // desired member id
-			}),
+				boardId: id,
+				currUserId: session.userId,
+				userId: selectedUser.id
+			})
+		},
 		{
 			onSuccess: () => {
 				setOpen(false)
-				// add a toast
-				console.log('Success!')
+				toast.success('Member added!')
+				queryClient.invalidateQueries(['board-members', id])
 			},
-			onError: (error) => {
-				// add a toast
-				console.error('onError by react-query', error)
+			onError: (e: Error) => {
+				setOpen(false)
+				toast.error(e.message)
 			},
 			onSettled: () => {
 				setSelectedUser(null)
@@ -97,6 +91,8 @@ export default function AddMemberModal({ authorId, id }: Board) {
 										className="bg-gray-50 border mr-3 border-gray-300 text-gray-800 text-sm rounded-lg w-full p-2.5 focus:outline-none focus:ring-1 hover:ring-1 hover:ring-gray-200 focus:ring-gray-200"
 										value={keyword}
 										onChange={(e) => setKeyword(e.target.value)}
+										required
+										autoFocus
 									/>
 									<Button variant="blue" type="submit" disabled={isLoading}>
 										{isLoading ? (
