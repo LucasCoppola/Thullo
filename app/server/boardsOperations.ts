@@ -69,7 +69,7 @@ export async function findBoardById({ id }: { id: string }) {
 			  }
 			: null
 
-		return modifiedBoard
+		return modifiedBoard as Board
 	} catch (e) {
 		console.error(e)
 		throw (e as Error).message
