@@ -16,6 +16,7 @@ type CardViewProps = {
 	cardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 	isCoverImageLoading: boolean
 	listId: string
+	boardAuthorId: string
 }
 
 export default function CardView({
@@ -27,14 +28,22 @@ export default function CardView({
 	coverImage,
 	cardMembers,
 	isCoverImageLoading,
-	listId
+	listId,
+	boardAuthorId
 }: CardViewProps) {
 	const remainingAvatars = cardMembers?.length! - 3
 
 	return (
 		<div className="bg-white rounded-xl shadow-md hover:shadow-lg space-y-2" style={{ width: '243px' }}>
 			<div className="relative">
-				{!isCoverImageLoading && <DeleteCard cardId={card.id} cardAuthorId={card.authorId} listId={listId} />}
+				{!isCoverImageLoading && (
+					<DeleteCard
+						cardId={card.id}
+						cardAuthorId={card.authorId}
+						listId={listId}
+						boardAuthorId={boardAuthorId}
+					/>
+				)}
 
 				{isCoverImageLoading ? (
 					<SkeletonImage />

@@ -3,30 +3,35 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import { ImageIcon } from 'lucide-react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { removeCoverImage, updateCoverImage } from '@/app/server/card-operations/coverImage'
 import { useSession } from 'next-auth/react'
 
 import CoverImageModal from '../cover-image-modal'
 import type { Card } from '@prisma/client'
 import type { CoverImageType } from '@/app/types'
+import { toast } from 'sonner'
 
 export function CoverImageSelector({
 	coverImage,
 	setCoverImage,
-	card
+	card,
+	boardAuthorId
 }: {
 	coverImage: CoverImageType | null
 	setCoverImage: (value: CoverImageType) => void
 	card: Card
+	boardAuthorId: string
 }) {
 	const { data: session } = useSession()
+	const queryClient = useQueryClient()
 
 	const mutateCoverImage = useMutation(
 		async () => {
 			if (!coverImage) return
 
 			await updateCoverImage({
+				boardAuthorId,
 				cardId: card.id,
 				authorId: card.authorId,
 				coverImage,
@@ -34,7 +39,9 @@ export function CoverImageSelector({
 			})
 		},
 		{
-			onSuccess: () => console.log('cover image updated!')
+			onSuccess: () => toast.success('Cover image updated'),
+			onError: (e: Error) => toast.error(e.message),
+			onSettled: () => queryClient.invalidateQueries(['cover-image', card.id])
 		}
 	)
 
@@ -61,28 +68,34 @@ export function CardCoverImage({
 	coverImage,
 	setCoverImage,
 	card,
-	isCoverImageLoading
+	isCoverImageLoading,
+	boardAuthorId
 }: {
 	coverImage: CoverImageType | null
 	setCoverImage: (value: CoverImageType | null) => void
 	card: Card
 	isCoverImageLoading: boolean
+	boardAuthorId: string
 }) {
 	const { data: session } = useSession()
 	const [isCoverImageHovered, setIsCoverImageHovered] = useState(false)
 
 	const { mutate } = useMutation(
-		async () =>
+		async () => {
+			if (!session) return
 			await removeCoverImage({
+				boardAuthorId,
 				authorId: card.authorId,
 				cardId: card.id,
-				userId: session?.userId!
-			}),
+				userId: session.userId
+			})
+		},
 		{
 			onSuccess: () => {
 				setCoverImage(null)
-				console.log('cover image removed!')
-			}
+				toast.success('Cover image removed')
+			},
+			onError: (e: Error) => toast.error(e.message)
 		}
 	)
 

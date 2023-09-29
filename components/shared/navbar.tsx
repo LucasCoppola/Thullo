@@ -14,7 +14,7 @@ export default function Navbar({ session }: { session: Session | null }) {
 	const pathname = usePathname()
 	const boardId = pathname.split('/').pop() as string
 
-	const { data } = useQuery(['board', boardId], async () => await findBoardById({ id: boardId }))
+	const { data: board } = useQuery(['board', boardId], async () => await findBoardById({ id: boardId }))
 
 	return (
 		<nav className="z-10 relative bg-transparent mt-1 px-10 shadow-sm">
@@ -25,9 +25,9 @@ export default function Navbar({ session }: { session: Session | null }) {
 					</Link>
 				</div>
 
-				{data?.board && (
+				{board && (
 					<div className="flex flex-row items-center">
-						<div className="ml-4 font-medium text-lg text-gray-800">{data.board?.title}</div>
+						<div className="ml-4 font-medium text-lg text-gray-800">{board?.title}</div>
 						<div className="mx-6 border-r border-gray-200 h-9" />
 						<Link href="/boards">
 							<Button variant="gray">All Boards</Button>

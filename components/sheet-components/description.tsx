@@ -6,11 +6,11 @@ import { useEffect, useRef, useState } from 'react'
 export default function Description({
 	description,
 	setDescription,
-	updateBoardMutation
+	updateBoardDescriptionMutation
 }: {
 	description: string
 	setDescription: (description: string) => void
-	updateBoardMutation: UseMutationResult<void, unknown, void, unknown>
+	updateBoardDescriptionMutation: UseMutationResult<void, unknown, void, unknown>
 }) {
 	const [editDescription, setEditDescription] = useState(false)
 	const [textareaHeight, setTextareaHeight] = useState(0)
@@ -102,7 +102,7 @@ export default function Description({
 						className="bg-[#219653] hover:bg-[#1e7b48] text-white text-xs rounded-lg px-3 py-1.5 mr-4 transition duration-200"
 						onClick={() => {
 							setEditDescription(false)
-							updateBoardMutation.mutate()
+							updateBoardDescriptionMutation.mutate()
 						}}
 					>
 						Save

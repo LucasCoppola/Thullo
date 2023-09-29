@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createList, updateListTitle } from '@/app/server/boardsOperations'
+import { createList, updateListTitle } from '@/app/server/listsOperations'
 import EditableTitle from '../shared/editable-title'
 import { useSession } from 'next-auth/react'
+import { toast } from 'sonner'
 
 export default function AddList({
 	setCreateMode,
@@ -19,22 +20,22 @@ export default function AddList({
 	const queryClient = useQueryClient()
 
 	const { mutate: mutateList, isLoading } = useMutation(
-		async () =>
-			await createList({
+		async () => {
+			if (!session) return
+
+			return await createList({
 				boardId,
 				title: listTitle,
-				authorId: session?.userId!
-			}),
+				authorId: session.userId
+			})
+		},
 		{
 			onSuccess: () => {
-				console.log('List created')
-				queryClient.invalidateQueries(['lists'])
-
+				toast.success('List created')
+				queryClient.invalidateQueries(['lists', boardId])
 				setCreateMode(false)
 			},
-			onError: (e) => {
-				console.error(e)
-			}
+			onError: (e: Error) => toast.error(e.message)
 		}
 	)
 	return (
@@ -74,13 +75,9 @@ export default function AddList({
 export function EditableListTitle({ title: listTitle, listId }: { title: string; listId: string }) {
 	const [title, setTitle] = useState(listTitle)
 
-	const { mutate: mutateListTitle, error } = useMutation(async () => await updateListTitle({ listId, title }), {
-		onSuccess: () => {
-			console.log('List title updated')
-		},
-		onError: () => {
-			console.error(error)
-		}
+	const { mutate: mutateListTitle } = useMutation(async () => await updateListTitle({ listId, title }), {
+		onSuccess: () => toast.success('List title updated'),
+		onError: (e: Error) => toast.error(e.message)
 	})
 	return (
 		<EditableTitle
@@ -90,7 +87,7 @@ export function EditableListTitle({ title: listTitle, listId }: { title: string;
 				setTitle(editedTitle)
 				mutateListTitle()
 			}}
-			titleClassName="text-lg font-medium px-1 py-0.5 hover:bg-gray-100 rounded-md"
+			titleClassName="text-lg font-medium px-1 py-0.5 hover:bg-gray-100 rounded-sm"
 			inputClassName="text-lg font-medium px-0.5"
 		/>
 	)

@@ -12,7 +12,7 @@ export default function CardMembers({
 	cardId,
 	cardAuthorId
 }: {
-	availableMembers: User[]
+	availableMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 	cardId: string
 	cardAuthorId: string
 }) {
@@ -64,7 +64,7 @@ export default function CardMembers({
 				</div>
 
 				<ul>
-					{availableMembers.map(({ id, name, image }) => (
+					{availableMembers?.map(({ id, name, image }) => (
 						<div key={id} className="relative first:mt-2 last:pb-2 mb-1">
 							<div
 								className={`flex flex-row py-1 px-2 rounded-md items-center cursor-pointer 

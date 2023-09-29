@@ -20,8 +20,8 @@ export default function MemberList({
 	removeMember
 }: {
 	author: User
-	members: User[]
-	removeMember: UseMutationResult<void, unknown, string, unknown>
+	members: Omit<User, 'email' | 'emailVerified'>[] | undefined
+	removeMember: UseMutationResult<{ success: boolean }, Error, string>
 }) {
 	return (
 		<ul className="mt-4">
@@ -33,27 +33,15 @@ export default function MemberList({
 					width={32}
 					height={32}
 				/>
-				<span className="font-semibold text-sm text-gray-900">
-					{author?.name}
-				</span>
-				<span className="ml-auto text-xs font-medium text-gray-400 flex flex-row items-center">
-					Author
-				</span>
+				<span className="font-semibold text-sm text-gray-900">{author?.name}</span>
+				<span className="ml-auto text-xs font-medium text-gray-400 flex flex-row items-center">Author</span>
 			</li>
-			{members.map(({ name, id, image }) => (
+			{members?.map(({ name, id, image }) => (
 				<li key={id} className="flex items-center gap-3 mb-3">
 					<div>
-						<Image
-							src={image || ''}
-							alt={`${name} avatar`}
-							className="rounded-lg"
-							width={32}
-							height={32}
-						/>
+						<Image src={image || ''} alt={`${name} avatar`} className="rounded-lg" width={32} height={32} />
 					</div>
-					<span className="font-semibold text-sm text-gray-900">
-						{name}
-					</span>
+					<span className="font-semibold text-sm text-gray-900">{name}</span>
 					<AlertDialog>
 						<AlertDialogTrigger asChild>
 							<button
@@ -65,12 +53,9 @@ export default function MemberList({
 						</AlertDialogTrigger>
 						<AlertDialogContent>
 							<AlertDialogHeader>
-								<AlertDialogTitle>
-									Are you absolutely sure?
-								</AlertDialogTitle>
+								<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 								<AlertDialogDescription>
-									This action cannot be undone. This will
-									delete <strong>{name}</strong> from the
+									This action cannot be undone. This will delete <strong>{name}</strong> from the
 									board.
 								</AlertDialogDescription>
 							</AlertDialogHeader>

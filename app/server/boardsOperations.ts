@@ -1,7 +1,7 @@
 'use server'
 
 import prisma from '@/lib/prisma'
-import { Prisma } from '@prisma/client'
+import { Prisma, type Board } from '@prisma/client'
 import type { CreateBoardType, VisibilityMutation } from '../types'
 import { revalidatePath } from 'next/cache'
 
@@ -9,18 +9,29 @@ type coverImageType = Prisma.NullTypes.JsonNull | Prisma.InputJsonValue
 
 export async function getBoards({ userId }: { userId: string }) {
 	try {
-		const boards = await prisma.board.findMany({
+		const ownedBoards = await prisma.board.findMany({
 			where: {
 				authorId: userId
 			}
 		})
 
-		return boards
+		const notOwnedBoardsIds = await prisma.membersOnBoards.findMany({
+			where: {
+				userId
+			}
+		})
+
+		const notOwnedBoards = (await Promise.all(
+			notOwnedBoardsIds.map(({ boardId }) => findBoardById({ id: boardId }))
+		)) as Board[]
+
+		return ownedBoards.concat(notOwnedBoards)
 	} catch (e) {
 		console.error(e)
 		throw (e as Error).message
 	}
 }
+
 export async function createBoard({
 	authorId,
 	title,
@@ -58,7 +69,32 @@ export async function findBoardById({ id }: { id: string }) {
 			  }
 			: null
 
-		return { board: modifiedBoard }
+		return modifiedBoard as Board
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
+	}
+}
+
+export async function deleteBoard({
+	boardId,
+	authorId,
+	currUserId
+}: {
+	boardId: string
+	authorId: string
+	currUserId: string
+}) {
+	try {
+		if (currUserId !== authorId) {
+			throw new Error('Unauthorized')
+		}
+
+		await prisma.board.delete({
+			where: {
+				id: boardId
+			}
+		})
 	} catch (e) {
 		console.error(e)
 		throw (e as Error).message
@@ -86,140 +122,67 @@ export async function updateVisibility({ boardId, visibility, authorId, currUser
 	}
 }
 
-export async function updateBoard({
+export async function updateBoardTitle({
 	boardId,
-	description,
 	title,
 	authorId,
 	currUserId
 }: {
 	boardId: string
-	description?: string
-	title?: string
+	title: string
 	authorId: string
 	currUserId: string
 }) {
 	try {
-		if (!description && !title) {
-			throw new Error('Either description or title is required.')
+		if (!title) {
+			throw new Error('Title is required.')
 		}
 		if (authorId !== currUserId) {
 			throw new Error('Unauthorized')
-		}
-
-		const updatedData = {} as { title: string; description: string }
-
-		if (title) {
-			updatedData.title = title
-		}
-		if (description) {
-			updatedData.description = description
 		}
 
 		const updatedBoard = await prisma.board.update({
 			where: {
 				id: boardId
 			},
-			data: updatedData
-		})
-
-		return { updatedBoard }
-	} catch (e) {
-		console.error(e)
-		throw (e as Error).message
-	}
-}
-
-export async function createList({ authorId, boardId, title }: { authorId: string; boardId: string; title: string }) {
-	try {
-		const createList = await prisma.list.create({
 			data: {
-				authorId,
-				boardId,
-				title
+				title: title
 			}
 		})
 
-		return { createList }
+		return updatedBoard
 	} catch (e) {
 		console.error(e)
 		throw (e as Error).message
 	}
 }
 
-export async function getLists({ boardId }: { boardId: string }) {
-	try {
-		const lists = await prisma.list.findMany({
-			where: {
-				boardId
-			}
-		})
-
-		return lists
-	} catch (e) {
-		console.error(e)
-		throw (e as Error).message
-	}
-}
-
-export async function updateListTitle({ listId, title }: { listId: string; title: string }) {
-	try {
-		const list = await prisma.list.update({
-			where: {
-				id: listId
-			},
-			data: {
-				title
-			}
-		})
-
-		return { list }
-	} catch (e) {
-		console.error(e)
-		throw (e as Error).message
-	}
-}
-
-export async function findListById({ listId }: { listId: string }) {
-	try {
-		const list = await prisma.list.findUnique({
-			where: {
-				id: listId
-			}
-		})
-
-		return list
-	} catch (e) {
-		console.error(e)
-		throw (e as Error).message
-	}
-}
-
-export async function removeList({
-	listId,
-	boardAuthorId,
-	listAuthorId,
-	userId
+export async function updateBoardDescription({
+	boardId,
+	description,
+	authorId,
+	currUserId
 }: {
-	listId: string
-	boardAuthorId: string
-	listAuthorId: string
-	userId: string
+	boardId: string
+	description: string
+	authorId: string
+	currUserId: string
 }) {
 	try {
-		if (listAuthorId !== userId) {
+		if (authorId !== currUserId) {
 			throw new Error('Unauthorized')
 		}
 
-		if (boardAuthorId !== userId) {
-			throw new Error('Unauthorized')
-		}
-
-		await prisma.list.delete({
+		const updatedBoard = await prisma.board.update({
 			where: {
-				id: listId
+				id: boardId
+			},
+			data: {
+				description: description
 			}
 		})
+
+		return updatedBoard
 	} catch (e) {
 		console.error(e)
 		throw (e as Error).message

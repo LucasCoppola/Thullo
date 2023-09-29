@@ -12,20 +12,12 @@ export async function getComments({ cardId }: { cardId: string }) {
 
 		return { comments }
 	} catch (e) {
-		console.error((e as Error).message)
-		throw e
+		console.error(e)
+		throw (e as Error).message
 	}
 }
 
-export async function addComment({
-	cardId,
-	authorId,
-	comment
-}: {
-	cardId: string
-	authorId: string
-	comment: string
-}) {
+export async function addComment({ cardId, authorId, comment }: { cardId: string; authorId: string; comment: string }) {
 	try {
 		const addComment = await prisma.comment.create({
 			data: {
@@ -37,8 +29,8 @@ export async function addComment({
 
 		return { addComment }
 	} catch (e) {
-		console.error((e as Error).message)
-		throw e
+		console.error(e)
+		throw (e as Error).message
 	}
 }
 
@@ -67,8 +59,8 @@ export async function removeComment({
 			}
 		})
 	} catch (e) {
-		console.error((e as Error).message)
-		throw e
+		console.error(e)
+		throw (e as Error).message
 	}
 }
 
@@ -101,7 +93,7 @@ export async function updateComment({
 		})
 		return { updatedComment }
 	} catch (e) {
-		console.error((e as Error).message)
-		throw e
+		console.error(e)
+		throw (e as Error).message
 	}
 }

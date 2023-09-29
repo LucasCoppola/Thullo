@@ -3,13 +3,14 @@ import type { User, Board } from '@prisma/client'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { MoreHorizontal, User2, Users2 } from 'lucide-react'
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
-import { updateBoard } from '@/app/server/boardsOperations'
-import { removeMemberAction } from '@/app/actions'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { updateBoardTitle, updateBoardDescription } from '@/app/server/boardsOperations'
 
-import MemberList from './sheet-components/member-list'
-import Description from './sheet-components/description'
-import EditableTitle from './shared/editable-title'
+import MemberList from '../sheet-components/member-list'
+import Description from '../sheet-components/description'
+import EditableTitle from '../shared/editable-title'
+import { removeMember } from '@/app/server/membersOperations'
+import { toast } from 'sonner'
 
 export default function BoardSheet({
 	id,
@@ -19,60 +20,61 @@ export default function BoardSheet({
 	title: boardTitle,
 	description: boardDescription,
 	currUserId
-}: { author: User; members: User[]; currUserId: string } & Board) {
+}: { author: User; members: Omit<User, 'email' | 'emailVerified'>[] | undefined; currUserId: string } & Board) {
 	const [description, setDescription] = useState(boardDescription)
 	const [title, setTitle] = useState(boardTitle)
+	const queryClient = useQueryClient()
 
-	async function updateBoardClient() {
-		if (title === boardTitle && description === boardDescription) {
-			return
-		} else if (title === boardTitle && description !== boardDescription) {
-			await updateBoard({
+	const updateBoardTitleMutation = useMutation(
+		async () => {
+			if (title === boardTitle) return
+
+			await updateBoardTitle({
+				boardId: id,
+				title,
+				authorId: author?.id,
+				currUserId
+			})
+		},
+		{
+			onSuccess: () => toast.success('Board title updated'),
+			onError: (e: Error) => toast.error(e.message)
+		}
+	)
+
+	const updateBoardDescriptionMutation = useMutation(
+		async () => {
+			if (description === boardDescription) return
+
+			await updateBoardDescription({
 				boardId: id!,
 				description: description || '',
-				authorId: author?.id || '',
+				authorId: author.id,
 				currUserId
 			})
-			return
-		} else if (title !== boardTitle && description === boardDescription) {
-			await updateBoard({
-				boardId: id!,
-				title: title || '',
-				authorId: author?.id || '',
-				currUserId
-			})
-			return
+		},
+		{
+			onSuccess: () => toast.success('Board description updated'),
+			onError: (e: Error) => toast.error(e.message)
 		}
-	}
+	)
 
-	const updateBoardMutation = useMutation(updateBoardClient, {
-		onSuccess: () => console.log('success, boardUpdated'),
-		onError: () => console.error('error, boardUpdated(?)')
-	})
-
-	async function removeMemberClient(userId: string) {
-		if (author?.id !== currUserId) {
-			throw new Error('Unauthorized')
+	const removeMemberMutation = useMutation(
+		async (userId: string) =>
+			await removeMember({
+				authorId: author.id,
+				boardId: id,
+				currUserId,
+				userId
+			}),
+		{
+			onSuccess: () => {
+				toast.success('Member removed')
+				queryClient.invalidateQueries(['board-members', id])
+			},
+			onError: (e: Error) => toast.error(e.message)
 		}
-		if (userId === currUserId) {
-			throw new Error("You can't delete yourself")
-		}
-		if (author.id === userId) {
-			throw new Error("You can't delete the author")
-		}
-
-		await removeMemberAction({
-			authorId: author?.id || '',
-			boardId: id!,
-			currUserId,
-			userId
-		})
-	}
-
-	const removeMember = useMutation(removeMemberClient, {
-		onSuccess: () => console.log('success, member removed'),
-		onError: () => console.error('error, member removed(?)')
-	})
+	)
 
 	return (
 		<Sheet>
@@ -89,7 +91,7 @@ export default function BoardSheet({
 							initialValue={title}
 							onSave={(editedTitle) => {
 								setTitle(editedTitle)
-								updateBoardMutation.mutate()
+								updateBoardTitleMutation.mutate()
 							}}
 							titleClassName="text-xl font-semibold p-1 hover:bg-gray-200 mb-1 rounded-sm"
 							inputClassName="px-2 py-0.5 text-xl font-semibold mb-1"
@@ -121,13 +123,13 @@ export default function BoardSheet({
 							<Description
 								description={description || ''}
 								setDescription={setDescription}
-								updateBoardMutation={updateBoardMutation}
+								updateBoardDescriptionMutation={updateBoardDescriptionMutation}
 							/>
 
 							<span className="text-xs font-medium text-gray-500 flex flex-row items-center">
 								<Users2 className="h-3.5 w-3.5 mr-1" /> Team
 							</span>
-							<MemberList author={author} members={members} removeMember={removeMember} />
+							<MemberList author={author} members={members} removeMember={removeMemberMutation} />
 						</div>
 					</SheetDescription>
 				</SheetHeader>

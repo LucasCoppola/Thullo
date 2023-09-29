@@ -22,16 +22,18 @@ export async function getCoverImage(cardId: string) {
 export async function updateCoverImage({
 	cardId,
 	authorId,
+	boardAuthorId,
 	userId,
 	coverImage
 }: {
 	cardId: string
 	authorId: string
+	boardAuthorId: string
 	userId: string
 	coverImage: CoverImageType
 }) {
 	try {
-		if (userId !== authorId) {
+		if (userId !== authorId && userId !== boardAuthorId) {
 			throw new Error('Unauthorized')
 		}
 
@@ -64,14 +66,16 @@ export async function updateCoverImage({
 export async function removeCoverImage({
 	cardId,
 	authorId,
+	boardAuthorId,
 	userId
 }: {
 	cardId: string
 	authorId: string
+	boardAuthorId: string
 	userId: string
 }) {
 	try {
-		if (userId !== authorId) {
+		if (userId !== authorId && userId !== boardAuthorId) {
 			throw new Error('Unauthorized')
 		}
 

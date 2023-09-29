@@ -2,29 +2,36 @@ import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createCard } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
+import { toast } from 'sonner'
 
 export default function AddCard({ setCreateMode, listId }: { setCreateMode: (val: boolean) => void; listId: string }) {
-	const [cardTitle, setCardTitle] = useState('')
-	const isCardTitleValid = cardTitle.trim().length >= 1
 	const { data: session } = useSession()
+	const [cardTitle, setCardTitle] = useState('')
 	const queryClient = useQueryClient()
 
+	const isCardTitleValid = cardTitle.trim().length >= 1
+
 	const { mutate: mutateCardTitle, isLoading } = useMutation(
-		async () =>
-			await createCard({
+		async () => {
+			if (!session) return
+
+			return await createCard({
 				listId,
 				title: cardTitle,
-				authorId: session?.userId!
-			}),
+				authorId: session.userId
+			})
+		},
 		{
 			onSuccess: () => {
-				console.log('Card created')
+				toast.success('Card created')
 				queryClient.invalidateQueries(['cards', listId])
 				setCreateMode(false)
 			},
-			onError: (e) => {
+			onError: (e: Error) => {
 				console.error(e)
-			}
+				toast.error(e.message)
+			},
+			onSettled: () => setCardTitle('')
 		}
 	)
 	return (
