@@ -24,11 +24,13 @@ import CardTitle from './card-title'
 export default function CardModal({
 	card,
 	boardMembers,
+	boardAuthorId,
 	listId,
 	listTitle
 }: {
 	card: Card
 	boardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
+	boardAuthorId: string
 	listId: string
 	listTitle: string
 }) {
@@ -72,6 +74,7 @@ export default function CardModal({
 					cardMembers={cardMembers}
 					isCoverImageLoading={isCoverImageLoading}
 					listId={listId}
+					boardAuthorId={boardAuthorId}
 				/>
 			</DialogTrigger>
 			<DialogContent className="overflow-y-auto max-h-[80vh] max-w-2xl pt-9">

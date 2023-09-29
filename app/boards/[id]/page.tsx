@@ -26,7 +26,7 @@ export default async function BoardPage({ params }: { params: { id: string } }) 
 			<BoardHeader {...(board as Board)} author={author as User} currUserId={session.userId} />
 			<div className="w-full overflow-x-auto bg-[#fafbfe] px-2 rounded-lg mt-4">
 				<div className="flex flex-row gap-8">
-					<Lists boardId={board.id} boardAuthorId={author?.id} />
+					<Lists boardId={board.id} boardAuthorId={author!.id} />
 
 					<AddButtonComponent name="list" boardId={board.id} listId={id} />
 				</div>

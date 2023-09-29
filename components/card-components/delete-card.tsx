@@ -2,14 +2,17 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { removeCard } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
 import DeleteItem from '../shared/delete-item'
+import { toast } from 'sonner'
 
 export default function DeleteCard({
 	cardId,
 	cardAuthorId,
+	boardAuthorId,
 	listId
 }: {
 	cardId: string
 	cardAuthorId: string
+	boardAuthorId: string
 	listId: string
 }) {
 	const { data: session } = useSession()
@@ -18,13 +21,14 @@ export default function DeleteCard({
 	const { mutate } = useMutation(
 		async () => {
 			if (!session) return
-			return await removeCard({ authorId: cardAuthorId, cardId, userId: session.userId })
+			return await removeCard({ cardAuthorId, boardAuthorId, cardId, userId: session.userId })
 		},
 		{
 			onSuccess: () => {
-				console.log('card removed')
+				toast.success('Card deleted')
 				queryClient.invalidateQueries(['cards', listId])
-			}
+			},
+			onError: (e: Error) => toast.error(e.message)
 		}
 	)
 

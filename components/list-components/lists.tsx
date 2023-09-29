@@ -5,7 +5,7 @@ import { getLists } from '@/app/server/listsOperations'
 import List from './list'
 import { getBoardMembers } from '@/app/server/membersOperations'
 
-export default function Lists({ boardId, boardAuthorId }: { boardId: string; boardAuthorId: string | undefined }) {
+export default function Lists({ boardId, boardAuthorId }: { boardId: string; boardAuthorId: string }) {
 	const { data: lists } = useQuery(['lists', boardId], async () => await getLists({ boardId }))
 	const { data: members } = useQuery(['board-members', boardId], async () => await getBoardMembers({ boardId }))
 

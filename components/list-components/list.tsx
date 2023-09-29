@@ -19,7 +19,7 @@ export default function List({
 	boardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 	boardId: string
 	title: string
-	boardAuthorId: string | undefined
+	boardAuthorId: string
 }) {
 	const { data: list } = useQuery(['list', listId], async () => await findListById({ listId }))
 
@@ -35,7 +35,12 @@ export default function List({
 				/>
 			</div>
 			<div className="space-y-4">
-				<Cards listId={listId} listTitle={list?.title || undefined} boardMembers={boardMembers} />
+				<Cards
+					listId={listId}
+					listTitle={list?.title || undefined}
+					boardMembers={boardMembers}
+					boardAuthorId={boardAuthorId}
+				/>
 			</div>
 
 			<AddButtonComponent name="card" boardId={boardId} listId={listId} />

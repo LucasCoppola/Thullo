@@ -8,11 +8,13 @@ import { getCards } from '@/app/server/card-operations/card'
 export default function Cards({
 	listId,
 	listTitle,
-	boardMembers
+	boardMembers,
+	boardAuthorId
 }: {
 	listId: string
 	listTitle: string | undefined
 	boardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
+	boardAuthorId: string
 }) {
 	const { data: cards } = useQuery(['cards', listId], async () => await getCards({ listId }))
 
@@ -23,6 +25,7 @@ export default function Cards({
 					key={card.id}
 					card={card}
 					boardMembers={boardMembers}
+					boardAuthorId={boardAuthorId}
 					listId={listId}
 					listTitle={listTitle!}
 				/>
