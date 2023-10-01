@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addCardMember } from '@/app/server/membersOperations'
 import type { User } from '@prisma/client'
 import { useSession } from 'next-auth/react'
+import { toast } from 'sonner'
 
 export default function CardMembers({
 	availableMembers,
@@ -23,20 +24,21 @@ export default function CardMembers({
 
 	const { mutate } = useMutation(
 		async () => {
-			await addCardMember({
+			if (!session || !selectedUser) return
+			return await addCardMember({
 				authorId: cardAuthorId,
 				cardId,
-				currUserId: session?.userId!,
-				userId: selectedUser?.id!
+				currUserId: session.userId,
+				userId: selectedUser.id
 			})
 		},
 		{
-			onSuccess: () => {
-				console.log('member added to the card!')
+			onSuccess: () => toast.success('Member added!'),
+			onError: (e) => toast.error((e as Error).message),
+			onSettled: () => {
+				setIsPopoverOpen(false)
 				queryClient.invalidateQueries(['card-members', cardId])
-			},
-			onError: (error) => console.error((error as Error).message),
-			onSettled: () => setIsPopoverOpen(false)
+			}
 		}
 	)
 

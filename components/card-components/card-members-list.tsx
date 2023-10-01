@@ -17,6 +17,7 @@ import { removeCardMember } from '@/app/server/membersOperations'
 import type { Card, User } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import SkeletonMember from '../loading/skeleton-member'
+import { toast } from 'sonner'
 
 export default function CardMembersList({
 	cardMembers,
@@ -36,10 +37,9 @@ export default function CardMembersList({
 
 	const removeMember = useMutation(
 		async (id: string) => {
-			if (!card.authorId) return
-			if (!hoverUserId) return
-			if (!session) return
-			await removeCardMember({
+			if (!card.authorId || !hoverUserId || !session) return
+
+			return await removeCardMember({
 				authorId: card.authorId,
 				cardId: card.id,
 				currUserId: session.userId,
@@ -47,7 +47,8 @@ export default function CardMembersList({
 			})
 		},
 		{
-			onSuccess: () => console.log('member removed!'),
+			onSuccess: () => toast.success('Member removed'),
+			onError: (e) => toast.error((e as Error).message),
 			onSettled: () => queryClient.invalidateQueries(['card-members', card.id])
 		}
 	)

@@ -58,7 +58,10 @@ export default function CardModal({
 	)
 
 	const availableMembers = boardMembers?.filter((member) => {
-		return !cardMembers?.find((cardMember) => cardMember.id === member.id)
+		return (
+			member.id !== card.authorId &&
+			(!cardMembers || !cardMembers.some((cardMember) => cardMember.id === member.id))
+		)
 	})
 
 	return (
