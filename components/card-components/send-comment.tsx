@@ -7,6 +7,7 @@ import { ArrowUpCircle } from 'lucide-react'
 import CommentComponent from './comment'
 
 import type { Comment } from '@prisma/client'
+import { toast } from 'sonner'
 
 export default function SendComment({
 	cardId,
@@ -28,15 +29,16 @@ export default function SendComment({
 
 	const addCommentMutation = useMutation(
 		async () => {
-			await addComment({ authorId: session?.userId!, cardId, comment })
+			if (!session) return
+			return await addComment({ authorId: session.userId, cardId, comment })
 		},
 
 		{
 			onSuccess: () => {
-				console.log('comment added')
+				toast.success('Comment added')
 				setComment('')
 			},
-			onError: (e) => console.error((e as Error).message),
+			onError: (e) => toast.error((e as Error).message),
 			onSettled: () => handleQueryInvalidation(cardId)
 		}
 	)
