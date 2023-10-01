@@ -8,6 +8,7 @@ import MutateLable from './mutate-label'
 
 import type { ColorProps } from '@/app/types'
 import type { Label } from '@prisma/client'
+import { toast } from 'sonner'
 
 export const colors: ColorProps[] = [
 	{ color: { text: '#4b5563', bg: '#f3f4f6' }, colorName: 'Gray' },
@@ -44,12 +45,9 @@ export default function AddLabel({ cardId, labels }: { cardId: string; labels: L
 			await createLabel({ cardId, color, name: label })
 		},
 		{
-			onSuccess: () => {
-				console.log('label created!')
-				handleQueryInvalidation(cardId)
-			},
-			onError: (e) => console.error('Error Client:', (e as Error).message),
+			onError: (e) => toast.error((e as Error).message),
 			onSettled: () => {
+				handleQueryInvalidation(cardId)
 				setLabel('')
 			}
 		}

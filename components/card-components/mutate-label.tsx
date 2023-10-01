@@ -13,10 +13,11 @@ import {
 } from '@/components/ui/alert-dialog'
 
 import { Trash2 } from 'lucide-react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { deleteLabel, updateLabel } from '@/app/server/card-operations/labels'
 import { colors } from './card-label'
 import type { ColorProps } from '@/app/types'
+import { toast } from 'sonner'
 
 export default function MutateLabel({
 	name,
@@ -37,25 +38,35 @@ export default function MutateLabel({
 	const [editColor, setEditColor] = useState(color)
 
 	const deleteLabelMutation = useMutation(async () => await deleteLabel({ cardId, labelId }), {
-		onSuccess: () => {
-			setQueryInvalidation(cardId)
-			console.log('label deleted! (check the db just in case)')
-		}
+		onSuccess: () => toast.success('Label deleted'),
+		onError: (e) => toast.error((e as Error).message),
+		onSettled: () => setQueryInvalidation(cardId)
 	})
 
 	const updateLabelMutation = useMutation(
 		async () => {
 			if (editLabelName === name && editColor === color) return
 
-			await updateLabel({
-				cardId,
-				color: editColor,
-				labelId,
-				name: editLabelName
-			})
+			if (editColor !== color && editLabelName === name) {
+				return await updateLabel({
+					cardId,
+					color: editColor,
+					labelId,
+					name
+				})
+			} else if (editLabelName !== name && editColor === color) {
+				return await updateLabel({
+					cardId,
+					color,
+					labelId,
+					name: editLabelName
+				})
+			}
 		},
 		{
-			onSuccess: () => setQueryInvalidation(cardId)
+			onSuccess: () => toast.success('Label updated'),
+			onError: (e) => toast.error((e as Error).message),
+			onSettled: () => setQueryInvalidation(cardId)
 		}
 	)
 
@@ -73,10 +84,7 @@ export default function MutateLabel({
 					type="text"
 					className="w-32 p-1 border border-gray-300 text-xs rounded-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
 					value={editLabelName}
-					onChange={(e) => {
-						setEditLabelName(e.target.value)
-						updateLabelMutation.mutate()
-					}}
+					onChange={(e) => setEditLabelName(e.target.value)}
 					autoFocus
 					onKeyDown={(e) => {
 						if (e.key === 'Enter') {
@@ -119,10 +127,7 @@ export default function MutateLabel({
 					key={colorName}
 					role="button"
 					className="flex flex-row items-center py-1"
-					onClick={() => {
-						setEditColor({ color, colorName })
-						updateLabelMutation.mutate()
-					}}
+					onClick={() => setEditColor({ color, colorName })}
 				>
 					<div
 						className="h-4 w-4 rounded-sm border"
