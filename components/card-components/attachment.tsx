@@ -19,6 +19,7 @@ import {
 import { useSession } from 'next-auth/react'
 import { fetchUser } from '@/app/fetch'
 import SkeletonAttachment from '../loading/skeleton-attachment'
+import { toast } from 'sonner'
 
 export default function AttachmentComponent({
 	cardId,
@@ -38,7 +39,7 @@ export default function AttachmentComponent({
 			const outsideRes = await fetch(attachment.url)
 
 			if (!outsideRes.ok) {
-				throw new Error('Failed to fetch the file')
+				throw new Error('Failed to download the file')
 			}
 
 			const blob = await outsideRes.blob()
@@ -48,8 +49,10 @@ export default function AttachmentComponent({
 			link.href = url
 			link.download = attachment.filename
 			link.click()
-		} catch (error) {
-			console.error('Error downloading the file:', error)
+
+			toast.success('File downloaded successfully')
+		} catch (e) {
+			toast.error((e as Error).message)
 		}
 	}
 
@@ -58,15 +61,19 @@ export default function AttachmentComponent({
 	)
 
 	const { mutate } = useMutation(
-		async () =>
-			await removeAttachment({
+		async () => {
+			if (!session) return
+			return await removeAttachment({
 				cardId,
 				attachmentId: attachment.id,
 				attachmentAuthor: attachment.userId,
 				cardAuthor: cardAuthorId,
-				userId: session?.userId!
-			}),
+				userId: session.userId
+			})
+		},
 		{
+			onSuccess: () => toast.success('Attachment deleted'),
+			onError: (e) => toast.error((e as Error).message),
 			onSettled: () => queryClient.invalidateQueries(['attachments', cardId])
 		}
 	)

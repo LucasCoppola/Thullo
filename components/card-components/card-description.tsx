@@ -4,6 +4,7 @@ import Tooltip from '../ui/tooltip'
 import { useMutation } from '@tanstack/react-query'
 import { updateCardDescription } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
+import { toast } from 'sonner'
 
 export default function CardDescription({
 	cardDescription,
@@ -22,16 +23,18 @@ export default function CardDescription({
 
 	const cardDescriptionMutation = useMutation(
 		async () => {
-			await updateCardDescription({
+			if (!session) return
+
+			return await updateCardDescription({
 				authorId,
 				cardId,
 				description,
-				userId: session?.userId!
+				userId: session.userId
 			})
 		},
 		{
-			onSuccess: () => console.log('success, card description updated!'),
-			onError: () => console.error('error, card updated(?)')
+			onSuccess: () => toast.success('Card description updated'),
+			onError: (e) => toast.error((e as Error).message)
 		}
 	)
 

@@ -2,25 +2,32 @@ import { createAttachment } from '@/app/server/card-operations/attachments'
 import { UploadButton } from '@/lib/uploadthing'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
+import { toast } from 'sonner'
 import type { UploadFileResponse } from 'uploadthing/client'
 
 export default function UploadFile({ cardId }: { cardId: string }) {
 	const { data: session } = useSession()
 	const queryClient = useQueryClient()
 
-	const attachmentMutation = useMutation(async (file: UploadFileResponse) => {
-		if (!file) return
+	const attachmentMutation = useMutation(
+		async (file: UploadFileResponse) => {
+			if (!file || !session) return
 
-		await createAttachment({
-			id: file.fileKey,
-			filename: file.fileName,
-			url: file.url,
-			size: file.size,
-			userId: session?.userId!,
-			cardId
-		})
-		queryClient.invalidateQueries(['attachments', cardId])
-	})
+			await createAttachment({
+				id: file.fileKey,
+				filename: file.fileName,
+				url: file.url,
+				size: file.size,
+				userId: session.userId,
+				cardId
+			})
+		},
+		{
+			onSuccess: () => toast.success('Attachment created'),
+			onError: (e: Error) => toast.error(e.message),
+			onSettled: () => queryClient.invalidateQueries(['attachments', cardId])
+		}
+	)
 	return (
 		<UploadButton
 			content={{
@@ -39,8 +46,7 @@ export default function UploadFile({ cardId }: { cardId: string }) {
 				}
 			}}
 			onUploadError={(error: Error) => {
-				console.log('Error: ', error.message)
-				alert(`ERROR! ${error.message}`)
+				toast.error(error.message)
 			}}
 		/>
 	)

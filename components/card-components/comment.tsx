@@ -18,6 +18,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 import type { Comment } from '@prisma/client'
 import SkeletonComment from '../loading/skeleton-comment'
+import { toast } from 'sonner'
 
 export default function Comment({
 	id,
@@ -51,21 +52,27 @@ export default function Comment({
 			setIsEditing(false)
 		},
 		{
+			onSuccess: () => toast.success('Comment updated'),
+			onError: (e) => toast.error((e as Error).message),
 			onSettled: () => setQueryInvalidation(cardId)
 		}
 	)
 
 	const removeCommentMutation = useMutation(
 		async () => {
-			await removeComment({
+			if (!user) return
+
+			return await removeComment({
 				cardId,
 				commentId: id,
-				commentAuthor: user?.id!,
+				commentAuthor: user.id,
 				cardAuthor: cardAuthorId,
 				userId
 			})
 		},
 		{
+			onSuccess: () => toast.success('Comment deleted'),
+			onError: (e) => toast.error((e as Error).message),
 			onSettled: () => setQueryInvalidation(cardId)
 		}
 	)

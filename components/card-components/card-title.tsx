@@ -3,6 +3,7 @@ import EditableTitle from '../shared/editable-title'
 import { useMutation } from '@tanstack/react-query'
 import { updateCardTitle } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
+import { toast } from 'sonner'
 
 export default function CardTitle({
 	cardTitle,
@@ -22,9 +23,8 @@ export default function CardTitle({
 			return await updateCardTitle({ authorId, cardId, title, userId: session?.userId })
 		},
 		{
-			onSuccess: () => {
-				console.log('card title updated')
-			}
+			onSuccess: () => toast.success('Card title updated'),
+			onError: (e) => toast.error((e as Error).message)
 		}
 	)
 	return (
