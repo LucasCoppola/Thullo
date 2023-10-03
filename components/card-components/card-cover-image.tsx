@@ -28,14 +28,14 @@ export function CoverImageSelector({
 
 	const mutateCoverImage = useMutation(
 		async () => {
-			if (!coverImage) return
+			if (!coverImage || !session) return
 
-			await updateCoverImage({
+			return await updateCoverImage({
 				boardAuthorId,
 				cardId: card.id,
 				authorId: card.authorId,
 				coverImage,
-				userId: session?.userId!
+				userId: session.userId
 			})
 		},
 		{
