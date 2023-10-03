@@ -43,10 +43,10 @@ export default function ListComponent({
 			<div
 				ref={setNodeRef}
 				style={{
-					minWidth: '243px',
+					width: '256px',
 					...style
 				}}
-				className="mt-4 px-1.5 pb-1.5 bg-[#e2e8f0] opacity-50 rounded-lg border border-blue-400 border-dashed"
+				className="mt-4 px-1.5 pb-1.5 bg-[#e2e8f0] opacity-50 rounded-lg border border-blue-400 border-dashed h-screen"
 			></div>
 		)
 	}
@@ -55,7 +55,7 @@ export default function ListComponent({
 		<div
 			ref={setNodeRef}
 			className="mt-4 bg-[#f8f9fa] px-1.5 pb-1.5 rounded-lg"
-			style={{ minWidth: '243px', ...style }}
+			style={{ width: '256px', ...style }}
 		>
 			<div className="flex flex-row items-center justify-between pb-4" {...attributes} {...listeners}>
 				<EditableListTitle title={title} listId={listId} />

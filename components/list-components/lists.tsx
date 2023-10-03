@@ -51,20 +51,21 @@ export default function Lists({
 				<AddButtonComponent name="list" boardId={boardId} />
 			</div>
 
-			{createPortal(
-				<DragOverlay>
-					{activeColumn && (
-						<ListComponent
-							listId={activeColumn.id}
-							title={activeColumn.title}
-							boardMembers={boardMembers}
-							boardId={boardId}
-							boardAuthorId={boardAuthorId}
-						/>
-					)}
-				</DragOverlay>,
-				document.body
-			)}
+			{typeof document !== 'undefined' &&
+				createPortal(
+					<DragOverlay>
+						{activeColumn && (
+							<ListComponent
+								listId={activeColumn.id}
+								title={activeColumn.title}
+								boardMembers={boardMembers}
+								boardId={boardId}
+								boardAuthorId={boardAuthorId}
+							/>
+						)}
+					</DragOverlay>,
+					document.body
+				)}
 		</DndContext>
 	)
 }
