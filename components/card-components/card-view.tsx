@@ -12,7 +12,7 @@ type CardViewProps = {
 	attachmentsLength: number
 	commentsLength: number
 	labels: Label[]
-	coverImage: CoverImageType | null
+	coverImage: CoverImageType | undefined
 	cardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 	isCoverImageLoading: boolean
 	listId: string
