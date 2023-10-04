@@ -1,14 +1,17 @@
 'use client'
 
+import ListComponent from './list'
+import AddButtonComponent from '../add-list-btn'
+
+import { createPortal } from 'react-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getLists } from '@/app/server/listsOperations'
-import ListComponent from './list'
-import { SortableContext } from '@dnd-kit/sortable'
+import { SortableContext, arrayMove } from '@dnd-kit/sortable'
+import { useMemo, useState, useEffect } from 'react'
+import { DndContext, DragOverlay, useSensors, useSensor, PointerSensor } from '@dnd-kit/core'
+
 import type { List, User } from '@prisma/client'
-import { useMemo, useState } from 'react'
-import { DndContext, DragOverlay, type DragStartEvent, type UniqueIdentifier } from '@dnd-kit/core'
-import AddButtonComponent from '../add-list-btn'
-import { createPortal } from 'react-dom'
+import type { DragStartEvent, UniqueIdentifier, DragEndEvent } from '@dnd-kit/core'
 
 export default function Lists({
 	boardId,
@@ -19,25 +22,57 @@ export default function Lists({
 	boardMembers: User[]
 	boardAuthorId: string
 }) {
-	const { data: lists } = useQuery(['lists', boardId], async () => await getLists({ boardId }))
-	const [activeColumn, setActiveColumn] = useState<List | null>(null)
+	const { data: initialLists } = useQuery(['lists', boardId], async () => await getLists({ boardId }))
+	const [listsState, setListsState] = useState<List[] | undefined>(initialLists)
+	const [activeList, setActiveList] = useState<List | null>(null)
 
 	const listsId = useMemo(() => {
-		if (!lists) return []
-		return lists.map((list) => list.id) as (UniqueIdentifier | { id: UniqueIdentifier })[]
-	}, [lists])
+		if (!listsState) return []
+		return listsState.map((list) => list.id) as (UniqueIdentifier | { id: UniqueIdentifier })[]
+	}, [listsState])
+
+	useEffect(() => {
+		setListsState(initialLists)
+	}, [initialLists])
 
 	function onDragStart(e: DragStartEvent) {
 		if (e.active.data.current?.type === 'list') {
-			setActiveColumn(e.active.data.current.list)
+			setActiveList(e.active.data.current.list)
 		}
 	}
 
+	function onDragEnd(e: DragEndEvent) {
+		const { active, over } = e
+		if (!over) return
+
+		const activeListId = active.id
+		const overListId = over.id
+
+		if (activeListId === overListId) return
+
+		setListsState((lists) => {
+			if (!lists) return lists
+
+			const activeListIdx = lists.findIndex((list) => list.id === activeListId)
+			const overListIdx = lists.findIndex((list) => list.id === overListId)
+
+			return arrayMove(lists, activeListIdx, overListIdx)
+		})
+	}
+
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 3
+			}
+		})
+	)
+
 	return (
-		<DndContext onDragStart={onDragStart}>
+		<DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
 			<div className="flex flex-row gap-8">
-				<SortableContext items={listsId}>
-					{lists?.map(({ id, title }) => (
+				{listsState?.map(({ id, title }) => (
+					<SortableContext items={listsId} key={id}>
 						<ListComponent
 							key={id}
 							listId={id}
@@ -46,18 +81,18 @@ export default function Lists({
 							boardId={boardId}
 							boardAuthorId={boardAuthorId}
 						/>
-					))}
-				</SortableContext>
+					</SortableContext>
+				))}
 				<AddButtonComponent name="list" boardId={boardId} />
 			</div>
 
 			{typeof document !== 'undefined' &&
 				createPortal(
 					<DragOverlay>
-						{activeColumn && (
+						{activeList && (
 							<ListComponent
-								listId={activeColumn.id}
-								title={activeColumn.title}
+								listId={activeList.id}
+								title={activeList.title}
 								boardMembers={boardMembers}
 								boardId={boardId}
 								boardAuthorId={boardAuthorId}
