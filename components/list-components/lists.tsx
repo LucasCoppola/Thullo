@@ -4,11 +4,12 @@ import ListComponent from './list'
 import AddButtonComponent from '../add-list-btn'
 
 import { createPortal } from 'react-dom'
-import { useQuery } from '@tanstack/react-query'
-import { getLists } from '@/app/server/listsOperations'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { getLists, updateListOrder } from '@/app/server/listsOperations'
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { useMemo, useState, useEffect } from 'react'
 import { DndContext, DragOverlay, useSensors, useSensor, PointerSensor } from '@dnd-kit/core'
+import { toast } from 'sonner'
 
 import type { List, User } from '@prisma/client'
 import type { DragStartEvent, UniqueIdentifier, DragEndEvent } from '@dnd-kit/core'
@@ -25,6 +26,23 @@ export default function Lists({
 	const { data: initialLists } = useQuery(['lists', boardId], async () => await getLists({ boardId }))
 	const [listsState, setListsState] = useState<List[] | undefined>(initialLists)
 	const [activeList, setActiveList] = useState<List | null>(null)
+
+	const mutateListOrder = useMutation(
+		async () => {
+			if (listsState === initialLists) return
+			if (!listsState) return
+
+			const listOrder = listsState?.map((list) => ({
+				id: list.id,
+				position: list.position
+			}))
+			await updateListOrder({ boardId, listOrder })
+		},
+		{
+			onSuccess: () => toast.success('List positions updated'),
+			onError: (e: Error) => toast.error(e.message)
+		}
+	)
 
 	const listsId = useMemo(() => {
 		if (!listsState) return []
@@ -58,6 +76,8 @@ export default function Lists({
 
 			return arrayMove(lists, activeListIdx, overListIdx)
 		})
+
+		mutateListOrder.mutate()
 	}
 
 	const sensors = useSensors(

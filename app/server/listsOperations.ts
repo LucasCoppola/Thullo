@@ -93,3 +93,26 @@ export async function removeList({
 		throw (e as Error).message
 	}
 }
+
+export async function updateListOrder({
+	boardId,
+	listOrder
+}: {
+	boardId: string
+	listOrder: { id: string; position: number }[]
+}) {
+	try {
+		for (let i = 0; i < listOrder.length; i++) {
+			const listPosition = listOrder[i]?.position
+			const listId = listOrder[i]?.id
+
+			await prisma.list.update({
+				where: { id: listId, boardId },
+				data: { position: listPosition }
+			})
+		}
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
+	}
+}
