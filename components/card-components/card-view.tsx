@@ -5,6 +5,8 @@ import type { ColorProps, CoverImageType } from '@/app/types'
 import SkeletonImage from '../loading/skeleton-image'
 import SkeletonCard from '../loading/skeleton-card'
 import DeleteCard from './delete-card'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 type CardViewProps = {
 	setOpen: (val: boolean) => void
@@ -33,8 +35,40 @@ export default function CardView({
 }: CardViewProps) {
 	const remainingAvatars = cardMembers?.length! - 3
 
+	const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
+		id: card.id,
+		data: {
+			type: 'card',
+			card
+		}
+	})
+
+	const style = {
+		transition,
+		transform: CSS.Transform.toString(transform)
+	}
+
+	if (isDragging) {
+		return (
+			<div
+				ref={setNodeRef}
+				style={{
+					width: '243px',
+					...style
+				}}
+				className="bg-[#e2e8f0] opacity-50 rounded-xl border border-blue-400 border-dashed h-56"
+			></div>
+		)
+	}
+
 	return (
-		<div className="bg-white rounded-xl shadow-md hover:shadow-lg space-y-2" style={{ width: '243px' }}>
+		<div
+			ref={setNodeRef}
+			{...attributes}
+			{...listeners}
+			className="bg-white rounded-xl shadow-md hover:shadow-lg space-y-2"
+			style={{ width: '243px', ...style }}
+		>
 			<div className="relative">
 				{!isCoverImageLoading && (
 					<DeleteCard
