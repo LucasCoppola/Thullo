@@ -91,8 +91,8 @@ export default function Lists({
 	return (
 		<DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
 			<div className="flex flex-row gap-8">
-				{listsState?.map(({ id, title }) => (
-					<SortableContext items={listsId} key={id}>
+				<SortableContext items={listsId}>
+					{listsState?.map(({ id, title }) => (
 						<ListComponent
 							key={id}
 							listId={id}
@@ -101,8 +101,8 @@ export default function Lists({
 							boardId={boardId}
 							boardAuthorId={boardAuthorId}
 						/>
-					</SortableContext>
-				))}
+					))}
+				</SortableContext>
 				<AddButtonComponent name="list" boardId={boardId} />
 			</div>
 
