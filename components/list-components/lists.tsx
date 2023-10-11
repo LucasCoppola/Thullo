@@ -11,8 +11,11 @@ import { useMemo, useState, useEffect } from 'react'
 import { DndContext, DragOverlay, useSensors, useSensor, PointerSensor } from '@dnd-kit/core'
 import { toast } from 'sonner'
 
-import type { List, User } from '@prisma/client'
-import type { DragStartEvent, UniqueIdentifier, DragEndEvent } from '@dnd-kit/core'
+import type { Card, List, User } from '@prisma/client'
+import type { DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core'
+import { getAllBoardCards } from '@/app/server/card-operations/card'
+import CardView from '../card-components/card-view'
+import CardModal from '../card-components/card-modal'
 
 export default function Lists({
 	boardId,
@@ -24,7 +27,11 @@ export default function Lists({
 	boardAuthorId: string
 }) {
 	const { data: initialLists } = useQuery(['lists', boardId], async () => await getLists({ boardId }))
+	const { data: initialCards } = useQuery(['board-cards', boardId], async () => await getAllBoardCards({ boardId }))
 	const [listsState, setListsState] = useState<List[] | undefined>(initialLists)
+	const [cardsState, setCardsState] = useState<Card[] | undefined>(initialCards)
+
+	const [activeCard, setActiveCard] = useState<Card | null>(null)
 	const [activeList, setActiveList] = useState<List | null>(null)
 
 	const mutateListOrder = useMutation(
@@ -39,45 +46,114 @@ export default function Lists({
 			await updateListOrder({ boardId, listOrder })
 		},
 		{
-			onSuccess: () => toast.success('List positions updated'),
 			onError: (e: Error) => toast.error(e.message)
 		}
 	)
 
 	const listsId = useMemo(() => {
 		if (!listsState) return []
-		return listsState.map((list) => list.id) as (UniqueIdentifier | { id: UniqueIdentifier })[]
+		return listsState.map((list) => list.id)
 	}, [listsState])
 
 	useEffect(() => {
 		setListsState(initialLists)
 	}, [initialLists])
+	useEffect(() => {
+		setCardsState(initialCards)
+	}, [initialCards])
 
 	function onDragStart(e: DragStartEvent) {
 		if (e.active.data.current?.type === 'list') {
 			setActiveList(e.active.data.current.list)
 		}
+		if (e.active.data.current?.type === 'card') {
+			setActiveCard(e.active.data.current.card)
+		}
 	}
 
 	function onDragEnd(e: DragEndEvent) {
+		setActiveList(null)
+		setActiveCard(null)
+
 		const { active, over } = e
 		if (!over) return
 
-		const activeListId = active.id
-		const overListId = over.id
+		const activeId = active.id
+		const overId = over.id
 
-		if (activeListId === overListId) return
+		if (activeId === overId) return
+
+		const isActiveList = active.data.current?.type === 'list'
+		if (!isActiveList) return
 
 		setListsState((lists) => {
-			if (!lists) return lists
+			if (!lists) return
+			const updatedList = [...lists]
+			const activeListIndex = updatedList.findIndex((list) => list.id === activeId)
+			const overListIndex = updatedList.findIndex((list) => list.id === overId)
 
-			const activeListIdx = lists.findIndex((list) => list.id === activeListId)
-			const overListIdx = lists.findIndex((list) => list.id === overListId)
+			// Reorder the List
+			const [movedList] = updatedList.splice(activeListIndex, 1)
+			updatedList.splice(overListIndex, 0, movedList!)
 
-			return arrayMove(lists, activeListIdx, overListIdx)
+			return updatedList
 		})
 
-		mutateListOrder.mutate()
+		// setListsState((lists) => {
+		// 	if (!lists) return lists
+
+		// 	const activeListIdx = lists.findIndex((list) => list.id === activeListId)
+		// 	const overListIdx = lists.findIndex((list) => list.id === overListId)
+
+		// 	return arrayMove(lists, activeListIdx, overListIdx)
+		// })
+
+		// mutateListOrder.mutate()
+	}
+
+	function onDragOver(e: DragOverEvent) {
+		const { active, over } = e
+		if (!over) return
+
+		const activeId = active.id
+		const overId = over.id
+
+		if (activeId === overId) return
+
+		const isActiveATask = active.data.current?.type === 'card'
+		const isOverATask = over.data.current?.type === 'card'
+
+		if (!isActiveATask) return
+
+		if (isActiveATask && isOverATask) {
+			setCardsState((cards) => {
+				if (!cards) return
+				const updatedCards = [...cards]
+				const activeIndex = cards.findIndex((t) => t.id === activeId)
+				const overIndex = cards.findIndex((t) => t.id === overId)
+				if (updatedCards[activeIndex]?.listId !== updatedCards[overIndex]?.listId) {
+					updatedCards[activeIndex]!.listId = updatedCards[overIndex]!.listId
+				}
+
+				const [movedCard] = updatedCards.splice(activeIndex, 1)
+				updatedCards.splice(overIndex, 0, movedCard!)
+
+				return updatedCards
+			})
+		}
+
+		const isOverAColumn = over.data.current?.type === 'list'
+
+		// Im dropping a card over a column
+		if (isActiveATask && isOverAColumn) {
+			setCardsState((cards) => {
+				if (!cards) return
+				const activeIndex = cards.findIndex((t) => t.id === activeId)
+				cards[activeIndex]!.listId = overId as string
+
+				return arrayMove(cards, activeIndex, activeIndex)
+			})
+		}
 	}
 
 	const sensors = useSensors(
@@ -89,7 +165,7 @@ export default function Lists({
 	)
 
 	return (
-		<DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd}>
+		<DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
 			<div className="flex flex-row gap-8">
 				<SortableContext items={listsId}>
 					{listsState?.map(({ id, title }) => (
@@ -100,6 +176,7 @@ export default function Lists({
 							boardMembers={boardMembers}
 							boardId={boardId}
 							boardAuthorId={boardAuthorId}
+							boardCards={cardsState || []}
 						/>
 					))}
 				</SortableContext>
@@ -116,6 +193,16 @@ export default function Lists({
 								boardMembers={boardMembers}
 								boardId={boardId}
 								boardAuthorId={boardAuthorId}
+								boardCards={cardsState || []}
+							/>
+						)}
+						{activeCard && (
+							<CardModal
+								card={activeCard}
+								boardMembers={boardMembers}
+								boardAuthorId={boardAuthorId}
+								listId={activeCard.listId}
+								listTitle={''}
 							/>
 						)}
 					</DragOverlay>,

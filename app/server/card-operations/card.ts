@@ -2,6 +2,20 @@
 
 import prisma from '@/lib/prisma'
 
+export async function getAllBoardCards({ boardId }: { boardId: string }) {
+	try {
+		const lists = await prisma.list.findMany({ where: { boardId } })
+
+		const cards = await Promise.all(lists.map(async (list) => await getCards({ listId: list.id })))
+
+		return cards.flat()
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
+	}
+}
+getAllBoardCards({ boardId: 'clmnn9el00006ilswfkwvpv3r' })
+
 export async function getCards({ listId }: { listId: string }) {
 	try {
 		const cards = await prisma.card.findMany({

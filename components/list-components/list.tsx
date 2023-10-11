@@ -2,7 +2,7 @@
 
 import { EditableListTitle } from './add-list'
 import AddButtonComponent from '../add-list-btn'
-import type { User } from '@prisma/client'
+import type { Card, User } from '@prisma/client'
 import { findListById } from '@/app/server/listsOperations'
 import Cards from '../card-components/cards'
 import { useQuery } from '@tanstack/react-query'
@@ -15,15 +15,19 @@ export default function ListComponent({
 	boardMembers,
 	boardId,
 	title,
-	boardAuthorId
+	boardAuthorId,
+	boardCards
 }: {
 	listId: string
 	boardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 	boardId: string
 	title: string
 	boardAuthorId: string
+	boardCards: Card[]
 }) {
 	const { data: list } = useQuery(['list', listId], async () => await findListById({ listId }))
+
+	const listCards = boardCards?.filter((card) => card.listId === listId)
 
 	const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
 		id: listId,
@@ -54,10 +58,12 @@ export default function ListComponent({
 	return (
 		<div
 			ref={setNodeRef}
+			{...attributes}
+			{...listeners}
 			className="mt-4 bg-[#f8f9fa] px-1.5 pb-1.5 rounded-lg"
 			style={{ width: '256px', ...style }}
 		>
-			<div className="flex flex-row items-center justify-between pb-4" {...attributes} {...listeners}>
+			<div className="flex flex-row items-center justify-between pb-4">
 				<EditableListTitle title={title} listId={listId} />
 				<DeleteList
 					listId={listId}
@@ -72,6 +78,7 @@ export default function ListComponent({
 					listTitle={list?.title || undefined}
 					boardMembers={boardMembers}
 					boardAuthorId={boardAuthorId}
+					listCards={listCards}
 				/>
 			</div>
 
