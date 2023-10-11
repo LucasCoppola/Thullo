@@ -56,7 +56,9 @@ export default function CardView({
 					width: '243px',
 					...style
 				}}
-				className="bg-[#e2e8f0] opacity-50 rounded-xl border border-blue-400 border-dashed h-56"
+				className={`bg-[#e2e8f0] opacity-50 rounded-xl border border-blue-400 border-dashed ${
+					coverImage ? 'h-56' : 'h-16'
+				}`}
 			></div>
 		)
 	}
