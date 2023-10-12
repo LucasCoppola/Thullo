@@ -14,7 +14,6 @@ import { toast } from 'sonner'
 import type { Card, List, User } from '@prisma/client'
 import type { DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core'
 import { getAllBoardCards } from '@/app/server/card-operations/card'
-import CardView from '../card-components/card-view'
 import CardModal from '../card-components/card-modal'
 
 export default function Lists({
@@ -58,6 +57,7 @@ export default function Lists({
 	useEffect(() => {
 		setListsState(initialLists)
 	}, [initialLists])
+
 	useEffect(() => {
 		setCardsState(initialCards)
 	}, [initialCards])
@@ -84,55 +84,48 @@ export default function Lists({
 		if (activeId === overId) return
 
 		const isActiveList = active.data.current?.type === 'list'
-		if (!isActiveList) return
+		if (isActiveList) {
+			setListsState((lists) => {
+				if (!lists) return
+				const updatedList = [...lists]
+				const activeListIndex = updatedList.findIndex((list) => list.id === activeId)
+				const overListIndex = updatedList.findIndex((list) => list.id === overId)
 
-		setListsState((lists) => {
-			if (!lists) return
-			const updatedList = [...lists]
-			const activeListIndex = updatedList.findIndex((list) => list.id === activeId)
-			const overListIndex = updatedList.findIndex((list) => list.id === overId)
+				// Reorder the List
+				const [movedList] = updatedList.splice(activeListIndex, 1)
+				updatedList.splice(overListIndex, 0, movedList!)
 
-			// Reorder the List
-			const [movedList] = updatedList.splice(activeListIndex, 1)
-			updatedList.splice(overListIndex, 0, movedList!)
+				return updatedList
+			})
+		}
 
-			return updatedList
-		})
-
-		// setListsState((lists) => {
-		// 	if (!lists) return lists
-
-		// 	const activeListIdx = lists.findIndex((list) => list.id === activeListId)
-		// 	const overListIdx = lists.findIndex((list) => list.id === overListId)
-
-		// 	return arrayMove(lists, activeListIdx, overListIdx)
-		// })
-
-		// mutateListOrder.mutate()
+		mutateListOrder.mutate()
 	}
 
 	function onDragOver(e: DragOverEvent) {
 		const { active, over } = e
 		if (!over) return
 
-		const activeId = active.id
+		const activeCardId = active.id
 		const overId = over.id
 
-		if (activeId === overId) return
+		if (activeCardId === overId) return
 
-		const isActiveATask = active.data.current?.type === 'card'
-		const isOverATask = over.data.current?.type === 'card'
+		const isActiveCard = active.data.current?.type === 'card'
+		const isOverCard = over.data.current?.type === 'card'
 
-		if (!isActiveATask) return
+		if (!isActiveCard) return
 
-		if (isActiveATask && isOverATask) {
+		if (isActiveCard && isOverCard) {
 			setCardsState((cards) => {
 				if (!cards) return
 				const updatedCards = [...cards]
-				const activeIndex = cards.findIndex((t) => t.id === activeId)
-				const overIndex = cards.findIndex((t) => t.id === overId)
+				const activeIndex = cards.findIndex((card) => card.id === activeCardId)
+				const overIndex = cards.findIndex((card) => card.id === overId)
+
 				if (updatedCards[activeIndex]?.listId !== updatedCards[overIndex]?.listId) {
 					updatedCards[activeIndex]!.listId = updatedCards[overIndex]!.listId
+					updatedCards[activeIndex]!.position = overIndex
 				}
 
 				const [movedCard] = updatedCards.splice(activeIndex, 1)
@@ -142,13 +135,12 @@ export default function Lists({
 			})
 		}
 
-		const isOverAColumn = over.data.current?.type === 'list'
+		const isOverList = over.data.current?.type === 'list'
 
-		// Im dropping a card over a column
-		if (isActiveATask && isOverAColumn) {
+		if (isActiveCard && isOverList) {
 			setCardsState((cards) => {
 				if (!cards) return
-				const activeIndex = cards.findIndex((t) => t.id === activeId)
+				const activeIndex = cards.findIndex((card) => card.id === activeCardId)
 				cards[activeIndex]!.listId = overId as string
 
 				return arrayMove(cards, activeIndex, activeIndex)
@@ -202,7 +194,6 @@ export default function Lists({
 								boardMembers={boardMembers}
 								boardAuthorId={boardAuthorId}
 								listId={activeCard.listId}
-								listTitle={''}
 							/>
 						)}
 					</DragOverlay>,

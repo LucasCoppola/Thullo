@@ -18,7 +18,6 @@ import CardMembersList from './card-members-list'
 import { CoverImageSelector, CardCoverImage } from './card-cover-image'
 import { fetchAttachments, fetchCardMembers, fetchComments, fetchCoverImage, fetchLabels, fetchUser } from '@/app/fetch'
 import type { Card, User } from '@prisma/client'
-import type { CoverImageType } from '@/app/types'
 import CardTitle from './card-title'
 
 export default function CardModal({
@@ -32,7 +31,7 @@ export default function CardModal({
 	boardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 	boardAuthorId: string
 	listId: string
-	listTitle: string
+	listTitle?: string
 }) {
 	const [open, setOpen] = useState(false)
 
