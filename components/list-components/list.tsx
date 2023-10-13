@@ -42,28 +42,13 @@ export default function ListComponent({
 		transform: CSS.Transform.toString(transform)
 	}
 
-	if (isDragging) {
-		return (
-			<div
-				ref={setNodeRef}
-				style={{
-					width: '256px',
-					...style
-				}}
-				className="mt-4 px-1.5 pb-1.5 bg-[#e2e8f0] opacity-50 rounded-lg border border-blue-400 border-dashed h-screen"
-			></div>
-		)
-	}
-
 	return (
 		<div
 			ref={setNodeRef}
-			{...attributes}
-			{...listeners}
-			className="mt-4 bg-[#f8f9fa] px-1.5 pb-1.5 rounded-lg"
-			style={{ width: '256px', ...style }}
+			className={`mt-4 bg-[#f8f9fa] px-1.5 pb-1.5 rounded-lg h-[75vh] ${isDragging && 'opacity-30'}`}
+			style={{ width: '265px', ...style }}
 		>
-			<div className="flex flex-row items-center justify-between pb-4">
+			<div className="flex flex-row items-center justify-between pb-4" {...attributes} {...listeners}>
 				<EditableListTitle title={title} listId={listId} />
 				<DeleteList
 					listId={listId}
@@ -72,7 +57,7 @@ export default function ListComponent({
 					boardId={boardId}
 				/>
 			</div>
-			<div className="space-y-4">
+			<div className="space-y-4 overflow-y-auto max-h-96 overflow-x-hidden pb-2">
 				<Cards
 					listId={listId}
 					listTitle={list?.title || undefined}
