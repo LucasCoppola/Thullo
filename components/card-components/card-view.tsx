@@ -68,7 +68,7 @@ export default function CardView({
 			ref={setNodeRef}
 			{...attributes}
 			{...listeners}
-			className="bg-white rounded-xl shadow-md hover:shadow-lg space-y-2"
+			className="bg-white rounded-xl shadow-md space-y-2"
 			style={{ width: '243px', ...style }}
 		>
 			<div className="relative">
