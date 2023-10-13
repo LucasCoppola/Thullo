@@ -14,27 +14,26 @@ import { toast } from 'sonner'
 
 export function CoverImageSelector({
 	coverImage,
-	setCoverImage,
 	card,
 	boardAuthorId
 }: {
-	coverImage: CoverImageType | null
-	setCoverImage: (value: CoverImageType) => void
+	coverImage: CoverImageType | undefined
 	card: Card
 	boardAuthorId: string
 }) {
 	const { data: session } = useSession()
 	const queryClient = useQueryClient()
+	const [coverImageState, setCoverImageState] = useState(coverImage)
 
 	const mutateCoverImage = useMutation(
 		async () => {
-			if (!coverImage || !session) return
+			if (!coverImageState || !session) return
 
 			return await updateCoverImage({
 				boardAuthorId,
 				cardId: card.id,
 				authorId: card.authorId,
-				coverImage,
+				coverImage: coverImageState,
 				userId: session.userId
 			})
 		},
@@ -46,13 +45,13 @@ export function CoverImageSelector({
 	)
 
 	const handleSelectImage = (selectedImage: CoverImageType) => {
-		setCoverImage(selectedImage)
+		setCoverImageState(selectedImage)
 		mutateCoverImage.mutate()
 	}
 
 	return (
 		<CoverImageModal
-			coverImage={coverImage}
+			coverImage={coverImageState}
 			setCoverImage={handleSelectImage}
 			triggerButton={
 				<button className="flex flex-row items-center text-gray-700 text-sm ml-auto bg-gray-200 hover:bg-gray-300 px-4 py-1.5 rounded-md w-4/5">
@@ -66,13 +65,11 @@ export function CoverImageSelector({
 
 export function CardCoverImage({
 	coverImage,
-	setCoverImage,
 	card,
 	isCoverImageLoading,
 	boardAuthorId
 }: {
-	coverImage: CoverImageType | null
-	setCoverImage: (value: CoverImageType | null) => void
+	coverImage: CoverImageType | undefined
 	card: Card
 	isCoverImageLoading: boolean
 	boardAuthorId: string
@@ -91,10 +88,7 @@ export function CardCoverImage({
 			})
 		},
 		{
-			onSuccess: () => {
-				setCoverImage(null)
-				toast.success('Cover image removed')
-			},
+			onSuccess: () => toast.success('Cover image removed'),
 			onError: (e: Error) => toast.error(e.message)
 		}
 	)

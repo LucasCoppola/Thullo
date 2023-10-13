@@ -92,6 +92,7 @@ model MembersOnBoards {
 
 model List {
   id       String @id @default(cuid())
+  position Int    @default(autoincrement())
   authorId String
   boardId  String
   title    String
@@ -101,6 +102,7 @@ model List {
 
 model Card {
   id          String           @id @default(cuid())
+  position    Int              @default(autoincrement())
   authorId    String
   listId      String
   title       String

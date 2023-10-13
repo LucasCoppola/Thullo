@@ -2,29 +2,67 @@
 
 import { EditableListTitle } from './add-list'
 import AddButtonComponent from '../add-list-btn'
-import type { List, User } from '@prisma/client'
+import type { Card, User } from '@prisma/client'
 import { findListById } from '@/app/server/listsOperations'
 import Cards from '../card-components/cards'
 import { useQuery } from '@tanstack/react-query'
 import DeleteList from './delete-list'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
-export default function List({
+export default function ListComponent({
 	listId,
 	boardMembers,
 	boardId,
 	title,
-	boardAuthorId
+	boardAuthorId,
+	boardCards
 }: {
 	listId: string
 	boardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 	boardId: string
 	title: string
 	boardAuthorId: string
+	boardCards: Card[]
 }) {
 	const { data: list } = useQuery(['list', listId], async () => await findListById({ listId }))
 
+	const listCards = boardCards?.filter((card) => card.listId === listId)
+
+	const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
+		id: listId,
+		data: {
+			type: 'list',
+			list
+		}
+	})
+
+	const style = {
+		transition,
+		transform: CSS.Transform.toString(transform)
+	}
+
+	if (isDragging) {
+		return (
+			<div
+				ref={setNodeRef}
+				style={{
+					width: '256px',
+					...style
+				}}
+				className="mt-4 px-1.5 pb-1.5 bg-[#e2e8f0] opacity-50 rounded-lg border border-blue-400 border-dashed h-screen"
+			></div>
+		)
+	}
+
 	return (
-		<div className="mt-4" style={{ minWidth: '243px' }}>
+		<div
+			ref={setNodeRef}
+			{...attributes}
+			{...listeners}
+			className="mt-4 bg-[#f8f9fa] px-1.5 pb-1.5 rounded-lg"
+			style={{ width: '256px', ...style }}
+		>
 			<div className="flex flex-row items-center justify-between pb-4">
 				<EditableListTitle title={title} listId={listId} />
 				<DeleteList
@@ -40,6 +78,7 @@ export default function List({
 					listTitle={list?.title || undefined}
 					boardMembers={boardMembers}
 					boardAuthorId={boardAuthorId}
+					listCards={listCards}
 				/>
 			</div>
 

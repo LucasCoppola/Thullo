@@ -18,7 +18,6 @@ import CardMembersList from './card-members-list'
 import { CoverImageSelector, CardCoverImage } from './card-cover-image'
 import { fetchAttachments, fetchCardMembers, fetchComments, fetchCoverImage, fetchLabels, fetchUser } from '@/app/fetch'
 import type { Card, User } from '@prisma/client'
-import type { CoverImageType } from '@/app/types'
 import CardTitle from './card-title'
 
 export default function CardModal({
@@ -32,9 +31,8 @@ export default function CardModal({
 	boardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 	boardAuthorId: string
 	listId: string
-	listTitle: string
+	listTitle?: string
 }) {
-	const [coverImage, setCoverImage] = useState<CoverImageType | null>(null)
 	const [open, setOpen] = useState(false)
 
 	const attachmentsQueryKey = ['attachments', card.id]
@@ -44,11 +42,9 @@ export default function CardModal({
 	const cardMembersQueryKey = ['card-members', card.id]
 	const cardAuthorQueryKey = ['card-author', card.authorId]
 
-	const { isLoading: isCoverImageLoading } = useQuery(coverImageQueryKey, () => fetchCoverImage(card.id), {
-		onSuccess: (data) => {
-			setCoverImage(data)
-		}
-	})
+	const { data: coverImage, isLoading: isCoverImageLoading } = useQuery(coverImageQueryKey, () =>
+		fetchCoverImage(card.id)
+	)
 	const { data: labels } = useQuery(labelsQueryKey, () => fetchLabels(card.id))
 	const { data: attachments } = useQuery(attachmentsQueryKey, () => fetchAttachments(card.id))
 	const { data: cardAuthor } = useQuery(cardAuthorQueryKey, () => fetchUser(card.authorId))
@@ -84,8 +80,7 @@ export default function CardModal({
 				<DialogDescription asChild>
 					<>
 						<CardCoverImage
-							coverImage={coverImage || null}
-							setCoverImage={setCoverImage}
+							coverImage={coverImage}
 							card={card}
 							isCoverImageLoading={isCoverImageLoading}
 							boardAuthorId={boardAuthorId}
@@ -148,12 +143,7 @@ export default function CardModal({
 									cardAuthorId={card.authorId}
 								/>
 								<AddLabel cardId={card.id} labels={labels || []} />
-								<CoverImageSelector
-									coverImage={coverImage || null}
-									setCoverImage={setCoverImage}
-									card={card}
-									boardAuthorId={boardAuthorId}
-								/>
+								<CoverImageSelector coverImage={coverImage} card={card} boardAuthorId={boardAuthorId} />
 								<CardMembersList
 									card={card}
 									cardMembers={cardMembers}

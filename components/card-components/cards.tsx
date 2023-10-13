@@ -1,26 +1,31 @@
 'use client'
 
-import type { User } from '@prisma/client'
+import type { Card, User } from '@prisma/client'
 import CardModal from './card-modal'
-import { useQuery } from '@tanstack/react-query'
-import { getCards } from '@/app/server/card-operations/card'
+import { SortableContext } from '@dnd-kit/sortable'
+import { useMemo } from 'react'
 
 export default function Cards({
 	listId,
 	listTitle,
 	boardMembers,
-	boardAuthorId
+	boardAuthorId,
+	listCards
 }: {
 	listId: string
 	listTitle: string | undefined
 	boardMembers: Omit<User, 'email' | 'emailVerified'>[] | undefined
 	boardAuthorId: string
+	listCards?: Card[]
 }) {
-	const { data: cards } = useQuery(['cards', listId], async () => await getCards({ listId }))
+	const cardsId = useMemo(() => {
+		if (!listCards) return []
+		return listCards.map((card) => card.id)
+	}, [listCards])
 
 	return (
-		<>
-			{cards?.map((card) => (
+		<SortableContext items={cardsId}>
+			{listCards?.map((card) => (
 				<CardModal
 					key={card.id}
 					card={card}
@@ -30,6 +35,6 @@ export default function Cards({
 					listTitle={listTitle!}
 				/>
 			))}
-		</>
+		</SortableContext>
 	)
 }

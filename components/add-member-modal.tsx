@@ -28,7 +28,7 @@ export default function AddMemberModal({ authorId, id }: Board) {
 	const queryClient = useQueryClient()
 
 	const { data: users, isLoading: isLoadingUsers } = useQuery(['searchUsers', keyword], async () => {
-		if (!session) return
+		if (!session || !keyword) return []
 		return (await findUsers({ keyword, currUserId: session.userId })) as Omit<User, 'email' | 'emailVerified'>[]
 	})
 

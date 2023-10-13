@@ -15,7 +15,7 @@ export default function CoverImageModal({
 	setCoverImage,
 	triggerButton
 }: {
-	coverImage: CoverImageType | null
+	coverImage: CoverImageType | undefined
 	setCoverImage: (value: CoverImageType) => void
 	triggerButton: React.ReactNode
 }) {
