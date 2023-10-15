@@ -7,12 +7,23 @@ import { findBoardById } from '@/app/server/boardsOperations'
 import type { Session } from 'next-auth'
 import { usePathname } from 'next/navigation'
 import { Button } from '../ui/button'
-import { Search } from '../ui/icons'
+import { Search } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
+import {
+	CommandDialog,
+	CommandEmpty,
+	CommandGroup,
+	CommandInput,
+	CommandItem,
+	CommandList,
+	CommandSeparator
+} from '@/components/ui/command'
 
 export default function Navbar({ session }: { session: Session | null }) {
 	const pathname = usePathname()
 	const boardId = pathname.split('/').pop() as string
+	const [openSearchDialog, setOpenSearchDialog] = useState(false)
 
 	const { data: board } = useQuery(['board', boardId], async () => await findBoardById({ id: boardId }))
 
@@ -39,16 +50,36 @@ export default function Navbar({ session }: { session: Session | null }) {
 					{session ? (
 						<>
 							{pathname !== '/' && (
-								<div className="relative mr-20">
-									<input
-										type="text"
-										className="w-full py-2 pl-10 pr-10 text-gray-600 text-sm bg-white border rounded-lg focus:border-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300"
-										placeholder="Search..."
-									/>
-									<span className="absolute inset-y-0 left-0 flex items-center pl-3">
-										<Search />
-									</span>
-								</div>
+								<>
+									<div className="relative mr-20 flex" onClick={() => setOpenSearchDialog(true)}>
+										<input
+											type="button"
+											className="pl-9 py-2 text-gray-500 text-sm bg-white border border-gray-300 rounded-lg text-left"
+											style={{ width: '16rem' }}
+											value="Search..."
+										/>
+										<span className="absolute inset-y-0 left-0 flex items-center pl-3">
+											<Search className="h-4 w-4 text-gray-500" />
+										</span>
+									</div>
+									<CommandDialog open={openSearchDialog} onOpenChange={setOpenSearchDialog}>
+										<CommandInput placeholder="Type a command or search..." />
+										<CommandList>
+											<CommandEmpty>No results found.</CommandEmpty>
+											<CommandGroup heading="Suggestions">
+												<CommandItem>Calendar</CommandItem>
+												<CommandItem>Search Emoji</CommandItem>
+												<CommandItem>Calculator</CommandItem>
+											</CommandGroup>
+											<CommandSeparator />
+											<CommandGroup heading="Settings">
+												<CommandItem>Profile</CommandItem>
+												<CommandItem>Billing</CommandItem>
+												<CommandItem>Settings</CommandItem>
+											</CommandGroup>
+										</CommandList>
+									</CommandDialog>
+								</>
 							)}
 							<UserDropdown session={session} />
 						</>
