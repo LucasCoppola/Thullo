@@ -10,6 +10,7 @@ import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { useMemo, useState, useEffect } from 'react'
 import { DndContext, DragOverlay, useSensors, useSensor, PointerSensor } from '@dnd-kit/core'
 import { toast } from 'sonner'
+import DraggableContainer from '../draggable-container'
 
 import type { Card, List, User } from '@prisma/client'
 import type { DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core'
@@ -158,7 +159,7 @@ export default function Lists({
 
 	return (
 		<DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
-			<div className="flex flex-row gap-8 w-full">
+			<DraggableContainer>
 				<SortableContext items={listsId}>
 					{listsState?.map(({ id, title }) => (
 						<ListComponent
@@ -173,7 +174,7 @@ export default function Lists({
 					))}
 				</SortableContext>
 				<AddButtonComponent name="list" boardId={boardId} />
-			</div>
+			</DraggableContainer>
 
 			{typeof document !== 'undefined' &&
 				createPortal(

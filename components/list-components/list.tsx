@@ -45,7 +45,7 @@ export default function ListComponent({
 	return (
 		<div
 			ref={setNodeRef}
-			className={`mt-4 bg-[#f8f9fa] px-1.5 pb-1.5 rounded-lg h-[75vh] ${isDragging && 'opacity-30'}`}
+			className={`mt-4 bg-[#f8f9fa] px-1.5 pb-1.5 rounded-lg max-h-[75vh] ${isDragging && 'opacity-30'}`}
 			style={{ width: '265px', ...style }}
 		>
 			<div className="flex flex-row items-center justify-between pb-4" {...attributes} {...listeners}>
