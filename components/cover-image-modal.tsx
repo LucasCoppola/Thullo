@@ -5,7 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { LoadingCircle, Search } from '@/components/ui/icons'
+import { LoadingCircle } from '@/components/ui/icons'
+import { Search } from 'lucide-react'
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { CoverImageType, ImageData } from '@/app/types'
@@ -127,13 +128,13 @@ function UnsplashTabContent({ setCoverImage }: { setCoverImage: (value: CoverIma
 		<div className="px-1">
 			<div className="relative mt-1">
 				<input
-					className="w-full py-2 pl-10 pr-10 text-gray-600 text-sm bg-white border rounded-lg focus:border-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300"
+					className="w-full py-2 pl-9 pr-10 text-gray-600 text-sm bg-white border rounded-lg focus:border-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300"
 					placeholder="Search for an image..."
 					value={query}
 					onChange={(e) => setQuery(e.target.value)}
 				/>
 				<span className="absolute inset-y-0 left-0 flex items-center pl-3">
-					<Search />
+					<Search className="h-4 w-4 text-gray-400" />
 				</span>
 			</div>
 			{isErrorRandom || isErrorSearch ? (
