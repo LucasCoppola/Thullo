@@ -80,7 +80,6 @@ enum BoardVisibility {
 }
 
 model MembersOnBoards {
-  id      String @id @default(cuid())
   userId  String
   boardId String
 

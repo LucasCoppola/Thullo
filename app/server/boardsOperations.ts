@@ -75,6 +75,22 @@ export async function findBoardById({ id }: { id: string }) {
 	}
 }
 
+export async function findBoard({ keyword, userId }: { keyword: string; userId: string }) {
+	try {
+		const boards = await prisma.board.findMany({
+			where: {
+				title: { startsWith: keyword, mode: 'insensitive' },
+				OR: [{ members: { some: { userId } } }, { author: { id: userId } }]
+			}
+		})
+
+		return boards
+	} catch (e) {
+		console.error(e)
+		throw (e as Error).message
+	}
+}
+
 export async function deleteBoard({
 	boardId,
 	authorId,
