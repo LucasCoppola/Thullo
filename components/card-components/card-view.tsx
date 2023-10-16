@@ -2,7 +2,6 @@ import Image from 'next/image'
 import { MessageSquare, Paperclip } from 'lucide-react'
 import type { Card, Label, User } from '@prisma/client'
 import type { ColorProps, CoverImageType } from '@/app/types'
-import SkeletonImage from '../loading/skeleton-image'
 import SkeletonCard from '../loading/skeleton-card'
 import DeleteCard from './delete-card'
 import { useSortable } from '@dnd-kit/sortable'
@@ -82,7 +81,9 @@ export default function CardView({
 				)}
 
 				{isCoverImageLoading ? (
-					<SkeletonImage />
+					<div role="status" className="w-full">
+						<div className="flex items-center justify-center h-[110px] bg-gray-200 rounded-t-xl"></div>
+					</div>
 				) : coverImage ? (
 					coverImage?.type === 'image' ? (
 						<Image
