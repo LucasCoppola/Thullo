@@ -46,7 +46,7 @@ export default function CardDescription({
 	}, [editDescription])
 
 	const renderFormattedText = (text: string) => {
-		const boldRegex = /\*(.*?)\*/g
+		const boldRegex = /\*\*(.*?)\*\*/g
 		const lineBreaksReplaced = text.replace(/\n/g, '<br>')
 		const formattedText = lineBreaksReplaced.replace(boldRegex, '<strong>$1</strong>')
 		return formattedText
@@ -59,7 +59,7 @@ export default function CardDescription({
 					<FileText className="h-3.5 w-3.5 mr-1" />
 					Description
 				</span>
-				{!editDescription && (
+				{!editDescription && session?.userId === authorId && (
 					<button
 						className="ml-3 border border-gray-300 rounded-full p-1 hover:bg-gray-200 transition duration-200 flex flex-row items-center text-gray-400"
 						title="Edit description"
@@ -79,9 +79,9 @@ export default function CardDescription({
 						>
 							Make a word <strong>bold</strong> by
 							<br />
-							enclosing it in <strong>*</strong>
+							enclosing it in <strong>**</strong>
 							asterisks
-							<strong>*</strong>.
+							<strong>**</strong>.
 						</Tooltip>
 
 						<textarea
@@ -97,6 +97,7 @@ export default function CardDescription({
 								textarea.style.height = `${textarea.scrollHeight}px`
 								setDescription(e.target.value)
 							}}
+							autoFocus
 						/>
 					</>
 				) : (

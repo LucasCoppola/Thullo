@@ -24,7 +24,7 @@ export default function Description({
 	}, [editDescription])
 
 	const renderFormattedText = (text: string) => {
-		const boldRegex = /\*(.*?)\*/g
+		const boldRegex = /\*\*(.*?)\*\*/g
 		const lineBreaksReplaced = text.replace(/\n/g, '<br>')
 		const formattedText = lineBreaksReplaced.replace(boldRegex, '<strong>$1</strong>')
 		return formattedText
@@ -57,9 +57,9 @@ export default function Description({
 						>
 							Make a word <strong>bold</strong> by
 							<br />
-							enclosing it in <strong>*</strong>
+							enclosing it in <strong>**</strong>
 							asterisks
-							<strong>*</strong>.
+							<strong>**</strong>.
 						</Tooltip>
 
 						<textarea
@@ -75,6 +75,7 @@ export default function Description({
 								textarea.style.height = `${textarea.scrollHeight}px`
 								setDescription(e.target.value)
 							}}
+							autoFocus
 						/>
 					</>
 				) : (
