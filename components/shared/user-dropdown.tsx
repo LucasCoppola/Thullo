@@ -54,9 +54,6 @@ export default function UserDropdown({ session }: { session: Session }) {
 					<h2 className="truncate">{session.user.email}</h2>{' '}
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem>Profile</DropdownMenuItem>
-				<DropdownMenuItem>Billing</DropdownMenuItem>
-				<DropdownMenuSeparator />
 				<DropdownMenuItem
 					onClick={() => {
 						signOut({ redirect: true, callbackUrl: '/' })
