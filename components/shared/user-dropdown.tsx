@@ -26,12 +26,12 @@ export default function UserDropdown({ session }: { session: Session }) {
 				>
 					<Image
 						src={session.user.image || ''}
-						className="mr-3 object-cover h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-gray-300 transition-all duration-75 focus:outline-none active:scale-95 sm:h-9 sm:w-9"
+						className="md:mr-3 object-cover h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-gray-300 transition-all duration-75 focus:outline-none active:scale-95 sm:h-9 sm:w-9"
 						alt="avatar"
 						width={400}
 						height={400}
 					/>
-					{session.user.name}
+					<span className="hidden md:block">{session.user.name}</span>
 					<svg
 						className={`w-2.5 h-2.5 ml-3 transition-transform ${isOpen ? 'rotate-180' : 'rotate-0'}`}
 						aria-hidden="true"

@@ -12,7 +12,7 @@ export default function Boards({ userId }: { userId: string }) {
 
 	return (
 		<>
-			{!boards ? (
+			{!boards && !isLoading ? (
 				<Image
 					className="w-full text-center h-96"
 					src="./no-boards.svg"
@@ -21,7 +21,7 @@ export default function Boards({ userId }: { userId: string }) {
 					height={400}
 				/>
 			) : (
-				<div className="flex flex-wrap gap-9">
+				<div className="flex justify-center flex-wrap gap-6 md:gap-9 last:mb-6 md:last:mb-0">
 					{isLoading
 						? Array(3)
 								.fill(null)

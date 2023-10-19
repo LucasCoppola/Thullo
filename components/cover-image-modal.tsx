@@ -31,7 +31,7 @@ export default function CoverImageModal({
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>{triggerButton}</DialogTrigger>
-			<DialogContent>
+			<DialogContent className="w-[350px] md:w-auto">
 				<Tabs defaultValue="colors" className="w-[400px]">
 					<TabsList>
 						<TabsTrigger value="colors">Colors</TabsTrigger>
@@ -39,13 +39,13 @@ export default function CoverImageModal({
 					</TabsList>
 					<TabsContent
 						value="colors"
-						className="w-[29rem] overflow-y-scroll md:overflow-y-auto max-h-[232px]"
+						className="w-[300px] md:w-[29rem] overflow-y-scroll md:overflow-y-auto max-h-[232px]"
 					>
 						<ColorsTabContent setCoverImage={setCoverImage} />
 					</TabsContent>
 					<TabsContent
 						value="unsplash"
-						className="w-[29rem] overflow-y-scroll md:overflow-y-auto max-h-[232px]"
+						className="w-[300px] md:w-[29rem] overflow-y-scroll md:overflow-y-auto max-h-[232px]"
 					>
 						<UnsplashTabContent setCoverImage={setCoverImage} />
 					</TabsContent>

@@ -19,11 +19,10 @@ export default function SearchBoardModal({ userId }: { userId: string }) {
 
 	return (
 		<>
-			<div className="relative mr-20 flex" onClick={() => setOpenSearchDialog(true)}>
+			<div className="relative mr-10 md:mr-20 flex" onClick={() => setOpenSearchDialog(true)}>
 				<input
 					type="button"
-					className="pl-9 py-2 text-gray-500 text-sm bg-white border border-gray-300 rounded-lg text-left"
-					style={{ width: '16rem' }}
+					className="w-40 md:w-64 pl-9 py-2 text-gray-500 text-sm bg-white border border-gray-300 rounded-lg text-left"
 					value="Search..."
 				/>
 				<span className="absolute inset-y-0 left-0 flex items-center pl-3">

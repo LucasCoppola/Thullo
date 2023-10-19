@@ -97,8 +97,8 @@ export default function CreateBoard() {
 					<Add className="mr-2 h-5 w-5" /> Add
 				</Button>
 			</DialogTrigger>
-			<DialogContent>
-				<DialogHeader>
+			<DialogContent className="w-[350px] md:w-auto">
+				<DialogHeader className="w-[300px] md:w-auto">
 					<DialogTitle className="mb-3">Create Board</DialogTitle>
 					<form onSubmit={handleSubmit}>
 						<DialogDescription className="w-full space-y-4">
@@ -210,7 +210,7 @@ export default function CreateBoard() {
 								</div>
 							</div>
 
-							<Button type="submit" disabled={isLoading} variant="blue" className="ml-96">
+							<Button type="submit" disabled={isLoading} variant="blue" className="ml-52 md:ml-96">
 								{isLoading ? <LoadingCircle className="fill-white mx-4 text-blue-200" /> : 'Create'}
 							</Button>
 						</DialogDescription>

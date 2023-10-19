@@ -11,7 +11,7 @@ export default async function BoardsPage() {
 	const userId = session.userId
 
 	return (
-		<div className="mx-24">
+		<div className="mx-6 md:mx-24">
 			<div className="flex justify-between w-full mt-14 mb-6">
 				<h1 className="text-lg font-medium text-gray-800">All Boards</h1>
 				<CreateBoard />
