@@ -9,8 +9,8 @@ import {
 	AlertDialogDescription,
 	AlertDialogTitle,
 	AlertDialogTrigger
-} from '../ui/alert-dialog'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../ui/dropdown-menu'
+} from './ui/alert-dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
 
 export default function DeleteItem({
 	name,

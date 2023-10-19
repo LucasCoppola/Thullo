@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import EditableTitle from '../shared/editable-title'
+import EditableTitle from '../editable-title'
 import { useMutation } from '@tanstack/react-query'
 import { updateCardTitle } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
