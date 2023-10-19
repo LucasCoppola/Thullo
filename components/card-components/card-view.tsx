@@ -1,3 +1,4 @@
+import React, { forwardRef } from 'react'
 import Image from 'next/image'
 import { MessageSquare, Paperclip } from 'lucide-react'
 import type { Card, Label, User } from '@prisma/client'
@@ -20,18 +21,21 @@ type CardViewProps = {
 	boardAuthorId: string
 }
 
-export default function CardView({
-	setOpen,
-	card,
-	attachmentsLength,
-	commentsLength,
-	labels,
-	coverImage,
-	cardMembers,
-	isCoverImageLoading,
-	listId,
-	boardAuthorId
-}: CardViewProps) {
+const CardView = forwardRef<HTMLDivElement, CardViewProps>(function CardView(
+	{
+		setOpen,
+		card,
+		attachmentsLength,
+		commentsLength,
+		labels,
+		coverImage,
+		cardMembers,
+		isCoverImageLoading,
+		listId,
+		boardAuthorId
+	},
+	ref
+) {
 	const remainingAvatars = cardMembers?.length! - 3
 
 	const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
@@ -169,4 +173,6 @@ export default function CardView({
 			)}
 		</div>
 	)
-}
+})
+
+export default CardView
