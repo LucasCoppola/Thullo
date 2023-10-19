@@ -8,7 +8,7 @@ import { updateBoardTitle, updateBoardDescription } from '@/app/server/boardsOpe
 
 import MemberList from '../sheet-components/member-list'
 import Description from '../sheet-components/description'
-import EditableTitle from '../shared/editable-title'
+import EditableTitle from '../editable-title'
 import { removeMember } from '@/app/server/membersOperations'
 import { toast } from 'sonner'
 

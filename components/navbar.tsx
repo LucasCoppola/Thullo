@@ -6,10 +6,10 @@ import Link from 'next/link'
 import { findBoardById } from '@/app/server/boardsOperations'
 import type { Session } from 'next-auth'
 import { usePathname } from 'next/navigation'
-import { Button } from '../ui/button'
+import { Button } from './ui/button'
 import { useQuery } from '@tanstack/react-query'
 
-import SearchBoardModal from '../search-board-modal'
+import SearchBoardModal from './search-board-modal'
 
 export default function Navbar({ session }: { session: Session | null }) {
 	const pathname = usePathname()

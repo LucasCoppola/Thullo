@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
-import DeleteItem from '../shared/delete-item'
+import DeleteItem from '../delete-item'
 import { deleteBoard } from '@/app/server/boardsOperations'
 import { toast } from 'sonner'
 

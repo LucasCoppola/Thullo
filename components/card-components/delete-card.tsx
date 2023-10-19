@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { removeCard } from '@/app/server/card-operations/card'
 import { useSession } from 'next-auth/react'
-import DeleteItem from '../shared/delete-item'
+import DeleteItem from '../delete-item'
 import { toast } from 'sonner'
 
 export default function DeleteCard({

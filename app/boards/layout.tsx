@@ -1,4 +1,4 @@
-import Nav from '@/components/shared/nav'
+import Nav from '@/components/nav'
 import { Poppins } from 'next/font/google'
 import { Toaster } from 'sonner'
 
