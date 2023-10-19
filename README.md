@@ -1,34 +1,36 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Project Overview
 
-## Getting Started
+This project is a robust task management application, designed to streamline team collaboration and task tracking. Built with Next.js, it offers a user-friendly interface that allows users to efficiently organize their tasks. From creating and managing multiple boards to customizing task cards, the application provides a comprehensive suite of features to enhance productivity and task management
 
-First, run the development server:
+## Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+-   **User Authentication**: Secure user authentication implemented using Next Auth.
+-   **Boards**: Users can create, update, delete, and manage multiple boards. Each board can have its own visibility settings, cover image, title, and description.
+-   **Board Members**: Users can add or remove members to their boards. This feature is only available to the author of the board.
+-   **Easy Access to Boards**: A search functionality is available on the navbar for easy access to the boards.
+-   **Lists**: Users can create, update, and delete multiple lists within a board. Lists can be rearranged using drag and drop functionality.
+-   **Cards**: Each list can contain multiple cards. Each card has its own author and can be rearranged within and across lists. Cards can have a cover image, title, description, attachments, comments, members, and labels with customizable colors and names.
+-   **Cover Images**: Users can set a cover image for their boards and cards. They can choose from neutral colors or search for specific images from Unsplash.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technologies Used
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+-   **Next.js**: For building the user interface.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+-   **Typescript**: For type-safe development across the application.
 
-## Learn More
+-   **TanStack Query**: For efficient fetching, caching, and state
+    management.
 
-To learn more about Next.js, take a look at the following resources:
+-   **Prisma**: Utilized for managing database operations.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+-   **Tailwind and Shadcn/ui**: Employed for rapid, responsive, and customizable UI design and component development.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+-   **Next Auth**: For secure authentication in Next.js applications.
 
-## Deploy on Vercel
+-   **Uploadthing**: File uploads.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The project is ready for deployment on the Vercel Platform, a platform built by the creators of Next.js.
+
+Postgres database hosted on Railway.
