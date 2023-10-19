@@ -82,7 +82,7 @@ export default function Description({
 					<>
 						{description ? (
 							<p
-								className="break-words"
+								className="break-words text-left"
 								ref={paragraphRef}
 								dangerouslySetInnerHTML={{
 									__html: renderFormattedText(description)

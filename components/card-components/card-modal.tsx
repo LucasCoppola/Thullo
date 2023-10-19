@@ -101,7 +101,7 @@ export default function CardModal({
 								/>
 
 								{/* Attachments */}
-								<div className="text-xs font-medium text-gray-600 flex flex-row items-center mb-4">
+								<div className="text-xs font-medium text-gray-600 flex flex-row items-center mb-2 md:mb-4">
 									<Paperclip className="h-3.5 w-3.5 mr-1" />
 									Attachments
 									<UploadFile cardId={card.id} />
