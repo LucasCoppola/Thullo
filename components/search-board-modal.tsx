@@ -7,10 +7,15 @@ import { useQuery } from '@tanstack/react-query'
 import { findBoard } from '@/app/server/boardsOperations'
 import { LoadingCircle } from './ui/icons'
 import type { CoverImageType } from '@/app/types'
+import { usePathname } from 'next/navigation'
+import useWindowSize from '@/lib/hooks/useWindowSize'
 
-export default function SearchBoardModal({ userId }: { userId: string }) {
+export default function SearchBoardModal({ userId, boardId }: { userId: string; boardId: string }) {
+	const pathname = usePathname()
 	const [openSearchDialog, setOpenSearchDialog] = useState(false)
 	const [keyword, setKeyword] = useState('')
+	const { isMobile, isMid } = useWindowSize()
+	const isBoardIdPage = pathname === `/boards/${boardId}`
 
 	const { data: boards, isLoading } = useQuery(
 		['search-board', keyword],
@@ -19,16 +24,25 @@ export default function SearchBoardModal({ userId }: { userId: string }) {
 
 	return (
 		<>
-			<div className="relative mr-10 md:mr-20 flex" onClick={() => setOpenSearchDialog(true)}>
-				<input
-					type="button"
-					className="w-40 md:w-64 pl-9 py-2 text-gray-500 text-sm bg-white border border-gray-300 rounded-lg text-left"
-					value="Search..."
-				/>
-				<span className="absolute inset-y-0 left-0 flex items-center pl-3">
-					<Search className="h-4 w-4 text-gray-500" />
-				</span>
-			</div>
+			{(isMobile && isBoardIdPage) || (isMid && isBoardIdPage) ? (
+				<div
+					className="flex items-center mr-3 border rounded-md px-1.5"
+					onClick={() => setOpenSearchDialog(true)}
+				>
+					<Search className="w-5 h-5 text-gray-500" />
+				</div>
+			) : (
+				<div className="relative mr-10 md:mr-20 flex" onClick={() => setOpenSearchDialog(true)}>
+					<input
+						type="button"
+						className="w-40 md:w-64 pl-9 py-2 text-gray-500 text-sm bg-white border border-gray-300 rounded-lg text-left"
+						value="Search..."
+					/>
+					<span className="absolute inset-y-0 left-0 flex items-center pl-3">
+						<Search className="w-4 h-4 text-gray-500" />
+					</span>
+				</div>
+			)}
 			<CommandDialog open={openSearchDialog} onOpenChange={setOpenSearchDialog}>
 				<>
 					<CommandInput
@@ -49,7 +63,7 @@ export default function SearchBoardModal({ userId }: { userId: string }) {
 								return (
 									<li
 										key={board.id}
-										className="py-1 select-none rounded-sm px-2 text-sm outline-none hover:bg-gray-100"
+										className="py-1 select-none rounded-sm px-2 text-sm outline-none hover-bg-gray-100"
 									>
 										<Link
 											href={`/boards/${board.id}`}
