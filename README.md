@@ -1,36 +1,45 @@
-# Project Overview
+# Thullo - Task Management Application
 
-This project is a robust task management application, designed to streamline team collaboration and task tracking. Built with Next.js, it offers a user-friendly interface that allows users to efficiently organize their tasks. From creating and managing multiple boards to customizing task cards, the application provides a comprehensive suite of features to enhance productivity and task management
+Thullo is a Trello-inspired task management application designed for seamless team collaboration and task tracking. Built using Next.js, it provides a user-friendly interface that simplifies task organization. From creating and managing multiple boards to customizing task cards.
 
 ## Key Features
 
--   **User Authentication**: Secure user authentication implemented using Next Auth.
--   **Boards**: Users can create, update, delete, and manage multiple boards. Each board can have its own visibility settings, cover image, title, and description.
--   **Board Members**: Users can add or remove members to their boards. This feature is only available to the author of the board.
--   **Easy Access to Boards**: A search functionality is available on the navbar for easy access to the boards.
--   **Lists**: Users can create, update, and delete multiple lists within a board. Lists can be rearranged using drag and drop functionality.
--   **Cards**: Each list can contain multiple cards. Each card has its own author and can be rearranged within and across lists. Cards can have a cover image, title, description, attachments, comments, members, and labels with customizable colors and names.
--   **Cover Images**: Users can set a cover image for their boards and cards. They can choose from neutral colors or search for specific images from Unsplash.
+-   **User Authentication**: Secure user authentication through Next Auth, safeguarding user accounts and data.
 
-## Technologies Used
+-   **Boards**: Users have the flexibility to create, modify, delete, and oversee multiple boards. Each board can be personalized with its own visibility settings, cover image, title, and description.
 
--   **Next.js**: For building the user interface.
+-   **Board Members**: Board authors can add or remove members to foster team collaboration, with this feature exclusively available to the board's creator.
 
--   **Typescript**: For type-safe development across the application.
+-   **Easy access to boards**: A convenient search functionality in the navbar allows swift access to boards, ensuring an efficient user experience.
 
--   **TanStack Query**: For efficient fetching, caching, and state
-    management.
+-   **List Management**: Users can create, edit, and delete multiple lists within a board. Lists are easily reorganized through intuitive drag-and-drop functionality.
 
--   **Prisma**: Utilized for managing database operations.
+-   **Card Customization**: Each list can contain multiple cards, each with its own author. Cards are easily rearranged within and across lists, and they can be enriched with cover images, titles, descriptions, attachments, comments, members, and labels with customizable colors and names.
 
--   **Tailwind and Shadcn/ui**: Employed for rapid, responsive, and customizable UI design and component development.
+-   **Cover Images**: Thullo empowers users to personalize their boards and cards with cover images. Choose from a selection of neutral colors or search for specific images on Unsplash to add a personal touch.
 
--   **Next Auth**: For secure authentication in Next.js applications.
+## Technologies Utilized
 
--   **Uploadthing**: File uploads.
+-   **Next.js**: Powering the user interface and delivering a seamless user experience.
+
+-   **Typescript**: Enabling type-safe development throughout the application for enhanced reliability.
+
+-   **TanStack Query**: Facilitating efficient data fetching, caching, and state management.
+
+-   **Prisma**: Providing essential database operations to manage data effectively.
+
+-   **Tailwind and Shadcn/ui**: Crafting responsive, customizable, and visually appealing UI elements to enhance user interaction.
+
+-   **Next Auth**: Ensuring secure authentication within Next.js applications to protect user accounts.
+
+-   **Uploadthing**: Simplifying file uploads and management for a seamless user experience.
 
 ## Deployment
 
-The project is ready for deployment on the Vercel Platform, a platform built by the creators of Next.js.
+Thullo is deployed on the Vercel Platform, ensuring a robust hosting environment for your application.
 
-Postgres database hosted on Railway.
+Postgres database hosting is provided by Railway, ensuring reliable data storage and management.
+
+## Acknowledgements
+
+-   **Design and Concept**: Thank you [devchallenges.com](https://legacy.devchallenges.io/challenges/wP0LbGgEeKhpFHUpPpDh) for providing the design and idea.
