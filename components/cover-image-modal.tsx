@@ -32,7 +32,7 @@ export default function CoverImageModal({
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>{triggerButton}</DialogTrigger>
 			<DialogContent className="w-[350px] md:w-auto">
-				<Tabs defaultValue="colors" className="w-[400px]">
+				<Tabs defaultValue="colors">
 					<TabsList>
 						<TabsTrigger value="colors">Colors</TabsTrigger>
 						<TabsTrigger value="unsplash">Unsplash</TabsTrigger>
