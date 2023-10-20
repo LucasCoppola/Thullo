@@ -83,10 +83,7 @@ export async function removeMember({
 	currUserId: string
 }) {
 	try {
-		if (currUserId === userId) {
-			throw new Error("You can't delete yourself")
-		}
-		if (authorId !== currUserId) {
+		if (authorId !== currUserId && currUserId !== userId) {
 			throw new Error('Unauthorized')
 		}
 		if (authorId === userId) {
