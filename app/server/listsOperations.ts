@@ -4,11 +4,14 @@ import prisma from '@/lib/prisma'
 
 export async function createList({ authorId, boardId, title }: { authorId: string; boardId: string; title: string }) {
 	try {
+		const listsLength = (await getLists({ boardId })).length
+
 		const createList = await prisma.list.create({
 			data: {
 				authorId,
 				boardId,
-				title
+				title,
+				position: listsLength + 1
 			}
 		})
 
