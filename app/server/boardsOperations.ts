@@ -10,6 +10,9 @@ type coverImageType = Prisma.NullTypes.JsonNull | Prisma.InputJsonValue
 export async function getBoards({ userId }: { userId: string }) {
 	try {
 		const ownedBoards = await prisma.board.findMany({
+			orderBy: {
+				createdAt: 'asc'
+			},
 			where: {
 				authorId: userId
 			}
