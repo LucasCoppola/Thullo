@@ -3,6 +3,7 @@
 import prisma from '@/lib/prisma'
 import { Prisma, type Board } from '@prisma/client'
 import type { CreateBoardType, VisibilityMutation } from '../types'
+import { removeMember } from './membersOperations'
 
 type coverImageType = Prisma.NullTypes.JsonNull | Prisma.InputJsonValue
 
@@ -94,22 +95,27 @@ export async function findBoard({ keyword, userId }: { keyword: string; userId: 
 export async function deleteBoard({
 	boardId,
 	authorId,
-	currUserId
+	currUserId,
+	leaveOnly
 }: {
 	boardId: string
 	authorId: string
 	currUserId: string
+	leaveOnly?: boolean
 }) {
 	try {
 		if (currUserId !== authorId) {
-			throw new Error('Unauthorized')
-		}
-
-		await prisma.board.delete({
-			where: {
-				id: boardId
+			if (leaveOnly) {
+				// Leave the board without deleting it
+				await removeMember({ boardId, authorId, currUserId, userId: currUserId })
+			} else {
+				await prisma.board.delete({
+					where: {
+						id: boardId
+					}
+				})
 			}
-		})
+		}
 	} catch (e) {
 		console.error(e)
 		throw (e as Error).message
