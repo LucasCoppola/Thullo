@@ -24,14 +24,16 @@ export default function AddCard({ setCreateMode, listId }: { setCreateMode: (val
 		{
 			onSuccess: () => {
 				toast.success('Card created')
-				queryClient.invalidateQueries(['cards', listId])
 				setCreateMode(false)
 			},
 			onError: (e: Error) => {
 				console.error(e)
 				toast.error(e.message)
 			},
-			onSettled: () => setCardTitle('')
+			onSettled: () => {
+				queryClient.invalidateQueries(['cards', listId])
+				setCardTitle('')
+			}
 		}
 	)
 	return (
