@@ -96,7 +96,7 @@ export async function deleteBoard({
 	boardId,
 	authorId,
 	currUserId,
-	leaveOnly
+	leaveOnly = false
 }: {
 	boardId: string
 	authorId: string
@@ -109,13 +109,15 @@ export async function deleteBoard({
 				// Leave the board without deleting it
 				await removeMember({ boardId, authorId, currUserId, userId: currUserId })
 			} else {
-				await prisma.board.delete({
-					where: {
-						id: boardId
-					}
-				})
+				throw new Error("You're not the author of this board")
 			}
 		}
+
+		await prisma.board.delete({
+			where: {
+				id: boardId
+			}
+		})
 	} catch (e) {
 		console.error(e)
 		throw (e as Error).message
