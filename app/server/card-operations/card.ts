@@ -32,11 +32,14 @@ export async function getCards({ listId }: { listId: string }) {
 
 export async function createCard({ listId, title, authorId }: { listId: string; title: string; authorId: string }) {
 	try {
+		const cardsLength = (await getCards({ listId })).length
+
 		const createCard = await prisma.card.create({
 			data: {
 				authorId,
 				listId,
-				title
+				title,
+				position: cardsLength + 1
 			}
 		})
 
