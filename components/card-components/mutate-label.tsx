@@ -64,7 +64,6 @@ export default function MutateLabel({
 			}
 		},
 		{
-			onSuccess: () => toast.success('Label updated'),
 			onError: (e) => toast.error((e as Error).message),
 			onSettled: () => setQueryInvalidation(cardId)
 		}
