@@ -10,7 +10,6 @@ import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { useMemo, useState, useEffect } from 'react'
 import { DndContext, DragOverlay, useSensors, useSensor, PointerSensor } from '@dnd-kit/core'
 import { toast } from 'sonner'
-import DraggableContainer from '../draggable-container'
 
 import type { Card, List, User } from '@prisma/client'
 import type { DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core'
