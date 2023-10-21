@@ -76,6 +76,7 @@ export function CardCoverImage({
 }) {
 	const { data: session } = useSession()
 	const [isCoverImageHovered, setIsCoverImageHovered] = useState(false)
+	const queryClient = useQueryClient()
 
 	const { mutate } = useMutation(
 		async () => {
@@ -89,7 +90,8 @@ export function CardCoverImage({
 		},
 		{
 			onSuccess: () => toast.success('Cover image removed'),
-			onError: (e: Error) => toast.error(e.message)
+			onError: (e: Error) => toast.error(e.message),
+			onSettled: () => queryClient.invalidateQueries(['cover-image', card.id])
 		}
 	)
 
