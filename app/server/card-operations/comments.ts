@@ -5,6 +5,9 @@ import prisma from '@/lib/prisma'
 export async function getComments({ cardId }: { cardId: string }) {
 	try {
 		const comments = await prisma.comment.findMany({
+			orderBy: {
+				createdAt: 'asc'
+			},
 			where: {
 				cardId
 			}
