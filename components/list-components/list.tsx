@@ -45,7 +45,7 @@ export default function ListComponent({
 	return (
 		<div
 			ref={setNodeRef}
-			className={`mt-4 bg-[#f8f9fa] px-1.5 pb-1.5 rounded-lg max-h-[75vh] ${isDragging && 'opacity-30'}`}
+			className={`mt-4 bg-[#f8f9fa] px-1.5 pb-1.5 rounded-lg max-h-[80vh] ${isDragging && 'opacity-30'}`}
 			style={{ width: '265px', ...style }}
 		>
 			<div className="flex flex-row items-center justify-between pb-4" {...attributes} {...listeners}>
@@ -57,7 +57,7 @@ export default function ListComponent({
 					boardId={boardId}
 				/>
 			</div>
-			<div className="space-y-4 overflow-y-auto max-h-96 overflow-x-hidden pb-2 pr-0.5">
+			<div className="space-y-4 overflow-y-auto max-h-[63vh] overflow-x-hidden pb-2 pr-0.5">
 				<Cards
 					listId={listId}
 					listTitle={list?.title || undefined}
