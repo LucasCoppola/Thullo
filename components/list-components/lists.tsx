@@ -159,7 +159,7 @@ export default function Lists({
 
 	return (
 		<DndContext sensors={sensors} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOver={onDragOver}>
-			<DraggableContainer>
+			<div className="flex flex-row gap-8 w-full">
 				<SortableContext items={listsId}>
 					{listsState?.map(({ id, title }) => (
 						<ListComponent
@@ -174,7 +174,7 @@ export default function Lists({
 					))}
 				</SortableContext>
 				<AddButtonComponent name="list" boardId={boardId} />
-			</DraggableContainer>
+			</div>
 
 			{typeof document !== 'undefined' &&
 				createPortal(
