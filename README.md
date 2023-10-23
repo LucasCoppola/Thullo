@@ -2,6 +2,10 @@
 
 Thullo is a Trello-inspired task management application designed for seamless team collaboration and task tracking. Built using Next.js, it provides a user-friendly interface that simplifies task organization. From creating and managing multiple boards to customizing task cards.
 
+https://github.com/LucasCoppola/Thullo/assets/112649792/b8a4dbf7-d4ee-46a3-87c4-913faf4f6af1
+
+
+
 ## Key Features
 
 -   **User Authentication**: Secure user authentication through Next Auth, safeguarding user accounts and data.
